@@ -5,16 +5,14 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import {
   Button,
   Checkbox,
-  Divider,
   Flex,
   Form,
+  Image,
   Input,
   Layout,
   Typography,
 } from 'antd';
 import { AxiosError } from 'axios';
-import { FaFacebook, FaGithub } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
 
 import useApp from '@/hooks/use-app';
 import { useAppStore } from '@/modules/app/app.zustand';
@@ -67,14 +65,6 @@ function LoginPage() {
     });
   };
 
-  const iconCss = css`
-    cursor: pointer;
-    transition: ${token.motionEaseInOut};
-    :hover {
-      scale: 1.2;
-    }
-  `;
-
   return (
     <>
       <Layout.Content
@@ -104,6 +94,11 @@ function LoginPage() {
           gap={24}
           align="center"
         >
+          <Image
+            width={token.screenXL * 0.2}
+            src={'/icon.png'}
+            preview={false}
+          />
           <Typography.Title level={2}>{t('Welcome')}</Typography.Title>
 
           <Form
@@ -186,27 +181,9 @@ function LoginPage() {
               </Button>
             </Form.Item>
 
-            <Divider>
-              <Typography.Text type="secondary">
-                {t('Or login with your social account')}
-              </Typography.Text>
-            </Divider>
-
-            <Flex justify="space-evenly">
-              <FcGoogle fontSize={token.fontSizeHeading2} css={iconCss} />
-
-              <FaFacebook
-                fontSize={token.fontSizeHeading2}
-                color={token.blue}
-                css={iconCss}
-              />
-
-              <FaGithub fontSize={token.fontSizeHeading2} css={iconCss} />
-            </Flex>
-
             <Flex
               css={css`
-                margin-top: ${token.marginXL}px;
+                margin-top: ${token.marginLG}px;
               `}
               justify="center"
               gap={token.sizeUnit}

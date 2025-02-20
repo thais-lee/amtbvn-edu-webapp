@@ -19,20 +19,10 @@ import { Route as IndexImport } from './routes/index'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout/register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout/login'
-import { Route as AppMProjectsIndexImport } from './routes/_app/m/projects/index'
-import { Route as AppDProjectsIndexImport } from './routes/_app/d/projects/index'
-import { Route as AppMProjectsProjectIdLayoutImport } from './routes/_app/m/projects/$projectId/_layout'
-import { Route as AppDProjectsProjectIdLayoutImport } from './routes/_app/d/projects/$projectId/_layout'
 
 // Create Virtual Routes
 
 const AuthImport = createFileRoute('/auth')()
-const AppMProjectsProjectIdImport = createFileRoute(
-  '/_app/m/projects/$projectId',
-)()
-const AppDProjectsProjectIdImport = createFileRoute(
-  '/_app/d/projects/$projectId',
-)()
 
 // Create/Update Routes
 
@@ -75,42 +65,6 @@ const AuthLayoutLoginRoute = AuthLayoutLoginImport.update({
   path: '/login',
   getParentRoute: () => AuthLayoutRoute,
 } as any)
-
-const AppMProjectsProjectIdRoute = AppMProjectsProjectIdImport.update({
-  id: '/m/projects/$projectId',
-  path: '/m/projects/$projectId',
-  getParentRoute: () => AppRoute,
-} as any)
-
-const AppDProjectsProjectIdRoute = AppDProjectsProjectIdImport.update({
-  id: '/d/projects/$projectId',
-  path: '/d/projects/$projectId',
-  getParentRoute: () => AppRoute,
-} as any)
-
-const AppMProjectsIndexRoute = AppMProjectsIndexImport.update({
-  id: '/m/projects/',
-  path: '/m/projects/',
-  getParentRoute: () => AppRoute,
-} as any)
-
-const AppDProjectsIndexRoute = AppDProjectsIndexImport.update({
-  id: '/d/projects/',
-  path: '/d/projects/',
-  getParentRoute: () => AppRoute,
-} as any)
-
-const AppMProjectsProjectIdLayoutRoute =
-  AppMProjectsProjectIdLayoutImport.update({
-    id: '/_layout',
-    getParentRoute: () => AppMProjectsProjectIdRoute,
-  } as any)
-
-const AppDProjectsProjectIdLayoutRoute =
-  AppDProjectsProjectIdLayoutImport.update({
-    id: '/_layout',
-    getParentRoute: () => AppDProjectsProjectIdRoute,
-  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -165,94 +119,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutRegisterImport
       parentRoute: typeof AuthLayoutImport
     }
-    '/_app/d/projects/': {
-      id: '/_app/d/projects/'
-      path: '/d/projects'
-      fullPath: '/d/projects'
-      preLoaderRoute: typeof AppDProjectsIndexImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/m/projects/': {
-      id: '/_app/m/projects/'
-      path: '/m/projects'
-      fullPath: '/m/projects'
-      preLoaderRoute: typeof AppMProjectsIndexImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/d/projects/$projectId': {
-      id: '/_app/d/projects/$projectId'
-      path: '/d/projects/$projectId'
-      fullPath: '/d/projects/$projectId'
-      preLoaderRoute: typeof AppDProjectsProjectIdImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/d/projects/$projectId/_layout': {
-      id: '/_app/d/projects/$projectId/_layout'
-      path: '/d/projects/$projectId'
-      fullPath: '/d/projects/$projectId'
-      preLoaderRoute: typeof AppDProjectsProjectIdLayoutImport
-      parentRoute: typeof AppDProjectsProjectIdRoute
-    }
-    '/_app/m/projects/$projectId': {
-      id: '/_app/m/projects/$projectId'
-      path: '/m/projects/$projectId'
-      fullPath: '/m/projects/$projectId'
-      preLoaderRoute: typeof AppMProjectsProjectIdImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/m/projects/$projectId/_layout': {
-      id: '/_app/m/projects/$projectId/_layout'
-      path: '/m/projects/$projectId'
-      fullPath: '/m/projects/$projectId'
-      preLoaderRoute: typeof AppMProjectsProjectIdLayoutImport
-      parentRoute: typeof AppMProjectsProjectIdRoute
-    }
   }
 }
 
 // Create and export the route tree
-
-interface AppDProjectsProjectIdRouteChildren {
-  AppDProjectsProjectIdLayoutRoute: typeof AppDProjectsProjectIdLayoutRoute
-}
-
-const AppDProjectsProjectIdRouteChildren: AppDProjectsProjectIdRouteChildren = {
-  AppDProjectsProjectIdLayoutRoute: AppDProjectsProjectIdLayoutRoute,
-}
-
-const AppDProjectsProjectIdRouteWithChildren =
-  AppDProjectsProjectIdRoute._addFileChildren(
-    AppDProjectsProjectIdRouteChildren,
-  )
-
-interface AppMProjectsProjectIdRouteChildren {
-  AppMProjectsProjectIdLayoutRoute: typeof AppMProjectsProjectIdLayoutRoute
-}
-
-const AppMProjectsProjectIdRouteChildren: AppMProjectsProjectIdRouteChildren = {
-  AppMProjectsProjectIdLayoutRoute: AppMProjectsProjectIdLayoutRoute,
-}
-
-const AppMProjectsProjectIdRouteWithChildren =
-  AppMProjectsProjectIdRoute._addFileChildren(
-    AppMProjectsProjectIdRouteChildren,
-  )
-
-interface AppRouteChildren {
-  AppDProjectsIndexRoute: typeof AppDProjectsIndexRoute
-  AppMProjectsIndexRoute: typeof AppMProjectsIndexRoute
-  AppDProjectsProjectIdRoute: typeof AppDProjectsProjectIdRouteWithChildren
-  AppMProjectsProjectIdRoute: typeof AppMProjectsProjectIdRouteWithChildren
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppDProjectsIndexRoute: AppDProjectsIndexRoute,
-  AppMProjectsIndexRoute: AppMProjectsIndexRoute,
-  AppDProjectsProjectIdRoute: AppDProjectsProjectIdRouteWithChildren,
-  AppMProjectsProjectIdRoute: AppMProjectsProjectIdRouteWithChildren,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthLayoutRouteChildren {
   AuthLayoutLoginRoute: typeof AuthLayoutLoginRoute
@@ -280,72 +150,38 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
+  '': typeof AppRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
-  '/d/projects': typeof AppDProjectsIndexRoute
-  '/m/projects': typeof AppMProjectsIndexRoute
-  '/d/projects/$projectId': typeof AppDProjectsProjectIdLayoutRoute
-  '/m/projects/$projectId': typeof AppMProjectsProjectIdLayoutRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
+  '': typeof AppRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
-  '/d/projects': typeof AppDProjectsIndexRoute
-  '/m/projects': typeof AppMProjectsIndexRoute
-  '/d/projects/$projectId': typeof AppDProjectsProjectIdLayoutRoute
-  '/m/projects/$projectId': typeof AppMProjectsProjectIdLayoutRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_app': typeof AppRouteWithChildren
+  '/_app': typeof AppRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
   '/auth/_layout/register': typeof AuthLayoutRegisterRoute
-  '/_app/d/projects/': typeof AppDProjectsIndexRoute
-  '/_app/m/projects/': typeof AppMProjectsIndexRoute
-  '/_app/d/projects/$projectId': typeof AppDProjectsProjectIdRouteWithChildren
-  '/_app/d/projects/$projectId/_layout': typeof AppDProjectsProjectIdLayoutRoute
-  '/_app/m/projects/$projectId': typeof AppMProjectsProjectIdRouteWithChildren
-  '/_app/m/projects/$projectId/_layout': typeof AppMProjectsProjectIdLayoutRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | ''
-    | '/about'
-    | '/auth'
-    | '/auth/login'
-    | '/auth/register'
-    | '/d/projects'
-    | '/m/projects'
-    | '/d/projects/$projectId'
-    | '/m/projects/$projectId'
+  fullPaths: '/' | '' | '/about' | '/auth' | '/auth/login' | '/auth/register'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | ''
-    | '/about'
-    | '/auth'
-    | '/auth/login'
-    | '/auth/register'
-    | '/d/projects'
-    | '/m/projects'
-    | '/d/projects/$projectId'
-    | '/m/projects/$projectId'
+  to: '/' | '' | '/about' | '/auth' | '/auth/login' | '/auth/register'
   id:
     | '__root__'
     | '/'
@@ -355,25 +191,19 @@ export interface FileRouteTypes {
     | '/auth/_layout'
     | '/auth/_layout/login'
     | '/auth/_layout/register'
-    | '/_app/d/projects/'
-    | '/_app/m/projects/'
-    | '/_app/d/projects/$projectId'
-    | '/_app/d/projects/$projectId/_layout'
-    | '/_app/m/projects/$projectId'
-    | '/_app/m/projects/$projectId/_layout'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
+  AppRoute: typeof AppRoute
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRouteWithChildren,
+  AppRoute: AppRoute,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRouteWithChildren,
 }
@@ -398,13 +228,7 @@ export const routeTree = rootRoute
       "filePath": "index.tsx"
     },
     "/_app": {
-      "filePath": "_app.tsx",
-      "children": [
-        "/_app/d/projects/",
-        "/_app/m/projects/",
-        "/_app/d/projects/$projectId",
-        "/_app/m/projects/$projectId"
-      ]
+      "filePath": "_app.tsx"
     },
     "/about": {
       "filePath": "about.tsx"
@@ -430,36 +254,6 @@ export const routeTree = rootRoute
     "/auth/_layout/register": {
       "filePath": "auth/_layout/register.tsx",
       "parent": "/auth/_layout"
-    },
-    "/_app/d/projects/": {
-      "filePath": "_app/d/projects/index.tsx",
-      "parent": "/_app"
-    },
-    "/_app/m/projects/": {
-      "filePath": "_app/m/projects/index.tsx",
-      "parent": "/_app"
-    },
-    "/_app/d/projects/$projectId": {
-      "filePath": "_app/d/projects/$projectId",
-      "parent": "/_app",
-      "children": [
-        "/_app/d/projects/$projectId/_layout"
-      ]
-    },
-    "/_app/d/projects/$projectId/_layout": {
-      "filePath": "_app/d/projects/$projectId/_layout.tsx",
-      "parent": "/_app/d/projects/$projectId"
-    },
-    "/_app/m/projects/$projectId": {
-      "filePath": "_app/m/projects/$projectId",
-      "parent": "/_app",
-      "children": [
-        "/_app/m/projects/$projectId/_layout"
-      ]
-    },
-    "/_app/m/projects/$projectId/_layout": {
-      "filePath": "_app/m/projects/$projectId/_layout.tsx",
-      "parent": "/_app/m/projects/$projectId"
     }
   }
 }
