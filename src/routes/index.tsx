@@ -9,5 +9,5 @@ export const Route = createFileRoute('/')({
 function IndexPage() {
   const { isMobile } = useDeviceSize();
 
-  return isMobile ? <Navigate to="/auth/login" /> : <Navigate to="/about" />;
+  return isMobile ? <Navigate to="/m/home" /> : <Navigate to="/d/home" />;
 }

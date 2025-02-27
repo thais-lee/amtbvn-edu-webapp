@@ -17,8 +17,13 @@ import { Route as AboutImport } from './routes/about'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
+import { Route as AppProfileIndexImport } from './routes/_app/profile/index'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout/register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout/login'
+import { Route as AppMSettingsIndexImport } from './routes/_app/m/settings/index'
+import { Route as AppMHomeIndexImport } from './routes/_app/m/home/index'
+import { Route as AppDSettingsIndexImport } from './routes/_app/d/settings/index'
+import { Route as AppDHomeIndexImport } from './routes/_app/d/home/index'
 
 // Create Virtual Routes
 
@@ -54,6 +59,12 @@ const AuthLayoutRoute = AuthLayoutImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AppProfileIndexRoute = AppProfileIndexImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AuthLayoutRegisterRoute = AuthLayoutRegisterImport.update({
   id: '/register',
   path: '/register',
@@ -64,6 +75,30 @@ const AuthLayoutLoginRoute = AuthLayoutLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthLayoutRoute,
+} as any)
+
+const AppMSettingsIndexRoute = AppMSettingsIndexImport.update({
+  id: '/m/settings/',
+  path: '/m/settings/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppMHomeIndexRoute = AppMHomeIndexImport.update({
+  id: '/m/home/',
+  path: '/m/home/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppDSettingsIndexRoute = AppDSettingsIndexImport.update({
+  id: '/d/settings/',
+  path: '/d/settings/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppDHomeIndexRoute = AppDHomeIndexImport.update({
+  id: '/d/home/',
+  path: '/d/home/',
+  getParentRoute: () => AppRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -119,10 +154,63 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutRegisterImport
       parentRoute: typeof AuthLayoutImport
     }
+    '/_app/profile/': {
+      id: '/_app/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AppProfileIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/d/home/': {
+      id: '/_app/d/home/'
+      path: '/d/home'
+      fullPath: '/d/home'
+      preLoaderRoute: typeof AppDHomeIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/d/settings/': {
+      id: '/_app/d/settings/'
+      path: '/d/settings'
+      fullPath: '/d/settings'
+      preLoaderRoute: typeof AppDSettingsIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/m/home/': {
+      id: '/_app/m/home/'
+      path: '/m/home'
+      fullPath: '/m/home'
+      preLoaderRoute: typeof AppMHomeIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/m/settings/': {
+      id: '/_app/m/settings/'
+      path: '/m/settings'
+      fullPath: '/m/settings'
+      preLoaderRoute: typeof AppMSettingsIndexImport
+      parentRoute: typeof AppImport
+    }
   }
 }
 
 // Create and export the route tree
+
+interface AppRouteChildren {
+  AppProfileIndexRoute: typeof AppProfileIndexRoute
+  AppDHomeIndexRoute: typeof AppDHomeIndexRoute
+  AppDSettingsIndexRoute: typeof AppDSettingsIndexRoute
+  AppMHomeIndexRoute: typeof AppMHomeIndexRoute
+  AppMSettingsIndexRoute: typeof AppMSettingsIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppProfileIndexRoute: AppProfileIndexRoute,
+  AppDHomeIndexRoute: AppDHomeIndexRoute,
+  AppDSettingsIndexRoute: AppDSettingsIndexRoute,
+  AppMHomeIndexRoute: AppMHomeIndexRoute,
+  AppMSettingsIndexRoute: AppMSettingsIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AuthLayoutRouteChildren {
   AuthLayoutLoginRoute: typeof AuthLayoutLoginRoute
@@ -150,38 +238,75 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AppRoute
+  '': typeof AppRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
+  '/profile': typeof AppProfileIndexRoute
+  '/d/home': typeof AppDHomeIndexRoute
+  '/d/settings': typeof AppDSettingsIndexRoute
+  '/m/home': typeof AppMHomeIndexRoute
+  '/m/settings': typeof AppMSettingsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AppRoute
+  '': typeof AppRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
+  '/profile': typeof AppProfileIndexRoute
+  '/d/home': typeof AppDHomeIndexRoute
+  '/d/settings': typeof AppDSettingsIndexRoute
+  '/m/home': typeof AppMHomeIndexRoute
+  '/m/settings': typeof AppMSettingsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_app': typeof AppRoute
+  '/_app': typeof AppRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
   '/auth/_layout/register': typeof AuthLayoutRegisterRoute
+  '/_app/profile/': typeof AppProfileIndexRoute
+  '/_app/d/home/': typeof AppDHomeIndexRoute
+  '/_app/d/settings/': typeof AppDSettingsIndexRoute
+  '/_app/m/home/': typeof AppMHomeIndexRoute
+  '/_app/m/settings/': typeof AppMSettingsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/about' | '/auth' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | ''
+    | '/about'
+    | '/auth'
+    | '/auth/login'
+    | '/auth/register'
+    | '/profile'
+    | '/d/home'
+    | '/d/settings'
+    | '/m/home'
+    | '/m/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/about' | '/auth' | '/auth/login' | '/auth/register'
+  to:
+    | '/'
+    | ''
+    | '/about'
+    | '/auth'
+    | '/auth/login'
+    | '/auth/register'
+    | '/profile'
+    | '/d/home'
+    | '/d/settings'
+    | '/m/home'
+    | '/m/settings'
   id:
     | '__root__'
     | '/'
@@ -191,19 +316,24 @@ export interface FileRouteTypes {
     | '/auth/_layout'
     | '/auth/_layout/login'
     | '/auth/_layout/register'
+    | '/_app/profile/'
+    | '/_app/d/home/'
+    | '/_app/d/settings/'
+    | '/_app/m/home/'
+    | '/_app/m/settings/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRouteWithChildren,
 }
@@ -228,7 +358,14 @@ export const routeTree = rootRoute
       "filePath": "index.tsx"
     },
     "/_app": {
-      "filePath": "_app.tsx"
+      "filePath": "_app.tsx",
+      "children": [
+        "/_app/profile/",
+        "/_app/d/home/",
+        "/_app/d/settings/",
+        "/_app/m/home/",
+        "/_app/m/settings/"
+      ]
     },
     "/about": {
       "filePath": "about.tsx"
@@ -254,6 +391,26 @@ export const routeTree = rootRoute
     "/auth/_layout/register": {
       "filePath": "auth/_layout/register.tsx",
       "parent": "/auth/_layout"
+    },
+    "/_app/profile/": {
+      "filePath": "_app/profile/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/d/home/": {
+      "filePath": "_app/d/home/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/d/settings/": {
+      "filePath": "_app/d/settings/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/m/home/": {
+      "filePath": "_app/m/home/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/m/settings/": {
+      "filePath": "_app/m/settings/index.tsx",
+      "parent": "/_app"
     }
   }
 }
