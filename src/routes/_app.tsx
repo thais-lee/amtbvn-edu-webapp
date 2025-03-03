@@ -12,6 +12,7 @@ import useApp from '@/hooks/use-app';
 import { useAuth } from '@/hooks/use-auth';
 import useDeviceSize from '@/hooks/use-device-size';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
+import BottomNavBar from '@/shared/components/layouts/app/bottom-nav-bar';
 
 export const Route = createFileRoute('/_app')({
   component: AppLayout,
@@ -56,6 +57,7 @@ function AppLayout() {
         `}
       >
         <Outlet />
+        <BottomNavBar />
       </Layout.Content>
     </Layout>
   );

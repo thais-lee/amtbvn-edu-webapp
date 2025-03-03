@@ -1,124 +1,104 @@
-import { Flex, Menu, MenuProps, Space, Typography } from 'antd';
+import { Link } from '@tanstack/react-router';
 import { Layout } from 'antd/lib';
 import { useState } from 'react';
-import { AiOutlineHome } from 'react-icons/ai';
+import {
+  AiOutlineHome,
+  AiOutlineMessage,
+  AiOutlineSetting,
+  AiOutlineUser,
+} from 'react-icons/ai';
 import { BiBook } from 'react-icons/bi';
-import { SiYoutubemusic } from 'react-icons/si';
 
 import useApp from '@/hooks/use-app';
-
-type TabbarProps = Required<MenuProps>['items'][number];
-const items: TabbarProps[] = [
-  {
-    label: (
-      <div>
-        <Flex
-          align="center"
-          vertical
-          gap={8}
-          style={{ backgroundColor: 'green' }}
-        >
-          <AiOutlineHome size={20} />
-          <Typography.Text>Home</Typography.Text>
-        </Flex>
-      </div>
-    ),
-    key: 'home',
-  },
-
-  {
-    label: (
-      <div>
-        <Flex
-          align="center"
-          vertical
-          gap={8}
-          style={{ backgroundColor: 'green' }}
-        >
-          <BiBook size={20} />
-          <Typography.Text>School</Typography.Text>
-        </Flex>
-      </div>
-    ),
-    key: 'school',
-  },
-
-  {
-    label: (
-      <div>
-        <Flex
-          align="center"
-          vertical
-          gap={8}
-          style={{ backgroundColor: 'green' }}
-        >
-          <SiYoutubemusic size={20} />
-          <Typography.Text>Music</Typography.Text>
-        </Flex>
-      </div>
-    ),
-    key: 'music',
-  },
-];
 
 const BottomNavBar = () => {
   const [current, setCurrent] = useState('home');
   const { token } = useApp();
-  const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
-    setCurrent(e.key);
+  const onClick = (e: string) => {
+    setCurrent(e);
   };
+
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="horizontal"
+    <Layout.Content
       style={{
-        borderBottom: 'none',
-        position: 'fixed',
         bottom: 0,
-        width: '100%',
-        // backgroundColor: 'blueviolet',
-        justifyContent: 'space-evenly',
-        flex: 1,
+        width: window.innerWidth,
+        left: 0,
+        right: 0,
+        display: 'flex',
       }}
     >
-      <Flex align="center" vertical gap={8}>
-        <Menu.Item key="home">
-          <Flex
-            align="center"
-            vertical
-            gap={8}
-            // style={{ backgroundColor: 'green' }}
+      <div className="navigation">
+        <ul>
+          <li
+            className={current === 'home' ? 'list active' : 'list'}
+            onClick={() => onClick('home')}
           >
-            <AiOutlineHome size={20} />
-            <Typography.Text>Home</Typography.Text>
-          </Flex>
-        </Menu.Item>
-        <Menu.Item key="school">
-          <Flex
-            align="center"
-            vertical
-            gap={8}
-            // style={{ backgroundColor: 'green' }}
+            <Link to="/m/home">
+              <a>
+                <span className="icon">
+                  <AiOutlineHome />
+                </span>
+                <span className="text">Home</span>
+              </a>
+            </Link>
+          </li>
+          <li
+            className={current === 'profile' ? 'list active' : 'list'}
+            onClick={() => onClick('profile')}
           >
-            <BiBook size={20} />
-            <Typography.Text>School</Typography.Text>
-          </Flex>
-        </Menu.Item>
-        <Menu.Item key="music">
-          <Flex
-            align="center"
-            vertical
-            gap={8}
-            // style={{ backgroundColor: 'green' }}
+            <Link to="/profile">
+              <a>
+                <span className="icon">
+                  <AiOutlineUser />
+                </span>
+                <span className="text">Profile</span>
+              </a>
+            </Link>
+          </li>
+          <li
+            className={current === 'messages' ? 'list active' : 'list'}
+            onClick={() => onClick('messages')}
           >
-            <SiYoutubemusic size={20} />
-            <Typography.Text>Music</Typography.Text>
-          </Flex>
-        </Menu.Item>
-      </Flex>
-    </Menu>
+            <Link to="/">
+              <a>
+                <span className="icon">
+                  <AiOutlineMessage />
+                </span>
+                <span className="text">Messages</span>
+              </a>
+            </Link>
+          </li>
+          <li
+            className={current === 'photos' ? 'list active' : 'list'}
+            onClick={() => onClick('photos')}
+          >
+            <Link to="/">
+              <a>
+                <span className="icon">
+                  <BiBook />
+                </span>
+                <span className="text">Photos</span>
+              </a>
+            </Link>
+          </li>
+          <li
+            className={current === 'settings' ? 'list active' : 'list'}
+            onClick={() => onClick('settings')}
+          >
+            <Link to="/m/settings">
+              <a>
+                <span className="icon">
+                  <AiOutlineSetting />
+                </span>
+                <span className="text">Settings</span>
+              </a>
+            </Link>
+          </li>
+          <div className="indicator"></div>
+        </ul>
+      </div>
+    </Layout.Content>
   );
 };
 
