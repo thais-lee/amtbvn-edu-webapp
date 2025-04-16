@@ -14,13 +14,16 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
-import { Route as AppImport } from './routes/_app'
+import { Route as AppRouteImport } from './routes/_app/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
+import { Route as AppMRouteImport } from './routes/_app/m/route'
+import { Route as AppDRouteImport } from './routes/_app/d/route'
 import { Route as AppProfileIndexImport } from './routes/_app/profile/index'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout/register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout/login'
 import { Route as AppMSettingsIndexImport } from './routes/_app/m/settings/index'
+import { Route as AppMLectureHallIndexImport } from './routes/_app/m/lectureHall/index'
 import { Route as AppMHomeIndexImport } from './routes/_app/m/home/index'
 import { Route as AppDSettingsIndexImport } from './routes/_app/d/settings/index'
 import { Route as AppDHomeIndexImport } from './routes/_app/d/home/index'
@@ -43,7 +46,7 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppRoute = AppImport.update({
+const AppRouteRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
@@ -59,10 +62,22 @@ const AuthLayoutRoute = AuthLayoutImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AppMRouteRoute = AppMRouteImport.update({
+  id: '/m',
+  path: '/m',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppDRouteRoute = AppDRouteImport.update({
+  id: '/d',
+  path: '/d',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
 const AppProfileIndexRoute = AppProfileIndexImport.update({
   id: '/profile/',
   path: '/profile/',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
 const AuthLayoutRegisterRoute = AuthLayoutRegisterImport.update({
@@ -78,27 +93,33 @@ const AuthLayoutLoginRoute = AuthLayoutLoginImport.update({
 } as any)
 
 const AppMSettingsIndexRoute = AppMSettingsIndexImport.update({
-  id: '/m/settings/',
-  path: '/m/settings/',
-  getParentRoute: () => AppRoute,
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
+const AppMLectureHallIndexRoute = AppMLectureHallIndexImport.update({
+  id: '/lectureHall/',
+  path: '/lectureHall/',
+  getParentRoute: () => AppMRouteRoute,
 } as any)
 
 const AppMHomeIndexRoute = AppMHomeIndexImport.update({
-  id: '/m/home/',
-  path: '/m/home/',
-  getParentRoute: () => AppRoute,
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => AppMRouteRoute,
 } as any)
 
 const AppDSettingsIndexRoute = AppDSettingsIndexImport.update({
-  id: '/d/settings/',
-  path: '/d/settings/',
-  getParentRoute: () => AppRoute,
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AppDRouteRoute,
 } as any)
 
 const AppDHomeIndexRoute = AppDHomeIndexImport.update({
-  id: '/d/home/',
-  path: '/d/home/',
-  getParentRoute: () => AppRoute,
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => AppDRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -116,7 +137,7 @@ declare module '@tanstack/react-router' {
       id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppImport
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -125,6 +146,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
+    }
+    '/_app/d': {
+      id: '/_app/d'
+      path: '/d'
+      fullPath: '/d'
+      preLoaderRoute: typeof AppDRouteImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/_app/m': {
+      id: '/_app/m'
+      path: '/m'
+      fullPath: '/m'
+      preLoaderRoute: typeof AppMRouteImport
+      parentRoute: typeof AppRouteImport
     }
     '/auth': {
       id: '/auth'
@@ -159,58 +194,93 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AppProfileIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppRouteImport
     }
     '/_app/d/home/': {
       id: '/_app/d/home/'
-      path: '/d/home'
+      path: '/home'
       fullPath: '/d/home'
       preLoaderRoute: typeof AppDHomeIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppDRouteImport
     }
     '/_app/d/settings/': {
       id: '/_app/d/settings/'
-      path: '/d/settings'
+      path: '/settings'
       fullPath: '/d/settings'
       preLoaderRoute: typeof AppDSettingsIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppDRouteImport
     }
     '/_app/m/home/': {
       id: '/_app/m/home/'
-      path: '/m/home'
+      path: '/home'
       fullPath: '/m/home'
       preLoaderRoute: typeof AppMHomeIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppMRouteImport
+    }
+    '/_app/m/lectureHall/': {
+      id: '/_app/m/lectureHall/'
+      path: '/lectureHall'
+      fullPath: '/m/lectureHall'
+      preLoaderRoute: typeof AppMLectureHallIndexImport
+      parentRoute: typeof AppMRouteImport
     }
     '/_app/m/settings/': {
       id: '/_app/m/settings/'
-      path: '/m/settings'
+      path: '/settings'
       fullPath: '/m/settings'
       preLoaderRoute: typeof AppMSettingsIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppMRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AppRouteChildren {
-  AppProfileIndexRoute: typeof AppProfileIndexRoute
+interface AppDRouteRouteChildren {
   AppDHomeIndexRoute: typeof AppDHomeIndexRoute
   AppDSettingsIndexRoute: typeof AppDSettingsIndexRoute
+}
+
+const AppDRouteRouteChildren: AppDRouteRouteChildren = {
+  AppDHomeIndexRoute: AppDHomeIndexRoute,
+  AppDSettingsIndexRoute: AppDSettingsIndexRoute,
+}
+
+const AppDRouteRouteWithChildren = AppDRouteRoute._addFileChildren(
+  AppDRouteRouteChildren,
+)
+
+interface AppMRouteRouteChildren {
   AppMHomeIndexRoute: typeof AppMHomeIndexRoute
+  AppMLectureHallIndexRoute: typeof AppMLectureHallIndexRoute
   AppMSettingsIndexRoute: typeof AppMSettingsIndexRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppProfileIndexRoute: AppProfileIndexRoute,
-  AppDHomeIndexRoute: AppDHomeIndexRoute,
-  AppDSettingsIndexRoute: AppDSettingsIndexRoute,
+const AppMRouteRouteChildren: AppMRouteRouteChildren = {
   AppMHomeIndexRoute: AppMHomeIndexRoute,
+  AppMLectureHallIndexRoute: AppMLectureHallIndexRoute,
   AppMSettingsIndexRoute: AppMSettingsIndexRoute,
 }
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AppMRouteRouteWithChildren = AppMRouteRoute._addFileChildren(
+  AppMRouteRouteChildren,
+)
+
+interface AppRouteRouteChildren {
+  AppDRouteRoute: typeof AppDRouteRouteWithChildren
+  AppMRouteRoute: typeof AppMRouteRouteWithChildren
+  AppProfileIndexRoute: typeof AppProfileIndexRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppDRouteRoute: AppDRouteRouteWithChildren,
+  AppMRouteRoute: AppMRouteRouteWithChildren,
+  AppProfileIndexRoute: AppProfileIndexRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
 
 interface AuthLayoutRouteChildren {
   AuthLayoutLoginRoute: typeof AuthLayoutLoginRoute
@@ -238,8 +308,10 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
+  '': typeof AppRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/d': typeof AppDRouteRouteWithChildren
+  '/m': typeof AppMRouteRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
@@ -247,13 +319,16 @@ export interface FileRoutesByFullPath {
   '/d/home': typeof AppDHomeIndexRoute
   '/d/settings': typeof AppDSettingsIndexRoute
   '/m/home': typeof AppMHomeIndexRoute
+  '/m/lectureHall': typeof AppMLectureHallIndexRoute
   '/m/settings': typeof AppMSettingsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
+  '': typeof AppRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/d': typeof AppDRouteRouteWithChildren
+  '/m': typeof AppMRouteRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
@@ -261,14 +336,17 @@ export interface FileRoutesByTo {
   '/d/home': typeof AppDHomeIndexRoute
   '/d/settings': typeof AppDSettingsIndexRoute
   '/m/home': typeof AppMHomeIndexRoute
+  '/m/lectureHall': typeof AppMLectureHallIndexRoute
   '/m/settings': typeof AppMSettingsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_app': typeof AppRouteWithChildren
+  '/_app': typeof AppRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/_app/d': typeof AppDRouteRouteWithChildren
+  '/_app/m': typeof AppMRouteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
@@ -277,6 +355,7 @@ export interface FileRoutesById {
   '/_app/d/home/': typeof AppDHomeIndexRoute
   '/_app/d/settings/': typeof AppDSettingsIndexRoute
   '/_app/m/home/': typeof AppMHomeIndexRoute
+  '/_app/m/lectureHall/': typeof AppMLectureHallIndexRoute
   '/_app/m/settings/': typeof AppMSettingsIndexRoute
 }
 
@@ -286,6 +365,8 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/about'
+    | '/d'
+    | '/m'
     | '/auth'
     | '/auth/login'
     | '/auth/register'
@@ -293,12 +374,15 @@ export interface FileRouteTypes {
     | '/d/home'
     | '/d/settings'
     | '/m/home'
+    | '/m/lectureHall'
     | '/m/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
     | '/about'
+    | '/d'
+    | '/m'
     | '/auth'
     | '/auth/login'
     | '/auth/register'
@@ -306,12 +390,15 @@ export interface FileRouteTypes {
     | '/d/home'
     | '/d/settings'
     | '/m/home'
+    | '/m/lectureHall'
     | '/m/settings'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/about'
+    | '/_app/d'
+    | '/_app/m'
     | '/auth'
     | '/auth/_layout'
     | '/auth/_layout/login'
@@ -320,20 +407,21 @@ export interface FileRouteTypes {
     | '/_app/d/home/'
     | '/_app/d/settings/'
     | '/_app/m/home/'
+    | '/_app/m/lectureHall/'
     | '/_app/m/settings/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRouteWithChildren,
+  AppRouteRoute: AppRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRouteWithChildren,
 }
@@ -358,17 +446,32 @@ export const routeTree = rootRoute
       "filePath": "index.tsx"
     },
     "/_app": {
-      "filePath": "_app.tsx",
+      "filePath": "_app/route.tsx",
       "children": [
-        "/_app/profile/",
-        "/_app/d/home/",
-        "/_app/d/settings/",
-        "/_app/m/home/",
-        "/_app/m/settings/"
+        "/_app/d",
+        "/_app/m",
+        "/_app/profile/"
       ]
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/_app/d": {
+      "filePath": "_app/d/route.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/d/home/",
+        "/_app/d/settings/"
+      ]
+    },
+    "/_app/m": {
+      "filePath": "_app/m/route.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/m/home/",
+        "/_app/m/lectureHall/",
+        "/_app/m/settings/"
+      ]
     },
     "/auth": {
       "filePath": "auth",
@@ -398,19 +501,23 @@ export const routeTree = rootRoute
     },
     "/_app/d/home/": {
       "filePath": "_app/d/home/index.tsx",
-      "parent": "/_app"
+      "parent": "/_app/d"
     },
     "/_app/d/settings/": {
       "filePath": "_app/d/settings/index.tsx",
-      "parent": "/_app"
+      "parent": "/_app/d"
     },
     "/_app/m/home/": {
       "filePath": "_app/m/home/index.tsx",
-      "parent": "/_app"
+      "parent": "/_app/m"
+    },
+    "/_app/m/lectureHall/": {
+      "filePath": "_app/m/lectureHall/index.tsx",
+      "parent": "/_app/m"
     },
     "/_app/m/settings/": {
       "filePath": "_app/m/settings/index.tsx",
-      "parent": "/_app"
+      "parent": "/_app/m"
     }
   }
 }

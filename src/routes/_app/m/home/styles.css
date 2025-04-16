@@ -1,0 +1,129 @@
+.home-screen {
+  min-height: 100vh;
+  background-color: #FDF8F4;
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.home-screen.mobile {
+  padding-bottom: 80px; /* Space for bottom navigation */
+}
+
+.home-screen.desktop {
+  padding-bottom: 24px;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #FDF8F4;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.home-title {
+  margin-bottom: 0 !important;
+  color: #333 !important;
+}
+
+.search-button {
+  padding: 8px;
+  border-radius: 50%;
+  background-color: #F8E7DE;
+  color: #333;
+  border: none;
+  cursor: pointer;
+}
+
+.search-icon {
+  font-size: 20px;
+}
+
+.category-tabs {
+  padding: 0 16px;
+  background-color: #FDF8F4;
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+}
+
+.lecture-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+@media (min-width: 769px) {
+  .lecture-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.lecture-card {
+  overflow: hidden;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 12px !important;
+}
+
+.lecture-thumbnail {
+  aspect-ratio: 16/9;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lecture-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lecture-title {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Ant Design overrides */
+.ant-layout {
+  min-height: 100vh !important;
+  background: #FDF8F4 !important;
+}
+
+.ant-tabs-tab {
+  font-size: 16px !important;
+  padding: 8px 0 !important;
+  margin: 0 12px !important;
+}
+
+.ant-tabs-tab-active {
+  font-weight: 500 !important;
+}
+
+.ant-tabs-ink-bar {
+  height: 3px !important;
+}
+
+.ant-card-cover {
+  margin: 0 !important;
+  padding: 12px 12px 0 12px !important;
+}
+
+.ant-card-body {
+  padding: 12px !important;
+}
+
+.ant-card-meta-title {
+  white-space: normal !important;
+  line-height: 1.4 !important;
+} 

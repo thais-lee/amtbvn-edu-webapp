@@ -1,12 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createRoute, useNavigate } from '@tanstack/react-router';
 import { Button } from 'antd';
 import { useCallback } from 'react';
 
 import authService from '@/modules/auth/auth.service';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
 
-export const Route = createFileRoute('/_app/d/home/')({
+import { desktopLayoutRoute } from '../route';
+
+export const Route = createRoute({
+  getParentRoute: () => desktopLayoutRoute, // Cha là layout mobile
+  path: '/', // Path tương đối với cha (/m/) -> /m/
   component: DHomeComponent,
 });
 
@@ -43,3 +47,5 @@ function DHomeComponent() {
     </div>
   );
 }
+
+export default DHomeComponent;

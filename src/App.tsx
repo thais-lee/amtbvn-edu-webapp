@@ -37,6 +37,9 @@ const App = () => {
   const theme = useAppStore((state) => state.theme);
   const loading = useAppStore((state) => state.loading);
 
+  // Initialize mobile detection
+  // useMobileDetection();
+
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={theme} locale={locale}>

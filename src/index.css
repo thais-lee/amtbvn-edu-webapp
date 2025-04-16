@@ -1,3 +1,38 @@
+
+
+/* Add custom styles for the home page */
+/* .ant-tabs-tab {
+  font-size: 1rem !important;
+  padding: 8px 0 !important;
+  margin: 0 12px !important;
+}
+
+.ant-tabs-tab-active {
+  font-weight: 500 !important;
+}
+
+.ant-tabs-ink-bar {
+  height: 3px !important;
+}
+
+.ant-card {
+  border-radius: 12px !important;
+}
+
+.ant-card-cover {
+  margin: 0 !important;
+  padding: 12px 12px 0 12px !important;
+}
+
+.ant-card-body {
+  padding: 12px !important;
+}
+
+.ant-card-meta-title {
+  white-space: normal !important;
+  line-height: 1.4 !important;
+} */
+
 * {
   box-sizing: border-box;
 }
