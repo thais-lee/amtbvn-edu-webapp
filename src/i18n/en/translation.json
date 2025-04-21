@@ -201,5 +201,12 @@
         "SOCKET_3G": "Socket 3 gang",
         "DIMMER_1G": "Dimmer 1 gang",
         "DIMMER_2G": "Dimmer 2 gang"
+    },
+    "BottomNavBar": {
+        "Home": "Home",
+        "Library": "Library",
+        "LectureHall": "Lecture Hall",
+        "Notification": "Notification",
+        "Profile": "Profile"
     }
 }

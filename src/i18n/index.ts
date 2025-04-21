@@ -12,8 +12,8 @@ for (const key in enTranslation) {
 }
 
 i18n.use(initReactI18next).init({
-  lng: localStorage.getItem('lang') || 'en',
-  fallbackLng: 'en',
+  lng: localStorage.getItem('lang') || 'vi',
+  fallbackLng: 'vi',
   initImmediate: true,
   compatibilityJSON: 'v4',
   debug: false,

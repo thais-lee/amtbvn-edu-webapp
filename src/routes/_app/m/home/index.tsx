@@ -1,17 +1,15 @@
-import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, createRoute, useNavigate } from '@tanstack/react-router';
-import { Layout, Tabs, Card, Typography, ConfigProvider } from 'antd';
-import { useCallback, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Card, ConfigProvider, Tabs, Typography } from 'antd';
+import { useCallback, useState } from 'react';
 
 import authService from '@/modules/auth/auth.service';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
-import './styles.css';
-import { mobileLayoutRoute } from '../route';
 
-export const Route = createRoute({
-  getParentRoute: () => mobileLayoutRoute,
-  path: '/',
+import './styles.css';
+
+export const Route = createFileRoute('/_app/m/home/')({
   component: MobileHomeScreen,
 });
 
@@ -79,7 +77,9 @@ function MobileHomeScreen() {
   return (
     <div className={``}>
       <div className="home-header">
-        <Title level={3} className="home-title">講堂</Title>
+        <Title level={3} className="home-title">
+          講堂
+        </Title>
         <button className="search-button">
           <SearchOutlined className="search-icon" />
         </button>
@@ -122,11 +122,7 @@ function MobileHomeScreen() {
             className="lecture-card"
           >
             <Card.Meta
-              title={
-                <div className="lecture-title">
-                  {lecture.title}
-                </div>
-              }
+              title={<div className="lecture-title">{lecture.title}</div>}
               className="lecture-meta"
             />
           </Card>

@@ -3,17 +3,15 @@ import { Layout } from 'antd/lib';
 import { useState } from 'react';
 import {
   AiOutlineHome,
-  AiOutlineMessage,
-  AiOutlineSetting,
   AiOutlineUser,
 } from 'react-icons/ai';
-import { BiBook } from 'react-icons/bi';
+import { IoBook, IoBookOutline, IoLibraryOutline, IoNotifications, IoNotificationsOutline } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 
 const BottomNavBar = () => {
   const [current, setCurrent] = useState('home');
-  const { token } = useApp();
+  const { token, t } = useApp();
 
   const onClick = (e: string) => {
     setCurrent(e);
@@ -45,51 +43,51 @@ const BottomNavBar = () => {
               <span className="icon">
                 <AiOutlineHome />
               </span>
-              <span className="text">Home</span>
+              <span className="text">{t('BottomNavBar.Home')}</span>
             </Link>
           </li>
           <li
             className={current === 'profile' ? 'list active' : 'list'}
             onClick={() => onClick('profile')}
           >
-            <Link to="/profile">
+            <Link to="/m/library">
               <span className="icon">
-                <AiOutlineUser />
+                <IoLibraryOutline />
               </span>
-              <span className="text">Profile</span>
+              <span className="text">{t('BottomNavBar.Library')}</span>
             </Link>
           </li>
           <li
             className={current === 'messages' ? 'list active' : 'list'}
             onClick={() => onClick('messages')}
           >
-            <Link to="/">
+            <Link to="/m/lecture-hall">
               <span className="icon">
-                <AiOutlineMessage />
+                <IoBookOutline />
               </span>
-              <span className="text">Messages</span>
+              <span className="text">{t('BottomNavBar.LectureHall')}</span>
             </Link>
           </li>
           <li
             className={current === 'photos' ? 'list active' : 'list'}
             onClick={() => onClick('photos')}
           >
-            <Link to="/">
+            <Link to="/m/notifications">
               <span className="icon">
-                <BiBook />
+                <IoNotificationsOutline />
               </span>
-              <span className="text">Photos</span>
+              <span className="text">{t('BottomNavBar.Notification')}</span>
             </Link>
           </li>
           <li
             className={current === 'settings' ? 'list active' : 'list'}
             onClick={() => onClick('settings')}
           >
-            <Link to="/m/settings">
+            <Link to="/m/profile">
               <span className="icon">
-                <AiOutlineSetting />
+                <AiOutlineUser />
               </span>
-              <span className="text">Settings</span>
+              <span className="text">{t('BottomNavBar.Profile')}</span>
             </Link>
           </li>
           <div className="indicator"></div>

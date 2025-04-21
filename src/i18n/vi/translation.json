@@ -201,5 +201,12 @@
         "SOCKET_3G": "Ổ cắm 3 gang",
         "DIMMER_1G": "Dimmer 1 gang",
         "DIMMER_2G": "Dimmer 2 gang"
+    },
+    "BottomNavBar": {
+        "Home": "Trang chủ",
+        "Library": "Thư viện",
+        "LectureHall": "Giảng đường",
+        "Notification": "Thông báo",
+        "Profile": "Cá nhân"
     }
 }
