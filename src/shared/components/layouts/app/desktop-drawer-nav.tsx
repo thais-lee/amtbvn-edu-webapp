@@ -9,6 +9,8 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import { Drawer, Menu, MenuProps } from 'antd';
 import React from 'react';
 
+import useApp from '@/hooks/use-app';
+
 // Use TanStack Link & hook
 
 interface DesktopDrawerNavProps {
@@ -21,7 +23,7 @@ export const DesktopDrawerNav: React.FC<DesktopDrawerNavProps> = ({
   onClose,
 }) => {
   const routerState = useRouterState();
-
+  const { t } = useApp();
   // Helper to determine active key based on the start of the path
   const getActiveKey = () => {
     const pathname = routerState.location.pathname;
@@ -39,11 +41,24 @@ export const DesktopDrawerNav: React.FC<DesktopDrawerNavProps> = ({
       // Use Link component for client-side routing, call onClose when clicked
       label: (
         <Link
-          to="/m/home"
+          to="/d/home"
           onClick={onClose}
           activeProps={{ style: { fontWeight: 'bold' } }}
         >
-          Trang chủ
+          {t('Home')}
+        </Link>
+      ),
+    },
+    {
+      key: 'library',
+      icon: <BookOutlined />,
+      label: (
+        <Link
+          to="/d/library"
+          onClick={onClose}
+          activeProps={{ style: { fontWeight: 'bold' } }}
+        >
+          {t('BottomNavBar.Library')}
         </Link>
       ),
     },
@@ -52,11 +67,24 @@ export const DesktopDrawerNav: React.FC<DesktopDrawerNavProps> = ({
       icon: <BookOutlined />,
       label: (
         <Link
-          to="/m/lectureHall"
+          to="/d/lecture-hall"
           onClick={onClose}
           activeProps={{ style: { fontWeight: 'bold' } }}
         >
-          Khóa học
+          {t('BottomNavBar.LectureHall')}
+        </Link>
+      ), // Example route
+    },
+    {
+      key: 'notifications',
+      icon: <SettingOutlined />,
+      label: (
+        <Link
+          to="/d/notifications"
+          onClick={onClose}
+          activeProps={{ style: { fontWeight: 'bold' } }}
+        >
+          {t('BottomNavBar.Notification')}
         </Link>
       ), // Example route
     },
@@ -65,27 +93,15 @@ export const DesktopDrawerNav: React.FC<DesktopDrawerNavProps> = ({
       icon: <UserOutlined />,
       label: (
         <Link
-          to="/profile"
+          to="/d/profile"
           onClick={onClose}
           activeProps={{ style: { fontWeight: 'bold' } }}
         >
-          Hồ sơ
+          {t('BottomNavBar.Profile')}
         </Link>
       ), // Example route
     },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: (
-        <Link
-          to="/m/settings"
-          onClick={onClose}
-          activeProps={{ style: { fontWeight: 'bold' } }}
-        >
-          Cài đặt
-        </Link>
-      ), // Example route
-    },
+
     // Add other navigation items here
   ];
 
