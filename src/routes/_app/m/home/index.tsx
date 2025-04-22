@@ -70,10 +70,6 @@ function MobileHomeScreen() {
     },
   });
 
-  const handleLogout = useCallback(() => {
-    logoutMutation.mutate();
-  }, [logoutMutation]);
-
   return (
     <div className={``}>
       <div className="home-header">

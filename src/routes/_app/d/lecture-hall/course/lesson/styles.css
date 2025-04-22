@@ -1,0 +1,93 @@
+.lesson-detail {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.lesson-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+}
+
+.play-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lesson-info {
+  margin-top: 16px;
+}
+
+.lesson-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navigation-buttons {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sidebar {
+  position: sticky;
+  top: 24px;
+}
+
+.lesson-item {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.lesson-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-item.active {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+.lesson-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lesson-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.completed {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+} 
