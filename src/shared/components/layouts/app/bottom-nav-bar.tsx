@@ -1,23 +1,43 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import { Layout } from 'antd/lib';
-import { useState } from 'react';
 import {
   AiOutlineHome,
   AiOutlineUser,
 } from 'react-icons/ai';
-import { IoBook, IoBookOutline, IoLibraryOutline, IoNotifications, IoNotificationsOutline } from 'react-icons/io5';
+import { IoBookOutline, IoLibraryOutline, IoNotificationsOutline } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 
+type TabTranslationKey = 
+  | 'BottomNavBar.Home'
+  | 'BottomNavBar.Library'
+  | 'BottomNavBar.LectureHall'
+  | 'BottomNavBar.Notification'
+  | 'BottomNavBar.Profile';
+
+interface Tab {
+  id: string;
+  icon: React.ComponentType;
+  path: string;
+  translationKey: TabTranslationKey;
+}
+
+const tabs: Tab[] = [
+  { id: 'home', icon: AiOutlineHome, path: '/m/home', translationKey: 'BottomNavBar.Home' },
+  { id: 'library', icon: IoLibraryOutline, path: '/m/library', translationKey: 'BottomNavBar.Library' },
+  { id: 'lecture', icon: IoBookOutline, path: '/m/lecture-hall', translationKey: 'BottomNavBar.LectureHall' },
+  { id: 'notifications', icon: IoNotificationsOutline, path: '/m/notifications', translationKey: 'BottomNavBar.Notification' },
+  { id: 'profile', icon: AiOutlineUser, path: '/m/profile', translationKey: 'BottomNavBar.Profile' },
+];
+
 const BottomNavBar = () => {
-  const [current, setCurrent] = useState('home');
-  const { token, t } = useApp();
+  const { t } = useApp();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  const onClick = (e: string) => {
-    setCurrent(e);
+  const getActiveTab = (path: string) => {
+    return tabs.find(tab => path.startsWith(tab.path))?.id || 'home';
   };
-
-  // if (!isMobile) return null;
 
   return (
     <Layout.Content
@@ -35,61 +55,24 @@ const BottomNavBar = () => {
     >
       <div className="navigation">
         <ul>
-          <li
-            className={current === 'home' ? 'list active' : 'list'}
-            onClick={() => onClick('home')}
-          >
-            <Link to="/m/home">
-              <span className="icon">
-                <AiOutlineHome />
-              </span>
-              <span className="text">{t('BottomNavBar.Home')}</span>
-            </Link>
-          </li>
-          <li
-            className={current === 'profile' ? 'list active' : 'list'}
-            onClick={() => onClick('profile')}
-          >
-            <Link to="/m/library">
-              <span className="icon">
-                <IoLibraryOutline />
-              </span>
-              <span className="text">{t('BottomNavBar.Library')}</span>
-            </Link>
-          </li>
-          <li
-            className={current === 'messages' ? 'list active' : 'list'}
-            onClick={() => onClick('messages')}
-          >
-            <Link to="/m/lecture-hall">
-              <span className="icon">
-                <IoBookOutline />
-              </span>
-              <span className="text">{t('BottomNavBar.LectureHall')}</span>
-            </Link>
-          </li>
-          <li
-            className={current === 'photos' ? 'list active' : 'list'}
-            onClick={() => onClick('photos')}
-          >
-            <Link to="/m/notifications">
-              <span className="icon">
-                <IoNotificationsOutline />
-              </span>
-              <span className="text">{t('BottomNavBar.Notification')}</span>
-            </Link>
-          </li>
-          <li
-            className={current === 'settings' ? 'list active' : 'list'}
-            onClick={() => onClick('settings')}
-          >
-            <Link to="/m/profile">
-              <span className="icon">
-                <AiOutlineUser />
-              </span>
-              <span className="text">{t('BottomNavBar.Profile')}</span>
-            </Link>
-          </li>
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = getActiveTab(currentPath) === tab.id;
+            
+            return (
+              <li
+                key={tab.id}
+                className={isActive ? 'list active' : 'list'}
+              >
+                <Link to={tab.path}>
+                  <span className="icon">
+                    <Icon />
+                  </span>
+                  <span className="text">{t(tab.translationKey)}</span>
+                </Link>
+              </li>
+            );
+          })}
           <div className="indicator"></div>
         </ul>
       </div>

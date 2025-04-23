@@ -1,0 +1,102 @@
+.profile {
+  padding: 16px;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-card {
+  margin-bottom: 16px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h4 {
+  margin: 0;
+}
+
+.profile-info .ant-typography {
+  display: block;
+  margin: 4px 0;
+}
+
+.settings-card .ant-list-item {
+  padding: 12px 0;
+}
+
+.settings-card .ant-list-item:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.courses-card .ant-list-item {
+  padding: 12px 0;
+}
+
+.course-item {
+  width: 100%;
+}
+
+.course-info {
+  margin-bottom: 8px;
+}
+
+.course-info .ant-typography {
+  display: block;
+  margin: 4px 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #f0f0f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #1890ff;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.logout-button {
+  margin-top: 16px;
+  width: 100%;
+  height: 40px;
+}
+
+/* Screen Header Styles */
+.screen-header {
+  background: none;
+  padding: 16px 0;
+}
+
+.screen-header .ant-typography {
+  text-align: center;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-header .ant-btn {
+    width: 100%;
+    margin-top: 16px;
+  }
+} 

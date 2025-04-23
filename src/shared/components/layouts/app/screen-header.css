@@ -1,13 +1,12 @@
 .screen-header {
   padding: 16px;
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  background: none;
 }
 
 .screen-header-content {
   display: flex;
   align-items: center;
-  gap: 16px;
+  position: relative;
 }
 
 .back-button {
@@ -20,6 +19,9 @@
   justify-content: center;
   color: #333;
   font-size: 20px;
+  position: absolute;
+  left: 0;
+  z-index: 1;
 }
 
 .back-button:hover {
@@ -29,4 +31,6 @@
 .screen-title {
   margin: 0 !important;
   color: #333;
+  width: 100%;
+  text-align: center;
 } 
