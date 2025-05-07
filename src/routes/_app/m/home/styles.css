@@ -51,6 +51,48 @@
   z-index: 10;
 }
 
+.slider-container,
+.section-container {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.slider-item {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.slider-title {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+}
+
+.slider-description {
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+}
+
 .lecture-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -126,4 +168,411 @@
 .ant-card-meta-title {
   white-space: normal !important;
   line-height: 1.4 !important;
+}
+
+.mobile-home-screen {
+  min-height: 100vh;
+  background-color: #FDF8F4;
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #FDF8F4;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.home-title {
+  margin-bottom: 0 !important;
+  color: #333 !important;
+}
+
+.search-button {
+  padding: 8px;
+  border-radius: 50%;
+  background-color: #F8E7DE;
+  color: #333;
+  border: none;
+  cursor: pointer;
+}
+
+.search-icon {
+  font-size: 20px;
+}
+
+.category-tabs {
+  padding: 0 16px;
+  background-color: #FDF8F4;
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+}
+
+.slider-container {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.slider-item {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+}
+
+.slider-title {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+}
+
+.slider-description {
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+}
+
+.lecture-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+@media (min-width: 769px) {
+  .lecture-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+.lecture-card {
+  overflow: hidden;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 12px !important;
+}
+
+.lecture-thumbnail {
+  aspect-ratio: 16/9;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lecture-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lecture-title {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Ant Design overrides */
+.ant-layout {
+  min-height: 100vh !important;
+  background: #FDF8F4 !important;
+}
+
+.ant-tabs-tab {
+  font-size: 16px !important;
+  padding: 8px 0 !important;
+  margin: 0 12px !important;
+}
+
+.ant-tabs-tab-active {
+  font-weight: 500 !important;
+}
+
+.ant-tabs-ink-bar {
+  height: 3px !important;
+}
+
+.ant-card-cover {
+  margin: 0 !important;
+  padding: 12px 12px 0 12px !important;
+}
+
+.ant-card-body {
+  padding: 12px !important;
+}
+
+.ant-card-meta-title {
+  white-space: normal !important;
+  line-height: 1.4 !important;
+}
+
+.section-container {
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  margin-bottom: 16px !important;
+  color: #333 !important;
+  font-weight: 500 !important;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.watch-more-link {
+  display: flex;
+  align-items: center;
+  color: #8B4513;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.watch-more-link .anticon {
+  margin-left: 4px;
+}
+
+/* Pinned Articles */
+.pinned-articles, .recent-articles {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.pinned-articles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0px;
+}
+
+.pinned-article-link {
+  text-decoration: none;
+}
+
+.article-list-box {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 24px;
+  overflow: visible;
+}
+
+.article-card, .pinned-article-card, .recent-article-card {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 0;
+  min-height: 100px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.article-separator {
+  width: 100%;
+  height: 1px;
+  background: rgba(0,0,0,0.08);
+  opacity: 0.5;
+}
+
+.article-content, .pinned-article-content, .recent-article-content {
+  flex: 0 0 70%;
+  max-width: 70%;
+  padding: 12px 8px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.article-title, .pinned-article-card .article-title, .recent-article-card .article-title {
+  font-size: 17px !important;
+  font-weight: 600;
+  color: #222 !important;
+  margin-bottom: 8px !important;
+  line-height: 1.3 !important;
+  word-break: break-word;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.article-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.article-category, .pinned-article-card .article-category, .recent-article-card .article-category {
+  color: #b89a5a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.article-date, .pinned-article-card .article-date, .recent-article-card .article-date {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.article-image, .pinned-article-image, .recent-article-image {
+  flex: 0 0 30%;
+  max-width: 30%;
+  min-width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 0 12px 12px 0;
+  overflow: hidden;
+}
+
+.article-image img, .pinned-article-image img, .recent-article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0 12px 12px 0;
+}
+
+/* Subject Articles */
+.subject-articles {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 8px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.subject-articles::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.subject-article-link {
+  text-decoration: none;
+  flex: 0 0 280px;
+}
+
+.subject-article-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.subject-article-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.subject-article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.subject-article-content {
+  padding: 12px;
+}
+
+/* Recent Articles */
+.recent-articles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.recent-article-link {
+  text-decoration: none;
+}
+
+.recent-article-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.recent-article-image {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.recent-article-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recent-article-content {
+  padding: 12px;
+}
+
+/* Common Article Styles */
+.article-category {
+  color: #8B4513;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.article-title {
+  color: #333 !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+}
+
+.article-date {
+  color: #666;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* If you want a consistent horizontal padding for all sections, add it to a wrapper, not to each card or section */
+.main-content-wrapper {
+  padding-left: 16px;
+  padding-right: 16px;
 } 

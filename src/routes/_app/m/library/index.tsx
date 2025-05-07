@@ -59,12 +59,11 @@ function LibraryScreen() {
         {categories.map((category) => (
           <Card
             key={category.id}
-            className="category-card"
+            className="category-card no-padding"
             onClick={() => {
               // TODO: Navigate to category page
               console.log(`Navigate to ${category.path}`);
             }}
-            bodyStyle={{ padding: 0 }}
           >
             <div className="category-image">
               <img src={category.image} alt={category.title} />

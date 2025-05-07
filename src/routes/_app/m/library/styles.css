@@ -57,7 +57,7 @@
 .library-screen {
   padding: 16px;
   padding-bottom: 76px;
-  background-color: #f5f5f5;
+  /* background-color: #f5f5f5; */
 }
 
 .category-grid {
@@ -75,6 +75,11 @@
   border: none !important;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.category-card.no-padding .ant-card-body {
+  padding: 0;
 }
 
 .category-card:active {
@@ -83,6 +88,15 @@
 
 .category-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Remove click effects */
+.category-card .ant-card-body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.category-card::after {
+  display: none !important;
 }
 
 .category-image {

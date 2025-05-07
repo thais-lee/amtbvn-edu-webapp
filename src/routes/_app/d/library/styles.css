@@ -1,0 +1,138 @@
+.library-screen {
+  padding: 16px;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: calc(100vh - 64px); /* Accounting for header */
+}
+
+.library-content {
+  margin-top: 24px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Default 2 columns for mobile */
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.category-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.category-card {
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px !important;
+  overflow: hidden;
+  border: none !important;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.category-card.no-padding .ant-card-body {
+  padding: 0;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.category-card:active {
+  transform: scale(0.98);
+}
+
+.category-image {
+  position: relative;
+  width: 100%;
+  padding-top: 66.67%; /* 3:2 Aspect Ratio */
+  overflow: hidden;
+}
+
+.category-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.category-card:hover .category-image img {
+  transform: scale(1.05);
+}
+
+.category-overlay {
+  background-color: white;
+  padding: 12px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.category-title {
+  margin: 0 !important;
+  color: #9c7a63 !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.5px;
+  line-height: 1.3 !important;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .library-screen {
+    padding: 24px 32px;
+  }
+
+  .library-content {
+    margin-top: 32px;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .category-overlay {
+    padding: 16px;
+  }
+
+  .category-title {
+    font-size: 18px !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .library-screen {
+    padding: 32px 48px;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+  }
+
+  .category-overlay {
+    padding: 20px;
+  }
+
+  .category-title {
+    font-size: 20px !important;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1440px) {
+  .category-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .category-title {
+    font-size: 22px !important;
+  }
+} 

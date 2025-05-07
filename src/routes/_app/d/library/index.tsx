@@ -1,4 +1,47 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Card, Typography } from 'antd';
+import { Link, createFileRoute } from '@tanstack/react-router';
+import { PageHeader } from '@/shared/components/layouts/app/page-header';
+import './styles.css';
+
+interface CategoryCard {
+  id: string;
+  title: string;
+  image: string;
+  path: string;
+}
+
+const categories: CategoryCard[] = [
+  {
+    id: 'lectures',
+    title: 'Bài Giảng',
+    image: '/assets/images/bai-giang.png',
+    path: '/lectures'
+  },
+  {
+    id: 'podcasts',
+    title: 'Podcast',
+    image: '/assets/images/podcasts.jpg',
+    path: '/podcasts'
+  },
+  {
+    id: 'dharma',
+    title: 'Khai Thị',
+    image: '/assets/images/khai-thi.jpg',
+    path: '/dharma'
+  },
+  {
+    id: 'gallery',
+    title: 'Tranh Ảnh',
+    image: '/assets/images/tranh-anh.jpg',
+    path: '/gallery'
+  },
+  {
+    id: 'books',
+    title: 'Kinh Sách Tịnh Tông',
+    image: '/assets/images/kinh-sach-tinh-tong.jpg',
+    path: '/books'
+  }
+];
 
 export const Route = createFileRoute('/_app/d/library/')({
   component: DLibraryComponent,
@@ -6,9 +49,43 @@ export const Route = createFileRoute('/_app/d/library/')({
 
 function DLibraryComponent() {
   return (
-    <div>
-      <h1>Desktop Library</h1>
-      <p>Welcome to the library! This is where you can access all your books.</p>
+    <div className="library-screen">
+      <PageHeader
+        title="Thư Viện"
+        subtitle="Khám phá kho tàng tri thức Phật pháp"
+      />
+      
+      <div className="library-content">
+        <div className="category-grid">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              to={category.path}
+              className="category-link"
+            >
+              <Card
+                className="category-card no-padding"
+                hoverable
+                cover={
+                  <div className="category-image">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      loading="lazy"
+                    />
+                  </div>
+                }
+              >
+                <div className="category-overlay">
+                  <Typography.Title level={3} className="category-title">
+                    {category.title}
+                  </Typography.Title>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
