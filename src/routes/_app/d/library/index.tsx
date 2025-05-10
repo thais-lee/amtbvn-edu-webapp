@@ -1,6 +1,8 @@
-import { Card, Typography } from 'antd';
 import { Link, createFileRoute } from '@tanstack/react-router';
+import { Card, Typography } from 'antd';
+
 import { PageHeader } from '@/shared/components/layouts/app/page-header';
+
 import './styles.css';
 
 interface CategoryCard {
@@ -15,32 +17,32 @@ const categories: CategoryCard[] = [
     id: 'lectures',
     title: 'Bài Giảng',
     image: '/assets/images/bai-giang.png',
-    path: '/lectures'
+    path: '/lectures',
   },
   {
     id: 'podcasts',
     title: 'Podcast',
     image: '/assets/images/podcasts.jpg',
-    path: '/podcasts'
+    path: '/podcasts',
   },
   {
     id: 'dharma',
     title: 'Khai Thị',
     image: '/assets/images/khai-thi.jpg',
-    path: '/dharma'
+    path: '/dharma',
   },
   {
     id: 'gallery',
     title: 'Tranh Ảnh',
     image: '/assets/images/tranh-anh.jpg',
-    path: '/gallery'
+    path: '/gallery',
   },
   {
     id: 'books',
     title: 'Kinh Sách Tịnh Tông',
     image: '/assets/images/kinh-sach-tinh-tong.jpg',
-    path: '/books'
-  }
+    path: '/books',
+  },
 ];
 
 export const Route = createFileRoute('/_app/d/library/')({
@@ -54,7 +56,7 @@ function DLibraryComponent() {
         title="Thư Viện"
         subtitle="Khám phá kho tàng tri thức Phật pháp"
       />
-      
+
       <div className="library-content">
         <div className="category-grid">
           {categories.map((category) => (

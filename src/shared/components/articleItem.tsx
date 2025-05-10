@@ -42,7 +42,7 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '70%',
+            width: '65%',
             justifyContent: 'space-between',
           }}
         >
@@ -65,7 +65,10 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
             </Typography.Text>
           </div>
         </div>
-        <div className="article-image" style={{ borderRadius: 10 }}>
+        <div
+          className="article-image"
+          style={{ borderRadius: 10, width: '35%' }}
+        >
           <img src={imgSrc} alt={title} onError={() => setImgSrc(ALT_IMAGE)} />
         </div>
       </div>

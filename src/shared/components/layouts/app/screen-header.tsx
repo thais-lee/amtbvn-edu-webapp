@@ -1,5 +1,5 @@
-import { Typography } from 'antd';
 import { useCanGoBack, useRouter } from '@tanstack/react-router';
+import { Typography } from 'antd';
 import { IoArrowBack } from 'react-icons/io5';
 
 import './screen-header.css';
@@ -12,7 +12,11 @@ interface ScreenHeaderProps {
   className?: string;
 }
 
-export default function ScreenHeader({ title, showBackButton = false, className = '' }: ScreenHeaderProps) {
+export default function ScreenHeader({
+  title,
+  showBackButton = false,
+  className = '',
+}: ScreenHeaderProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const handleBack = () => {

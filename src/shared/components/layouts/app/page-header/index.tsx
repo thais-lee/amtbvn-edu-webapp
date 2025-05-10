@@ -1,5 +1,6 @@
-import React from 'react';
 import { Typography } from 'antd';
+import React from 'react';
+
 import './styles.css';
 
 interface PageHeaderProps {
@@ -7,7 +8,10 @@ interface PageHeaderProps {
   subtitle?: string;
 }
 
-export function PageHeader({ title, subtitle }: PageHeaderProps): React.ReactElement {
+export function PageHeader({
+  title,
+  subtitle,
+}: PageHeaderProps): React.ReactElement {
   return (
     <div className="page-header">
       <Typography.Title level={2} className="page-header-title">
@@ -20,4 +24,4 @@ export function PageHeader({ title, subtitle }: PageHeaderProps): React.ReactEle
       )}
     </div>
   );
-} 
+}

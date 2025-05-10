@@ -1,8 +1,13 @@
-import { Card, Button, Tabs, Tag, Empty, Skeleton } from 'antd';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
-import { IoBookOutline, IoTimeOutline, IoChevronForward } from 'react-icons/io5';
+import { Button, Card, Empty, Skeleton, Tabs, Tag } from 'antd';
 import { useState } from 'react';
+import {
+  IoBookOutline,
+  IoChevronForward,
+  IoTimeOutline,
+} from 'react-icons/io5';
+
+import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
@@ -73,8 +78,8 @@ function LectureHallComponent() {
           <img src={course.image} alt={course.title} />
           {isCurrent && (
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
+              <div
+                className="progress-fill"
                 style={{ width: `${course.progress}%` }}
               />
             </div>
@@ -88,9 +93,7 @@ function LectureHallComponent() {
           <div className="course-info">
             {isCurrent && (
               <>
-                <div className="progress-text">
-                  {course.progress}% Complete
-                </div>
+                <div className="progress-text">{course.progress}% Complete</div>
                 <div className="last-lesson">
                   <IoTimeOutline /> Last: {course.lastLesson}
                 </div>
@@ -105,33 +108,32 @@ function LectureHallComponent() {
 
   const renderCourses = (courses: any[], isCurrent: boolean = false) => {
     if (isLoading) {
-      return Array(3).fill(0).map((_, index) => (
-        <Skeleton key={index} active className="course-card" />
-      ));
+      return Array(3)
+        .fill(0)
+        .map((_, index) => (
+          <Skeleton key={index} active className="course-card" />
+        ));
     }
 
     if (courses.length === 0) {
-      return (
-        <Empty
-          description="No courses found"
-          className="empty-state"
-        />
-      );
+      return <Empty description="No courses found" className="empty-state" />;
     }
 
-    return courses.map(course => renderCourseCard(course, isCurrent));
+    return courses.map((course) => renderCourseCard(course, isCurrent));
   };
 
   return (
     <div className="lecture-hall">
       <ScreenHeader title="Lecture Hall" />
-      
+
       <div className="categories-scroll">
         <div className="categories-container">
           {categories.map((category) => (
-            <Tag 
-              key={category} 
-              className={`category-tag ${selectedCategory === category ? 'active' : ''}`}
+            <Tag
+              key={category}
+              className={`category-tag ${
+                selectedCategory === category ? 'active' : ''
+              }`}
               onClick={() => handleCategoryClick(category)}
             >
               {category}

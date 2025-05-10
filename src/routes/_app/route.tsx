@@ -1,5 +1,11 @@
 import { css } from '@emotion/react';
-import { Outlet, createRoute, redirect, useNavigate, useRouter } from '@tanstack/react-router';
+import {
+  Outlet,
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
 import { Layout, Spin } from 'antd';
 import React, { Suspense, useEffect } from 'react';
 
@@ -7,7 +13,6 @@ import useApp from '@/hooks/use-app';
 import { useAuth } from '@/hooks/use-auth';
 import useDeviceSize from '@/hooks/use-device-size';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
-import { rootRoute } from '@/routes/__root';
 
 const SharedAppLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -32,11 +37,7 @@ const SharedAppLayout: React.FC = () => {
   }, [authQuery.isError, navigate, router.history.location.pathname, user]);
 
   return (
-    <Suspense
-      fallback={
-        <Spin fullscreen />
-      }
-    >
+    <Suspense fallback={<Spin fullscreen />}>
       <Layout>
         <Layout.Content
           className="main-content"
@@ -58,10 +59,11 @@ const SharedAppLayout: React.FC = () => {
   );
 };
 
-export const Route = createRoute({
-  getParentRoute: () => rootRoute,
-  id: '_app',
+export const Route = createFileRoute('/_app')({
   component: SharedAppLayout,
+  validateSearch: (search: Record<string, unknown>) => {
+    return search;
+  },
   beforeLoad: async () => {
     const accessToken = useAuthStore.getState().accessToken;
     if (!accessToken) {
@@ -72,6 +74,7 @@ export const Route = createRoute({
         },
       });
     }
+    return {};
   },
 });
 

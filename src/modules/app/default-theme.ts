@@ -4,7 +4,7 @@ import { TTheme } from './app.zustand';
 
 export const defaultTheme: TTheme = {
   token: {
-    colorPrimary: '#2980b9',
+    colorPrimary: '#8B4513',
     colorInfo: '#3498db',
     colorSuccess: '#27ae60',
     colorWarning: '#f39c12',

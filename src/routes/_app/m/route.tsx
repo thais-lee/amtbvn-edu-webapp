@@ -1,4 +1,4 @@
-import { Outlet, createRoute } from '@tanstack/react-router';
+import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { Layout, Spin } from 'antd';
 import React, { Suspense } from 'react';
 
@@ -14,7 +14,7 @@ const { Content } = Layout;
 const MobileLayoutComponent: React.FC = () => {
   return (
     <Layout style={{ minHeight: '100vh', background: '#f8f2ed' }}>
-      <Content style={{ padding: '16px', paddingBottom: '70px' }}>
+      <Content style={{ padding: '0px', paddingBottom: '70px' }}>
         <Suspense
           fallback={
             <div style={{ textAlign: 'center', marginTop: 50 }}>
@@ -30,11 +30,12 @@ const MobileLayoutComponent: React.FC = () => {
   );
 };
 
-export const Route = createRoute({
-  getParentRoute: () => appRoute, // Cha là _app
-  path: 'm', // Phân đoạn path là /m
+export const Route = createFileRoute('/_app/m')({
   component: MobileLayoutComponent,
+  validateSearch: (search: Record<string, unknown>) => {
+    return search;
+  },
+  beforeLoad: () => {
+    return {};
+  },
 });
-
-// Export để các route con trong m/ tham chiếu
-export const mobileLayoutRoute = Route;

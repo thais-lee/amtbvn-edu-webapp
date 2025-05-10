@@ -1,7 +1,18 @@
-import { Card, Button, Tabs, Tag, Typography, Progress, Space, Row, Col } from 'antd';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  Button,
+  Card,
+  Col,
+  Progress,
+  Row,
+  Space,
+  Tabs,
+  Tag,
+  Typography,
+} from 'antd';
+import { IoBookOutline, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
-import { IoTimeOutline, IoBookOutline, IoPlayOutline } from 'react-icons/io5';
 
 import './styles.css';
 
@@ -15,18 +26,39 @@ export const Route = createFileRoute('/_app/d/lecture-hall/course/$courseId')({
 const courseData = {
   id: '1',
   title: '淨土大經科註',
-  description: 'This is a detailed description of the course. It explains what students will learn and the benefits of taking this course.',
+  description:
+    'This is a detailed description of the course. It explains what students will learn and the benefits of taking this course.',
   progress: 65,
   totalLessons: 20,
   completedLessons: 13,
   category: '淨土宗',
   image: '/lectures/02-037.jpg',
   lessons: [
-    { id: '1', title: '第1講: Introduction', duration: '45:30', completed: true },
-    { id: '2', title: '第2講: Basic Concepts', duration: '52:15', completed: true },
-    { id: '3', title: '第3講: Advanced Topics', duration: '48:20', completed: false },
-    { id: '4', title: '第4講: Practical Applications', duration: '55:10', completed: false },
-  ]
+    {
+      id: '1',
+      title: '第1講: Introduction',
+      duration: '45:30',
+      completed: true,
+    },
+    {
+      id: '2',
+      title: '第2講: Basic Concepts',
+      duration: '52:15',
+      completed: true,
+    },
+    {
+      id: '3',
+      title: '第3講: Advanced Topics',
+      duration: '48:20',
+      completed: false,
+    },
+    {
+      id: '4',
+      title: '第4講: Practical Applications',
+      duration: '55:10',
+      completed: false,
+    },
+  ],
 };
 
 function CourseDetailComponent() {
@@ -34,35 +66,39 @@ function CourseDetailComponent() {
   const navigate = useNavigate();
 
   const handleLessonClick = (lessonId: string) => {
-    navigate({ to: '/d/lecture-hall/course/lesson/$lessonId', params: { lessonId } });
+    navigate({
+      to: '/d/lecture-hall/course/lesson/$lessonId',
+      params: { lessonId },
+    });
   };
 
   return (
     <div className="course-detail">
       <ScreenHeader title={courseData.title} showBackButton />
-      
+
       <Row gutter={24}>
         <Col span={16}>
           <div className="course-content">
             <div className="course-thumbnail">
               <img src={courseData.image} alt={courseData.title} />
             </div>
-            
+
             <Card className="course-info">
               <Tag className="course-category">{courseData.category}</Tag>
               <Title level={4}>{courseData.title}</Title>
               <Text type="secondary">{courseData.description}</Text>
-              
+
               <div className="progress-section">
-                <Progress 
-                  percent={courseData.progress} 
+                <Progress
+                  percent={courseData.progress}
                   strokeColor="#8B4513"
                   showInfo={false}
                 />
                 <Space className="progress-text">
                   <Text>Progress: {courseData.progress}%</Text>
                   <Text type="secondary">
-                    {courseData.completedLessons} of {courseData.totalLessons} lessons completed
+                    {courseData.completedLessons} of {courseData.totalLessons}{' '}
+                    lessons completed
                   </Text>
                 </Space>
               </div>
@@ -79,7 +115,9 @@ function CourseDetailComponent() {
                       {courseData.lessons.map((lesson) => (
                         <Card
                           key={lesson.id}
-                          className={`lesson-card ${lesson.completed ? 'completed' : ''}`}
+                          className={`lesson-card ${
+                            lesson.completed ? 'completed' : ''
+                          }`}
                           onClick={() => handleLessonClick(lesson.id)}
                         >
                           <div className="lesson-content">
@@ -94,8 +132,8 @@ function CourseDetailComponent() {
                                 )}
                               </Space>
                             </div>
-                            <Button 
-                              type="primary" 
+                            <Button
+                              type="primary"
                               icon={<IoPlayOutline />}
                               className="play-button"
                             >
@@ -121,7 +159,7 @@ function CourseDetailComponent() {
             />
           </div>
         </Col>
-        
+
         <Col span={8}>
           <Card className="sidebar">
             <Title level={5}>Course Details</Title>
@@ -140,8 +178,8 @@ function CourseDetailComponent() {
               </div>
               <div className="detail-item">
                 <Text type="secondary">Progress</Text>
-                <Progress 
-                  percent={courseData.progress} 
+                <Progress
+                  percent={courseData.progress}
                   size="small"
                   strokeColor="#8B4513"
                 />
@@ -152,4 +190,4 @@ function CourseDetailComponent() {
       </Row>
     </div>
   );
-} 
+}

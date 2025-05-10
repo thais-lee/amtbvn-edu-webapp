@@ -457,8 +457,8 @@
 }
 
 .article-image, .pinned-article-image, .recent-article-image {
-  flex: 0 0 30%;
-  max-width: 30%;
+  flex: 0 0 35%;
+  max-width: 35%;
   min-width: 90px;
   height: 90px;
   display: flex;

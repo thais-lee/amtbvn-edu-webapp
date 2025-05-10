@@ -1,8 +1,13 @@
-import { Card, Button, Tabs, Tag, Empty, Skeleton, Row, Col } from 'antd';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
-import { IoBookOutline, IoTimeOutline, IoChevronForward } from 'react-icons/io5';
+import { Button, Card, Col, Empty, Row, Skeleton, Tabs, Tag } from 'antd';
 import { useState } from 'react';
+import {
+  IoBookOutline,
+  IoChevronForward,
+  IoTimeOutline,
+} from 'react-icons/io5';
+
+import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
@@ -73,8 +78,8 @@ function LectureHallComponent() {
             <img src={course.image} alt={course.title} />
             {isCurrent && (
               <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
+                <div
+                  className="progress-fill"
                   style={{ width: `${course.progress}%` }}
                 />
               </div>
@@ -106,37 +111,38 @@ function LectureHallComponent() {
 
   const renderCourses = (courses: any[], isCurrent: boolean = false) => {
     if (isLoading) {
-      return Array(4).fill(0).map((_, index) => (
-        <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
-          <Skeleton active className="course-card" />
-        </Col>
-      ));
+      return Array(4)
+        .fill(0)
+        .map((_, index) => (
+          <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
+            <Skeleton active className="course-card" />
+          </Col>
+        ));
     }
 
     if (courses.length === 0) {
       return (
         <Col span={24}>
-          <Empty
-            description="No courses found"
-            className="empty-state"
-          />
+          <Empty description="No courses found" className="empty-state" />
         </Col>
       );
     }
 
-    return courses.map(course => renderCourseCard(course, isCurrent));
+    return courses.map((course) => renderCourseCard(course, isCurrent));
   };
 
   return (
     <div className="lecture-hall">
       <ScreenHeader title="Lecture Hall" />
-      
+
       <div className="categories-section">
         <div className="categories-container">
           {categories.map((category) => (
-            <Tag 
-              key={category} 
-              className={`category-tag ${selectedCategory === category ? 'active' : ''}`}
+            <Tag
+              key={category}
+              className={`category-tag ${
+                selectedCategory === category ? 'active' : ''
+              }`}
               onClick={() => handleCategoryClick(category)}
             >
               {category}
@@ -169,9 +175,7 @@ function LectureHallComponent() {
             label: 'Other Courses',
             children: (
               <div className="courses-section">
-                <Row gutter={[16, 16]}>
-                  {renderCourses(otherCourses)}
-                </Row>
+                <Row gutter={[16, 16]}>{renderCourses(otherCourses)}</Row>
                 <div className="watch-more-container">
                   <Button type="link" className="watch-more-btn">
                     Watch More <IoChevronForward />

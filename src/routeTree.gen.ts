@@ -22,7 +22,6 @@ import { Route as AppDRouteImport } from './routes/_app/d/route'
 import { Route as AppProfileIndexImport } from './routes/_app/profile/index'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout/register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout/login'
-import { Route as AppMLectureHallRouteImport } from './routes/_app/m/lecture-hall/route'
 import { Route as AppMSettingsIndexImport } from './routes/_app/m/settings/index'
 import { Route as AppMProfileIndexImport } from './routes/_app/m/profile/index'
 import { Route as AppMNotificationsIndexImport } from './routes/_app/m/notifications/index'
@@ -35,7 +34,9 @@ import { Route as AppDNotificationsIndexImport } from './routes/_app/d/notificat
 import { Route as AppDLibraryIndexImport } from './routes/_app/d/library/index'
 import { Route as AppDLectureHallIndexImport } from './routes/_app/d/lecture-hall/index'
 import { Route as AppDHomeIndexImport } from './routes/_app/d/home/index'
+import { Route as AppMHomeArticlesIndexImport } from './routes/_app/m/home/articles/index'
 import { Route as AppMLectureHallCourseCourseIdImport } from './routes/_app/m/lecture-hall/course/$courseId'
+import { Route as AppMHomeArticlesArticleIdImport } from './routes/_app/m/home/articles/$articleId'
 import { Route as AppDLectureHallCourseCourseIdImport } from './routes/_app/d/lecture-hall/course/$courseId'
 import { Route as AppMLectureHallCourseLessonLessonIdImport } from './routes/_app/m/lecture-hall/course/lesson/$lessonId'
 import { Route as AppDLectureHallCourseLessonLessonIdImport } from './routes/_app/d/lecture-hall/course/lesson/$lessonId'
@@ -104,12 +105,6 @@ const AuthLayoutLoginRoute = AuthLayoutLoginImport.update({
   getParentRoute: () => AuthLayoutRoute,
 } as any)
 
-const AppMLectureHallRouteRoute = AppMLectureHallRouteImport.update({
-  id: '/lecture-hall',
-  path: '/lecture-hall',
-  getParentRoute: () => AppMRouteRoute,
-} as any)
-
 const AppMSettingsIndexRoute = AppMSettingsIndexImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -135,9 +130,9 @@ const AppMLibraryIndexRoute = AppMLibraryIndexImport.update({
 } as any)
 
 const AppMLectureHallIndexRoute = AppMLectureHallIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppMLectureHallRouteRoute,
+  id: '/lecture-hall/',
+  path: '/lecture-hall/',
+  getParentRoute: () => AppMRouteRoute,
 } as any)
 
 const AppMHomeIndexRoute = AppMHomeIndexImport.update({
@@ -182,12 +177,24 @@ const AppDHomeIndexRoute = AppDHomeIndexImport.update({
   getParentRoute: () => AppDRouteRoute,
 } as any)
 
+const AppMHomeArticlesIndexRoute = AppMHomeArticlesIndexImport.update({
+  id: '/home/articles/',
+  path: '/home/articles/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
 const AppMLectureHallCourseCourseIdRoute =
   AppMLectureHallCourseCourseIdImport.update({
-    id: '/course/$courseId',
-    path: '/course/$courseId',
-    getParentRoute: () => AppMLectureHallRouteRoute,
+    id: '/lecture-hall/course/$courseId',
+    path: '/lecture-hall/course/$courseId',
+    getParentRoute: () => AppMRouteRoute,
   } as any)
+
+const AppMHomeArticlesArticleIdRoute = AppMHomeArticlesArticleIdImport.update({
+  id: '/home/articles/$articleId',
+  path: '/home/articles/$articleId',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
 
 const AppDLectureHallCourseCourseIdRoute =
   AppDLectureHallCourseCourseIdImport.update({
@@ -198,9 +205,9 @@ const AppDLectureHallCourseCourseIdRoute =
 
 const AppMLectureHallCourseLessonLessonIdRoute =
   AppMLectureHallCourseLessonLessonIdImport.update({
-    id: '/course/lesson/$lessonId',
-    path: '/course/lesson/$lessonId',
-    getParentRoute: () => AppMLectureHallRouteRoute,
+    id: '/lecture-hall/course/lesson/$lessonId',
+    path: '/lecture-hall/course/lesson/$lessonId',
+    getParentRoute: () => AppMRouteRoute,
   } as any)
 
 const AppDLectureHallCourseLessonLessonIdRoute =
@@ -262,13 +269,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthLayoutImport
       parentRoute: typeof AuthRoute
-    }
-    '/_app/m/lecture-hall': {
-      id: '/_app/m/lecture-hall'
-      path: '/lecture-hall'
-      fullPath: '/m/lecture-hall'
-      preLoaderRoute: typeof AppMLectureHallRouteImport
-      parentRoute: typeof AppMRouteImport
     }
     '/auth/_layout/login': {
       id: '/auth/_layout/login'
@@ -342,10 +342,10 @@ declare module '@tanstack/react-router' {
     }
     '/_app/m/lecture-hall/': {
       id: '/_app/m/lecture-hall/'
-      path: '/'
-      fullPath: '/m/lecture-hall/'
+      path: '/lecture-hall'
+      fullPath: '/m/lecture-hall'
       preLoaderRoute: typeof AppMLectureHallIndexImport
-      parentRoute: typeof AppMLectureHallRouteImport
+      parentRoute: typeof AppMRouteImport
     }
     '/_app/m/library/': {
       id: '/_app/m/library/'
@@ -382,12 +382,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDLectureHallCourseCourseIdImport
       parentRoute: typeof AppDRouteImport
     }
+    '/_app/m/home/articles/$articleId': {
+      id: '/_app/m/home/articles/$articleId'
+      path: '/home/articles/$articleId'
+      fullPath: '/m/home/articles/$articleId'
+      preLoaderRoute: typeof AppMHomeArticlesArticleIdImport
+      parentRoute: typeof AppMRouteImport
+    }
     '/_app/m/lecture-hall/course/$courseId': {
       id: '/_app/m/lecture-hall/course/$courseId'
-      path: '/course/$courseId'
+      path: '/lecture-hall/course/$courseId'
       fullPath: '/m/lecture-hall/course/$courseId'
       preLoaderRoute: typeof AppMLectureHallCourseCourseIdImport
-      parentRoute: typeof AppMLectureHallRouteImport
+      parentRoute: typeof AppMRouteImport
+    }
+    '/_app/m/home/articles/': {
+      id: '/_app/m/home/articles/'
+      path: '/home/articles'
+      fullPath: '/m/home/articles'
+      preLoaderRoute: typeof AppMHomeArticlesIndexImport
+      parentRoute: typeof AppMRouteImport
     }
     '/_app/d/lecture-hall/course/lesson/$lessonId': {
       id: '/_app/d/lecture-hall/course/lesson/$lessonId'
@@ -398,10 +412,10 @@ declare module '@tanstack/react-router' {
     }
     '/_app/m/lecture-hall/course/lesson/$lessonId': {
       id: '/_app/m/lecture-hall/course/lesson/$lessonId'
-      path: '/course/lesson/$lessonId'
+      path: '/lecture-hall/course/lesson/$lessonId'
       fullPath: '/m/lecture-hall/course/lesson/$lessonId'
       preLoaderRoute: typeof AppMLectureHallCourseLessonLessonIdImport
-      parentRoute: typeof AppMLectureHallRouteImport
+      parentRoute: typeof AppMRouteImport
     }
   }
 }
@@ -435,38 +449,31 @@ const AppDRouteRouteWithChildren = AppDRouteRoute._addFileChildren(
   AppDRouteRouteChildren,
 )
 
-interface AppMLectureHallRouteRouteChildren {
-  AppMLectureHallIndexRoute: typeof AppMLectureHallIndexRoute
-  AppMLectureHallCourseCourseIdRoute: typeof AppMLectureHallCourseCourseIdRoute
-  AppMLectureHallCourseLessonLessonIdRoute: typeof AppMLectureHallCourseLessonLessonIdRoute
-}
-
-const AppMLectureHallRouteRouteChildren: AppMLectureHallRouteRouteChildren = {
-  AppMLectureHallIndexRoute: AppMLectureHallIndexRoute,
-  AppMLectureHallCourseCourseIdRoute: AppMLectureHallCourseCourseIdRoute,
-  AppMLectureHallCourseLessonLessonIdRoute:
-    AppMLectureHallCourseLessonLessonIdRoute,
-}
-
-const AppMLectureHallRouteRouteWithChildren =
-  AppMLectureHallRouteRoute._addFileChildren(AppMLectureHallRouteRouteChildren)
-
 interface AppMRouteRouteChildren {
-  AppMLectureHallRouteRoute: typeof AppMLectureHallRouteRouteWithChildren
   AppMHomeIndexRoute: typeof AppMHomeIndexRoute
+  AppMLectureHallIndexRoute: typeof AppMLectureHallIndexRoute
   AppMLibraryIndexRoute: typeof AppMLibraryIndexRoute
   AppMNotificationsIndexRoute: typeof AppMNotificationsIndexRoute
   AppMProfileIndexRoute: typeof AppMProfileIndexRoute
   AppMSettingsIndexRoute: typeof AppMSettingsIndexRoute
+  AppMHomeArticlesArticleIdRoute: typeof AppMHomeArticlesArticleIdRoute
+  AppMLectureHallCourseCourseIdRoute: typeof AppMLectureHallCourseCourseIdRoute
+  AppMHomeArticlesIndexRoute: typeof AppMHomeArticlesIndexRoute
+  AppMLectureHallCourseLessonLessonIdRoute: typeof AppMLectureHallCourseLessonLessonIdRoute
 }
 
 const AppMRouteRouteChildren: AppMRouteRouteChildren = {
-  AppMLectureHallRouteRoute: AppMLectureHallRouteRouteWithChildren,
   AppMHomeIndexRoute: AppMHomeIndexRoute,
+  AppMLectureHallIndexRoute: AppMLectureHallIndexRoute,
   AppMLibraryIndexRoute: AppMLibraryIndexRoute,
   AppMNotificationsIndexRoute: AppMNotificationsIndexRoute,
   AppMProfileIndexRoute: AppMProfileIndexRoute,
   AppMSettingsIndexRoute: AppMSettingsIndexRoute,
+  AppMHomeArticlesArticleIdRoute: AppMHomeArticlesArticleIdRoute,
+  AppMLectureHallCourseCourseIdRoute: AppMLectureHallCourseCourseIdRoute,
+  AppMHomeArticlesIndexRoute: AppMHomeArticlesIndexRoute,
+  AppMLectureHallCourseLessonLessonIdRoute:
+    AppMLectureHallCourseLessonLessonIdRoute,
 }
 
 const AppMRouteRouteWithChildren = AppMRouteRoute._addFileChildren(
@@ -520,7 +527,6 @@ export interface FileRoutesByFullPath {
   '/d': typeof AppDRouteRouteWithChildren
   '/m': typeof AppMRouteRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
-  '/m/lecture-hall': typeof AppMLectureHallRouteRouteWithChildren
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
   '/profile': typeof AppProfileIndexRoute
@@ -531,13 +537,15 @@ export interface FileRoutesByFullPath {
   '/d/profile': typeof AppDProfileIndexRoute
   '/d/settings': typeof AppDSettingsIndexRoute
   '/m/home': typeof AppMHomeIndexRoute
-  '/m/lecture-hall/': typeof AppMLectureHallIndexRoute
+  '/m/lecture-hall': typeof AppMLectureHallIndexRoute
   '/m/library': typeof AppMLibraryIndexRoute
   '/m/notifications': typeof AppMNotificationsIndexRoute
   '/m/profile': typeof AppMProfileIndexRoute
   '/m/settings': typeof AppMSettingsIndexRoute
   '/d/lecture-hall/course/$courseId': typeof AppDLectureHallCourseCourseIdRoute
+  '/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
+  '/m/home/articles': typeof AppMHomeArticlesIndexRoute
   '/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/m/lecture-hall/course/lesson/$lessonId': typeof AppMLectureHallCourseLessonLessonIdRoute
 }
@@ -565,7 +573,9 @@ export interface FileRoutesByTo {
   '/m/profile': typeof AppMProfileIndexRoute
   '/m/settings': typeof AppMSettingsIndexRoute
   '/d/lecture-hall/course/$courseId': typeof AppDLectureHallCourseCourseIdRoute
+  '/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
+  '/m/home/articles': typeof AppMHomeArticlesIndexRoute
   '/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/m/lecture-hall/course/lesson/$lessonId': typeof AppMLectureHallCourseLessonLessonIdRoute
 }
@@ -579,7 +589,6 @@ export interface FileRoutesById {
   '/_app/m': typeof AppMRouteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
-  '/_app/m/lecture-hall': typeof AppMLectureHallRouteRouteWithChildren
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
   '/auth/_layout/register': typeof AuthLayoutRegisterRoute
   '/_app/profile/': typeof AppProfileIndexRoute
@@ -596,7 +605,9 @@ export interface FileRoutesById {
   '/_app/m/profile/': typeof AppMProfileIndexRoute
   '/_app/m/settings/': typeof AppMSettingsIndexRoute
   '/_app/d/lecture-hall/course/$courseId': typeof AppDLectureHallCourseCourseIdRoute
+  '/_app/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/_app/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
+  '/_app/m/home/articles/': typeof AppMHomeArticlesIndexRoute
   '/_app/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/_app/m/lecture-hall/course/lesson/$lessonId': typeof AppMLectureHallCourseLessonLessonIdRoute
 }
@@ -610,7 +621,6 @@ export interface FileRouteTypes {
     | '/d'
     | '/m'
     | '/auth'
-    | '/m/lecture-hall'
     | '/auth/login'
     | '/auth/register'
     | '/profile'
@@ -621,13 +631,15 @@ export interface FileRouteTypes {
     | '/d/profile'
     | '/d/settings'
     | '/m/home'
-    | '/m/lecture-hall/'
+    | '/m/lecture-hall'
     | '/m/library'
     | '/m/notifications'
     | '/m/profile'
     | '/m/settings'
     | '/d/lecture-hall/course/$courseId'
+    | '/m/home/articles/$articleId'
     | '/m/lecture-hall/course/$courseId'
+    | '/m/home/articles'
     | '/d/lecture-hall/course/lesson/$lessonId'
     | '/m/lecture-hall/course/lesson/$lessonId'
   fileRoutesByTo: FileRoutesByTo
@@ -654,7 +666,9 @@ export interface FileRouteTypes {
     | '/m/profile'
     | '/m/settings'
     | '/d/lecture-hall/course/$courseId'
+    | '/m/home/articles/$articleId'
     | '/m/lecture-hall/course/$courseId'
+    | '/m/home/articles'
     | '/d/lecture-hall/course/lesson/$lessonId'
     | '/m/lecture-hall/course/lesson/$lessonId'
   id:
@@ -666,7 +680,6 @@ export interface FileRouteTypes {
     | '/_app/m'
     | '/auth'
     | '/auth/_layout'
-    | '/_app/m/lecture-hall'
     | '/auth/_layout/login'
     | '/auth/_layout/register'
     | '/_app/profile/'
@@ -683,7 +696,9 @@ export interface FileRouteTypes {
     | '/_app/m/profile/'
     | '/_app/m/settings/'
     | '/_app/d/lecture-hall/course/$courseId'
+    | '/_app/m/home/articles/$articleId'
     | '/_app/m/lecture-hall/course/$courseId'
+    | '/_app/m/home/articles/'
     | '/_app/d/lecture-hall/course/lesson/$lessonId'
     | '/_app/m/lecture-hall/course/lesson/$lessonId'
   fileRoutesById: FileRoutesById
@@ -751,12 +766,16 @@ export const routeTree = rootRoute
       "filePath": "_app/m/route.tsx",
       "parent": "/_app",
       "children": [
-        "/_app/m/lecture-hall",
         "/_app/m/home/",
+        "/_app/m/lecture-hall/",
         "/_app/m/library/",
         "/_app/m/notifications/",
         "/_app/m/profile/",
-        "/_app/m/settings/"
+        "/_app/m/settings/",
+        "/_app/m/home/articles/$articleId",
+        "/_app/m/lecture-hall/course/$courseId",
+        "/_app/m/home/articles/",
+        "/_app/m/lecture-hall/course/lesson/$lessonId"
       ]
     },
     "/auth": {
@@ -771,15 +790,6 @@ export const routeTree = rootRoute
       "children": [
         "/auth/_layout/login",
         "/auth/_layout/register"
-      ]
-    },
-    "/_app/m/lecture-hall": {
-      "filePath": "_app/m/lecture-hall/route.tsx",
-      "parent": "/_app/m",
-      "children": [
-        "/_app/m/lecture-hall/",
-        "/_app/m/lecture-hall/course/$courseId",
-        "/_app/m/lecture-hall/course/lesson/$lessonId"
       ]
     },
     "/auth/_layout/login": {
@@ -824,7 +834,7 @@ export const routeTree = rootRoute
     },
     "/_app/m/lecture-hall/": {
       "filePath": "_app/m/lecture-hall/index.tsx",
-      "parent": "/_app/m/lecture-hall"
+      "parent": "/_app/m"
     },
     "/_app/m/library/": {
       "filePath": "_app/m/library/index.tsx",
@@ -846,9 +856,17 @@ export const routeTree = rootRoute
       "filePath": "_app/d/lecture-hall/course/$courseId.tsx",
       "parent": "/_app/d"
     },
+    "/_app/m/home/articles/$articleId": {
+      "filePath": "_app/m/home/articles/$articleId.tsx",
+      "parent": "/_app/m"
+    },
     "/_app/m/lecture-hall/course/$courseId": {
       "filePath": "_app/m/lecture-hall/course/$courseId.tsx",
-      "parent": "/_app/m/lecture-hall"
+      "parent": "/_app/m"
+    },
+    "/_app/m/home/articles/": {
+      "filePath": "_app/m/home/articles/index.tsx",
+      "parent": "/_app/m"
     },
     "/_app/d/lecture-hall/course/lesson/$lessonId": {
       "filePath": "_app/d/lecture-hall/course/lesson/$lessonId.tsx",
@@ -856,7 +874,7 @@ export const routeTree = rootRoute
     },
     "/_app/m/lecture-hall/course/lesson/$lessonId": {
       "filePath": "_app/m/lecture-hall/course/lesson/$lessonId.tsx",
-      "parent": "/_app/m/lecture-hall"
+      "parent": "/_app/m"
     }
   }
 }

@@ -1,7 +1,25 @@
-import { Card, Button, Typography, Avatar, Space, List, Divider, Switch, Select } from 'antd';
 import { createFileRoute } from '@tanstack/react-router';
+import {
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  List,
+  Select,
+  Space,
+  Switch,
+  Typography,
+} from 'antd';
+import {
+  IoBookOutline,
+  IoLanguageOutline,
+  IoLockClosedOutline,
+  IoLogOutOutline,
+  IoPencilOutline,
+  IoPersonOutline,
+} from 'react-icons/io5';
+
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
-import { IoPersonOutline, IoLockClosedOutline, IoLanguageOutline, IoBookOutline, IoLogOutOutline, IoPencilOutline } from 'react-icons/io5';
 
 import './styles.css';
 
@@ -58,7 +76,7 @@ function ProfileComponent() {
   return (
     <div className="profile">
       <ScreenHeader title="Profile" />
-      
+
       <div className="profile-content">
         <Card className="profile-card">
           <div className="profile-header">
@@ -68,8 +86,8 @@ function ProfileComponent() {
               <Text type="secondary">{userData.email}</Text>
               <Text type="secondary">Member since {userData.joinDate}</Text>
             </div>
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               icon={<IoPencilOutline />}
               onClick={handleEditProfile}
             >
@@ -86,14 +104,20 @@ function ProfileComponent() {
                 <IoLockClosedOutline />
                 <Text>Change Password</Text>
               </Space>
-              <Button type="link" onClick={handleChangePassword}>Change</Button>
+              <Button type="link" onClick={handleChangePassword}>
+                Change
+              </Button>
             </List.Item>
             <List.Item>
               <Space>
                 <IoLanguageOutline />
                 <Text>Language</Text>
               </Space>
-              <Select defaultValue="en" style={{ width: 120 }} onChange={handleLanguageChange}>
+              <Select
+                defaultValue="en"
+                style={{ width: 120 }}
+                onChange={handleLanguageChange}
+              >
                 <Option value="en">English</Option>
                 <Option value="zh">中文</Option>
                 <Option value="vi">Tiếng Việt</Option>
@@ -119,11 +143,13 @@ function ProfileComponent() {
                   <div className="course-info">
                     <Text strong>{course.title}</Text>
                     <Text type="secondary">Progress: {course.progress}%</Text>
-                    <Text type="secondary">Last accessed: {course.lastAccessed}</Text>
+                    <Text type="secondary">
+                      Last accessed: {course.lastAccessed}
+                    </Text>
                   </div>
                   <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
+                    <div
+                      className="progress-fill"
                       style={{ width: `${course.progress}%` }}
                     />
                   </div>
@@ -133,9 +159,9 @@ function ProfileComponent() {
           />
         </Card>
 
-        <Button 
-          type="text" 
-          danger 
+        <Button
+          type="text"
+          danger
           icon={<IoLogOutOutline />}
           onClick={handleLogout}
           className="logout-button"

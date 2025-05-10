@@ -1,14 +1,15 @@
 import { Link, useLocation } from '@tanstack/react-router';
 import { Layout } from 'antd/lib';
+import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai';
 import {
-  AiOutlineHome,
-  AiOutlineUser,
-} from 'react-icons/ai';
-import { IoBookOutline, IoLibraryOutline, IoNotificationsOutline } from 'react-icons/io5';
+  IoBookOutline,
+  IoLibraryOutline,
+  IoNotificationsOutline,
+} from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 
-type TabTranslationKey = 
+type TabTranslationKey =
   | 'BottomNavBar.Home'
   | 'BottomNavBar.Library'
   | 'BottomNavBar.LectureHall'
@@ -23,11 +24,36 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  { id: 'home', icon: AiOutlineHome, path: '/m/home', translationKey: 'BottomNavBar.Home' },
-  { id: 'library', icon: IoLibraryOutline, path: '/m/library', translationKey: 'BottomNavBar.Library' },
-  { id: 'lecture', icon: IoBookOutline, path: '/m/lecture-hall', translationKey: 'BottomNavBar.LectureHall' },
-  { id: 'notifications', icon: IoNotificationsOutline, path: '/m/notifications', translationKey: 'BottomNavBar.Notification' },
-  { id: 'profile', icon: AiOutlineUser, path: '/m/profile', translationKey: 'BottomNavBar.Profile' },
+  {
+    id: 'home',
+    icon: AiOutlineHome,
+    path: '/m/home',
+    translationKey: 'BottomNavBar.Home',
+  },
+  {
+    id: 'library',
+    icon: IoLibraryOutline,
+    path: '/m/library',
+    translationKey: 'BottomNavBar.Library',
+  },
+  {
+    id: 'lecture',
+    icon: IoBookOutline,
+    path: '/m/lecture-hall',
+    translationKey: 'BottomNavBar.LectureHall',
+  },
+  {
+    id: 'notifications',
+    icon: IoNotificationsOutline,
+    path: '/m/notifications',
+    translationKey: 'BottomNavBar.Notification',
+  },
+  {
+    id: 'profile',
+    icon: AiOutlineUser,
+    path: '/m/profile',
+    translationKey: 'BottomNavBar.Profile',
+  },
 ];
 
 const BottomNavBar = () => {
@@ -36,7 +62,7 @@ const BottomNavBar = () => {
   const currentPath = location.pathname;
 
   const getActiveTab = (path: string) => {
-    return tabs.find(tab => path.startsWith(tab.path))?.id || 'home';
+    return tabs.find((tab) => path.startsWith(tab.path))?.id || 'home';
   };
 
   return (
@@ -58,12 +84,9 @@ const BottomNavBar = () => {
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = getActiveTab(currentPath) === tab.id;
-            
+
             return (
-              <li
-                key={tab.id}
-                className={isActive ? 'list active' : 'list'}
-              >
+              <li key={tab.id} className={isActive ? 'list active' : 'list'}>
                 <Link to={tab.path}>
                   <span className="icon">
                     <Icon />
