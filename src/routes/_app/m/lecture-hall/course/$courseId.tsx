@@ -15,36 +15,37 @@ export const Route = createFileRoute('/_app/m/lecture-hall/course/$courseId')({
 // Mock data - replace with actual data from your API
 const courseData = {
   id: '1',
-  title: '淨土大經科註',
+  title: 'Thái Thượng Cảm Ứng Thiên',
   description:
-    'This is a detailed description of the course. It explains what students will learn and the benefits of taking this course.',
+    'Chủ giảng: Lão Pháp Sư Tịnh Không\nGiảng từ ngày 11/05/1999 đến 20/04/2000\nGiảng tại Singapore, Australia, Hồng Kông.\nTổng cộng 195 Tập (AMTB), Bộ dịch gộp 128 Tập \n\nChuyển ngữ: Ban biên dịch Tịnh Không Pháp Ngữ\nGiám định biên dịch: Vọng Tây Cư Sĩ\n\nMã AMTB: 19-012-0001 đến 19-012-0195',
   progress: 65,
   totalLessons: 20,
   completedLessons: 13,
-  category: '淨土宗',
-  image: '/lectures/02-037.jpg',
+  category: 'Giáo dục',
+  image:
+    'https://amtbvn.org/wp-content/uploads/2021/04/19-012-thai-thuong-cam-ung-thien-vn.jpg',
   lessons: [
     {
       id: '1',
-      title: '第1講: Introduction',
+      title: 'Tập 1: Giới thiệu',
       duration: '45:30',
       completed: true,
     },
     {
       id: '2',
-      title: '第2講: Basic Concepts',
+      title: 'Tập 2: Cơ bản',
       duration: '52:15',
       completed: true,
     },
     {
       id: '3',
-      title: '第3講: Advanced Topics',
+      title: 'Tập 3: Nâng cao',
       duration: '48:20',
       completed: false,
     },
     {
       id: '4',
-      title: '第4講: Practical Applications',
+      title: 'Tập 4: Ứng dụng thực tế',
       duration: '55:10',
       completed: false,
     },
@@ -74,11 +75,11 @@ function CourseDetailComponent() {
             <Text type="secondary">
               <IoTimeOutline /> {lesson.duration}
             </Text>
-            {lesson.completed && <Tag color="success">Completed</Tag>}
+            {lesson.completed && <Tag color="success">Đã xem</Tag>}
           </Space>
         </div>
         <Button type="primary" icon={<IoPlayOutline />} className="play-button">
-          {lesson.completed ? 'Watch Again' : 'Watch Now'}
+          {lesson.completed ? 'Xem lại' : 'Xem ngay'}
         </Button>
       </div>
     </Card>
@@ -105,10 +106,10 @@ function CourseDetailComponent() {
               showInfo={false}
             />
             <Space className="progress-text">
-              <Text>Progress: {courseData.progress}%</Text>
+              <Text>Tiến trình: {courseData.progress}%</Text>
               <Text type="secondary">
-                {courseData.completedLessons} of {courseData.totalLessons}{' '}
-                lessons completed
+                {courseData.completedLessons} / {courseData.totalLessons} bài
+                giảng đã hoàn thành
               </Text>
             </Space>
           </div>
@@ -132,7 +133,7 @@ function CourseDetailComponent() {
             label: 'About',
             children: (
               <Card className="about-card">
-                <Title level={4}>About This Course</Title>
+                <Title level={4}>Giới thiệu</Title>
                 <Text>{courseData.description}</Text>
               </Card>
             ),

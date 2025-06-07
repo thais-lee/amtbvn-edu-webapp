@@ -1,24 +1,25 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Avatar,
   Button,
   Card,
-  Divider,
   List,
   Select,
   Space,
   Switch,
   Typography,
 } from 'antd';
+import dayjs from 'dayjs';
 import {
   IoBookOutline,
   IoLanguageOutline,
   IoLockClosedOutline,
   IoLogOutOutline,
   IoPencilOutline,
-  IoPersonOutline,
 } from 'react-icons/io5';
 
+import useApp from '@/hooks/use-app';
+import { useAuthStore } from '@/modules/auth/auth.zustand';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
@@ -39,20 +40,20 @@ const userData = {
   currentCourses: [
     {
       id: '1',
-      title: '淨土大經科註',
+      title: 'Thái Thượng Cảm Ứng Thiên',
       progress: 45,
       lastAccessed: '2024-03-20',
-    },
-    {
-      id: '2',
-      title: '二零一四淨土大經科註',
-      progress: 30,
-      lastAccessed: '2024-03-19',
     },
   ],
 };
 
 function ProfileComponent() {
+  const { t } = useApp();
+  const logout = useAuthStore((state) => state.logout);
+  const setUser = useAuthStore((state) => state.setUser);
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+
   const handleEditProfile = () => {
     // TODO: Implement edit profile functionality
   };
@@ -62,7 +63,11 @@ function ProfileComponent() {
   };
 
   const handleLogout = () => {
-    // TODO: Implement logout functionality
+    logout();
+    setUser(null);
+    navigate({
+      to: '/auth/login',
+    });
   };
 
   const handleLanguageChange = (value: string) => {
@@ -80,11 +85,15 @@ function ProfileComponent() {
       <div className="profile-content">
         <Card className="profile-card">
           <div className="profile-header">
-            <Avatar size={80} src={userData.avatar} />
+            <Avatar size={80} src={user?.avatarImageFileUrl} />
             <div className="profile-info">
-              <Title level={4}>{userData.name}</Title>
-              <Text type="secondary">{userData.email}</Text>
-              <Text type="secondary">Member since {userData.joinDate}</Text>
+              <Title level={4}>
+                {user?.lastName} {user?.firstName}
+              </Title>
+              <Text type="secondary">{user?.phoneNumber}</Text>
+              <Text type="secondary">
+                Thành viên từ {dayjs(user?.createdAt).format('DD/MM/YYYY')}
+              </Text>
             </div>
             <Button
               type="primary"

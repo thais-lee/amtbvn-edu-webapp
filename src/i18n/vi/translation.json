@@ -208,5 +208,9 @@
         "LectureHall": "Giảng đường",
         "Notification": "Thông báo",
         "Profile": "Cá nhân"
-    }
+    },
+    "All": "Tất cả",
+    "Lectures": "Bài giảng",
+    "Current Courses": "Khóa học hiện tại",
+    "Watch More": "Xem thêm"
 }

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Card, Typography } from 'antd';
 
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
@@ -52,6 +52,7 @@ export const Route = createFileRoute('/_app/m/library/')({
 });
 
 function LibraryScreen() {
+  const navigate = useNavigate();
   return (
     <div className="library-screen">
       <ScreenHeader title="Thư viện" />
@@ -62,8 +63,7 @@ function LibraryScreen() {
             key={category.id}
             className="category-card no-padding"
             onClick={() => {
-              // TODO: Navigate to category page
-              console.log(`Navigate to ${category.path}`);
+              navigate({ to: category.path });
             }}
           >
             <div className="category-image">

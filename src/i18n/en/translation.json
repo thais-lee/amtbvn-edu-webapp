@@ -208,5 +208,9 @@
         "LectureHall": "Lecture Hall",
         "Notification": "Notification",
         "Profile": "Profile"
-    }
+    },
+    "All": "All",
+    "Lectures": "Lectures",
+    "Current Courses": "Current Courses",
+    "Watch More": "Watch More"
 }

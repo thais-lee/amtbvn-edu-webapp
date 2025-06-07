@@ -7,23 +7,24 @@ import React, { useState } from 'react';
 const initialNotifications = [
   {
     id: 1,
-    title: '新消息',
-    message: '您有一條新的系統通知，請及時查閱。',
+    title: 'Thông báo mới',
+    message: 'Bạn có một thông báo mới, vui lòng kiểm tra.',
     time: '10:30',
     unread: true,
   },
   {
     id: 2,
-    title: '活動提醒',
-    message: '今晚7點有線上講座，歡迎參加！',
+    title: 'Lời nhắc',
+    message: 'Hôm nay 7 giờ có buổi hội thảo trực tuyến, vui lòng tham gia.',
     time: '09:15',
     unread: false,
   },
   {
     id: 3,
-    title: '更新通知',
-    message: '應用已升級至最新版本，體驗更佳。',
-    time: '昨天',
+    title: 'Thông báo cập nhật',
+    message:
+      'Ứng dụng đã được cập nhật đến phiên bản mới nhất, trải nghiệm tốt hơn.',
+    time: 'Hôm qua',
     unread: true,
   },
 ];
@@ -47,7 +48,7 @@ function MNotificationsComponent() {
   // Delete notification
   const handleDelete = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-    message.success('已刪除通知');
+    message.success('Đã xóa thông báo');
   };
 
   // Simple swipe-to-delete logic for mobile
@@ -98,7 +99,7 @@ function MNotificationsComponent() {
             color: '#222',
           }}
         >
-          通知
+          Thông báo
         </div>
       </div>
       {/* Notification Cards */}

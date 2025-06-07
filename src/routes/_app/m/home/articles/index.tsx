@@ -1,6 +1,7 @@
 import { LeftOutlined } from '@ant-design/icons';
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Typography } from 'antd';
+import { useState } from 'react';
 
 import ArticleItem from '@/shared/components/articleItem';
 
@@ -57,6 +58,7 @@ export const Route = createFileRoute('/_app/m/home/articles/')({
 
 function ArticleListPage() {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   return (
     <div
       style={{
