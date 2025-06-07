@@ -8,8 +8,8 @@ interface ArticleItemProps {
   date: string;
   category: string;
   image: string;
-  link: string;
   className?: string;
+  onClick?: () => void;
 }
 
 const ALT_IMAGE = '/assets/images/alt-image.jpg';
@@ -19,16 +19,16 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
   date,
   category,
   image,
-  link,
+  onClick,
   className,
 }) => {
   const [imgSrc, setImgSrc] = useState(image);
 
   return (
     <a
-      href={link}
       className={className || ''}
       style={{ textDecoration: 'none' }}
+      onClick={onClick}
     >
       <div
         style={{

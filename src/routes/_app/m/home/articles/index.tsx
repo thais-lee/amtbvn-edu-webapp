@@ -59,6 +59,7 @@ export const Route = createFileRoute('/_app/m/home/articles/')({
 function ArticleListPage() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
   return (
     <div
       style={{
@@ -126,7 +127,12 @@ function ArticleListPage() {
               image={a.img}
               date={a.overlay || ''}
               category={a.overlay || ''}
-              link={a.id || ''}
+              onClick={() => {
+                navigate({
+                  to: '/m/home/articles/$articleId',
+                  params: { articleId: a.id },
+                });
+              }}
             />
           </Link>
         ))}

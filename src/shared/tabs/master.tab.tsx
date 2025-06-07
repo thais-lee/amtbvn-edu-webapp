@@ -10,22 +10,26 @@ interface MasterContentProps {
 
 const tabContent = [
   {
+    id: 37,
     title: 'Tiểu sử',
     content: 'Tiểu sử lão Pháp Sư',
     cover:
       'https://amtbvn.org/wp-content/uploads/2021/03/aboutmaster-gioithieuht.jpg',
   },
   {
+    id: 38,
     title: 'Sư Thừa',
     content: 'Những người thầy của lão Pháp Sư',
     cover: 'https://amtbvn.org/wp-content/uploads/2021/03/lineage-su-thua.jpg',
   },
   {
+    id: 39,
     title: 'Lý niệm',
     content: 'Lý niệm hoằng pháp lão Pháp Sư',
     cover: 'https://amtbvn.org/wp-content/uploads/2021/03/concept-lyniem.jpg',
   },
   {
+    id: 40,
     title: 'Đồng Đạo',
     content: 'Những người bạn đạo cùng chung chí hướng',
     cover:
@@ -33,7 +37,7 @@ const tabContent = [
   },
 ];
 
-const MasterContent = (item: MasterContentProps) => {
+const MasterContent = (input: MasterContentProps) => {
   const navigate = useNavigate();
   return (
     <div>
@@ -57,9 +61,8 @@ const MasterContent = (item: MasterContentProps) => {
           cover={<img alt={item.title} src={item.cover} />}
           onClick={() => {
             navigate({
-              to: '/m/home/articles',
-              params: { category: item.title },
-              search: { category: item.title },
+              to: '/m/home/articles/$categoryId',
+              params: { categoryId: item.id.toString() },
             });
           }}
         >

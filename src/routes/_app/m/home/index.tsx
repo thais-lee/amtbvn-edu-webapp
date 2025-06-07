@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ConfigProvider, Tabs, Typography } from 'antd';
 import { useState } from 'react';
 
@@ -25,6 +25,7 @@ const categories = [
 
 function MobileHomeScreen() {
   const [activeTab, setActiveTab] = useState('recommended');
+  const navigate = useNavigate();
 
   const renderTabContent = (key: string) => {
     if (key === 'recommended') {
