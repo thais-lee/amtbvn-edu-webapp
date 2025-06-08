@@ -94,6 +94,13 @@ class ArticleService {
       method: 'GET',
     });
   }
+
+  likeArticle(articleId: number) {
+    return httpService.request<void>({
+      url: `/api/articles/${articleId}/like`,
+      method: 'POST',
+    });
+  }
 }
 
 export default new ArticleService();

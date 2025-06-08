@@ -39,7 +39,9 @@ function CategoryArticleListPage() {
   });
 
   const handleGoBack = () => {
-    window.history.back();
+    navigate({
+      to: '/m/home',
+    });
   };
 
   const {

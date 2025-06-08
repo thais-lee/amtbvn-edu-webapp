@@ -1,5 +1,10 @@
-import { Button, Card, List } from 'antd';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { Button, Card, Empty, List } from 'antd';
+import dayjs from 'dayjs';
 import React, { useRef, useState } from 'react';
+
+import articleService from '@/modules/app/articles/article.service';
 
 import ArticleItem from '../components/articleItem';
 
@@ -9,7 +14,7 @@ interface CommonTabProps {
   category?: string;
   description?: string;
   image?: string;
-  link?: string;
+  categoryId?: string;
 }
 
 const categories = [
@@ -147,12 +152,19 @@ const buttonStyle = (active: boolean): React.CSSProperties => ({
   boxShadow: active ? '0 2px 8px rgba(155,133,106,0.08)' : 'none',
 });
 
-const CommonTab = () => {
+const CommonTab = ({ categoryId }: CommonTabProps) => {
   const [selected, setSelected] = useState(0);
+  const navigate = useNavigate();
+
+  const { data: articles, isLoading } = useQuery({
+    queryKey: ['articles', categoryId],
+    queryFn: () =>
+      articleService.getArticles({ categoryId: parseInt(categoryId || '0') }),
+  });
 
   return (
     <div>
-      <div style={buttonListStyle as React.CSSProperties as any}>
+      {/* <div style={buttonListStyle as React.CSSProperties as any}>
         {categories.map((item, idx) => (
           <Button
             key={item.key}
@@ -162,7 +174,7 @@ const CommonTab = () => {
             {item.title}
           </Button>
         ))}
-      </div>
+      </div> */}
       {/* Below: show list of articles, use ant design components if needed */}
       <div
         style={{
@@ -175,18 +187,49 @@ const CommonTab = () => {
         <List
           itemLayout="vertical"
           size="default"
-          dataSource={selected === 0 ? articles1 : articles2}
+          dataSource={articles?.data.items || []}
           renderItem={(item) => (
             <List.Item>
               <ArticleItem
                 title={item.title}
-                date={item.date}
-                category={item.category}
-                image={item.image}
-                link={''}
+                date={dayjs(item.createdAt).format('DD/MM/YYYY')}
+                category={item.categoryId.toString()}
+                image={item.thumbnailUrl || ''}
+                onClick={() => {
+                  navigate({
+                    to: '/m/home/articles/$categoryId/$articleId',
+                    params: {
+                      categoryId: categoryId || '',
+                      articleId: item.id.toString(),
+                    },
+                  });
+                }}
               />
             </List.Item>
           )}
+          locale={{
+            emptyText: (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  width: '100%',
+                }}
+              >
+                <Empty
+                  description="Không có bài viết"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  style={{
+                    width: '100%',
+                    margin: 0,
+                  }}
+                />
+              </div>
+            ),
+          }}
         />
       </div>
     </div>

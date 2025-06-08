@@ -17,10 +17,10 @@ const { Title } = Typography;
 
 const categories = [
   { key: 'recommended', label: 'Đề xuất' },
-  { key: 'master-content', label: 'Lão Pháp Sư' },
-  { key: 'pure-land', label: 'Tịnh Tông Học Hội' },
-  { key: 'basic-sutras', label: 'Cương Lĩnh Tu Học' },
-  { key: 'question-answer', label: 'Vấn đáp học Phật' },
+  { key: 'master-content', label: 'Lão Pháp Sư', id: 33 },
+  { key: 'pure-land', label: 'Tịnh Tông Học Hội', id: 34 },
+  { key: 'basic-sutras', label: 'Cương Lĩnh Tu Học', id: 35 },
+  { key: 'question-answer', label: 'Vấn đáp học Phật', id: 36 },
 ];
 
 function MobileHomeScreen() {
@@ -40,7 +40,12 @@ function MobileHomeScreen() {
         />
       );
     }
-    return <CommonTab />;
+    return (
+      <CommonTab
+        categoryId={categories.find((c) => c.key === key)?.id?.toString() || ''}
+        title={categories.find((c) => c.key === key)?.label || ''}
+      />
+    );
   };
 
   return (
@@ -68,7 +73,10 @@ function MobileHomeScreen() {
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
-          items={categories}
+          items={categories.map((c) => ({
+            key: c.key,
+            label: c.label,
+          }))}
           className="category-tabs"
           tabBarGutter={24}
           size="large"

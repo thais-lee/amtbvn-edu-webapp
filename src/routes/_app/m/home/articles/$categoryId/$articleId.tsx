@@ -1,9 +1,15 @@
 // src/routes/_app/m/home/articles/$categoryId/$articleId.tsx
-import { LeftOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import Icon, {
+  EyeOutlined,
+  LeftOutlined,
+  LikeOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Spin, Typography } from 'antd';
+import { Button, FloatButton, Space, Spin, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { PiEyeFill, PiHandsPrayingFill } from 'react-icons/pi';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -35,6 +41,7 @@ function ArticleDetailComponent() {
     data: articleData,
     isLoading: isArticleLoading,
     isError: isArticleError,
+    refetch: refetchArticle,
   } = useQuery<TArticle, Error, TArticle>({
     queryKey: ['article', articleId],
     queryFn: async () => {
@@ -60,6 +67,16 @@ function ArticleDetailComponent() {
     enabled: !!categoryId && !isArticleLoading, // Only fetch category if article is loading (to show title) or article data is available
   });
 
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      const response = await articleService.likeArticle(parseInt(articleId));
+      return response.data;
+    },
+    onSuccess: () => {
+      refetchArticle();
+    },
+  });
+
   const renderContent = () => {
     if (isArticleLoading) {
       return (
@@ -83,16 +100,14 @@ function ArticleDetailComponent() {
     return (
       <div
         style={{
-          // Removed backgroundColor to use the overall background color
-          // Removed borderRadius and margin: '0 8px' for full width
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)', // Keep light shadow
-          padding: '0 16px 16px', // Add horizontal padding for content
-          backgroundColor: '#fff', // Set background to match the overall screen
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+          padding: '0 16px 16px',
+          backgroundColor: '#fff',
         }}
       >
         {/* Title and image are now within the content area */}
         <Title
-          level={4} // Changed to level 2 for consistency with the header
+          level={4}
           style={{
             marginBottom: '8px',
             textAlign: 'left',
@@ -117,14 +132,63 @@ function ArticleDetailComponent() {
           />
         )}
 
-        <Text
-          type="secondary"
-          style={{ display: 'block', marginBottom: '16px' }}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: '4px 0px 16px 0px',
+            // backgroundColor: '#f8f5ef',
+          }}
         >
-          {(categoryData?.name || articleData.categoryId) + ' | '}{' '}
-          {/* Display category name or ID as fallback */}
-          {dayjs(articleData.createdAt).format('DD/MM/YYYY')}
-        </Text>
+          <Text
+            type="secondary"
+            style={{ display: 'block', fontSize: 14, color: '#a87332' }}
+          >
+            {(categoryData?.name || articleData.categoryId) + ' | '}{' '}
+            {/* Display category name or ID as fallback */}
+            {dayjs(articleData.createdAt).format('DD/MM/YYYY')}
+          </Text>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div
+              style={{
+                backgroundColor: '#f8f5ef',
+                padding: '4px 16px',
+                borderRadius: 4,
+                color: '#a87332',
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              <Icon
+                component={PiEyeFill}
+                style={{ fontSize: 16, color: '#a87332', marginRight: 4 }}
+              />
+              {articleData.viewCount}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                backgroundColor: '#f8f5ef',
+                padding: '4px 16px',
+                borderRadius: 4,
+                color: '#a87332',
+                fontSize: 14,
+                fontWeight: 600,
+              }}
+            >
+              <Icon
+                component={PiHandsPrayingFill}
+                style={{ fontSize: 16, color: '#a87332', marginRight: 4 }}
+              />
+              {articleData.likeCount}
+            </div>
+          </div>
+        </div>
+
         <div
           // style={{ width: '100%', height: '100%', fontSize: 100 }}
           className="quill-content-container"
@@ -155,6 +219,43 @@ function ArticleDetailComponent() {
             }
           `}</style>
         </div>
+
+        {/* Button show view counts and like counts */}
+        <Space
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+            marginTop: 16,
+            marginBottom: 16,
+          }}
+        >
+          <FloatButton
+            icon={
+              <PiHandsPrayingFill
+                style={{ color: '#a87332', fontSize: 20, marginRight: 4 }}
+              />
+            }
+            //remove splash effect when click
+            onClick={() => {
+              likeMutation.mutate();
+            }}
+            style={{
+              marginBottom: 50,
+              backgroundColor: '#f8f5ef',
+              color: '#a87332',
+              border: '1px solid #a87332',
+              // borderRadius: 4,
+              // borderColor: '#a87332',
+              // padding: '4px 16px',
+              fontSize: 14,
+              fontWeight: 600,
+              boxShadow: '0 2px 8px rgba(45, 43, 43, 0.06)',
+            }}
+          >
+            {articleData.likeCount}
+          </FloatButton>
+        </Space>
       </div>
     );
   };
@@ -205,25 +306,6 @@ function ArticleDetailComponent() {
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           }}
         />
-        {/* The main title of the page is now dynamically set from articleData.title */}
-        {/* <Title
-          level={2}
-          style={{
-            textAlign: 'center',
-            margin: 0,
-            fontWeight: 800,
-            fontSize: 28,
-            letterSpacing: 1,
-            color: '#222',
-            flex: 1,
-            zIndex: 1,
-            userSelect: 'none',
-          }}
-        >
-          {isArticleLoading
-            ? 'Loading...'
-            : articleData?.title || 'Article Detail'}
-        </Title> */}
       </div>
 
       {/* Article Content */}
