@@ -13,6 +13,7 @@ export interface TCourse {
   bannerFileUrl?: string;
   categoryId: number;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  requireApproval?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,12 +26,24 @@ export interface TCourseDetail extends TCourse {
   attachments: TAttachment[];
 }
 
+export interface TCourseItem extends TCourse {
+  category: {
+    name: string;
+  };
+  _count: {
+    enrollments: number;
+    lessons: number;
+  };
+  enrollments: TEnrollment[];
+}
+
 export interface TCourseCreate {
   name: string;
   description?: string;
   slug?: string;
   categoryId: number;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  requireApproval?: boolean;
 }
 
 export interface TCourseUpdate {

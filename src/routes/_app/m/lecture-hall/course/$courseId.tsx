@@ -1,8 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Card, Progress, Space, Tabs, Tag, Typography } from 'antd';
-import { IoBookOutline, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
 
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
+import courseService from '@/modules/app/courses/course.service';
 
 import './styles.css';
 
@@ -12,104 +13,158 @@ export const Route = createFileRoute('/_app/m/lecture-hall/course/$courseId')({
   component: CourseDetailComponent,
 });
 
-// Mock data - replace with actual data from your API
-const courseData = {
-  id: '1',
-  title: 'Thái Thượng Cảm Ứng Thiên',
-  description:
-    'Chủ giảng: Lão Pháp Sư Tịnh Không\nGiảng từ ngày 11/05/1999 đến 20/04/2000\nGiảng tại Singapore, Australia, Hồng Kông.\nTổng cộng 195 Tập (AMTB), Bộ dịch gộp 128 Tập \n\nChuyển ngữ: Ban biên dịch Tịnh Không Pháp Ngữ\nGiám định biên dịch: Vọng Tây Cư Sĩ\n\nMã AMTB: 19-012-0001 đến 19-012-0195',
-  progress: 65,
-  totalLessons: 20,
-  completedLessons: 13,
-  category: 'Giáo dục',
-  image:
-    'https://amtbvn.org/wp-content/uploads/2021/04/19-012-thai-thuong-cam-ung-thien-vn.jpg',
-  lessons: [
-    {
-      id: '1',
-      title: 'Tập 1: Giới thiệu',
-      duration: '45:30',
-      completed: true,
-    },
-    {
-      id: '2',
-      title: 'Tập 2: Cơ bản',
-      duration: '52:15',
-      completed: true,
-    },
-    {
-      id: '3',
-      title: 'Tập 3: Nâng cao',
-      duration: '48:20',
-      completed: false,
-    },
-    {
-      id: '4',
-      title: 'Tập 4: Ứng dụng thực tế',
-      duration: '55:10',
-      completed: false,
-    },
-  ],
-};
-
 function CourseDetailComponent() {
   const { courseId } = Route.useParams();
   const navigate = useNavigate();
-  const handleLessonClick = (lessonId: string) => {
+
+  const { data: course, isLoading } = useQuery({
+    queryKey: ['/courses', courseId, 'user-progress'],
+    queryFn: () => courseService.getCourseUserProgress(Number(courseId)),
+    enabled: !!courseId,
+  });
+
+  const handleLessonClick = (lessonId: number) => {
     navigate({
       to: '/m/lecture-hall/course/lesson/$lessonId',
-      params: { lessonId },
+      params: { lessonId: lessonId.toString() },
     });
   };
+
+  const renderActivityProgress = (activity: any) => (
+    <Card size="small" style={{ marginBottom: 8 }}>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Text strong>{activity.title}</Text>
+        <Space>
+          <Tag color="blue">{activity.type}</Tag>
+          <Tag color={activity.status === 'PUBLISHED' ? 'success' : 'default'}>
+            {activity.status === 'PUBLISHED' ? 'Đã phát hành' : 'Nháp'}
+          </Tag>
+          {activity.dueDate && (
+            <Tag color="orange">
+              Hạn: {new Date(activity.dueDate).toLocaleDateString()}
+            </Tag>
+          )}
+        </Space>
+        {activity.latestAttempt ? (
+          <Space>
+            <Tag
+              color={
+                activity.latestAttempt.completedAt ? 'success' : 'processing'
+              }
+            >
+              {activity.latestAttempt.completedAt ? 'Đã nộp' : 'Đang làm'}
+            </Tag>
+            <Text type="secondary">
+              Điểm: {activity.latestAttempt.score ?? 'Chưa chấm'}
+            </Text>
+          </Space>
+        ) : (
+          <Text type="secondary">Chưa làm</Text>
+        )}
+      </Space>
+    </Card>
+  );
 
   const renderLessonCard = (lesson: any) => (
     <Card
       key={lesson.id}
-      className={`lesson-card ${lesson.completed ? 'completed' : ''}`}
+      className={`lesson-card ${lesson.isCompleted ? 'completed' : ''}`}
       onClick={() => handleLessonClick(lesson.id)}
     >
       <div className="lesson-content">
         <div className="lesson-info">
           <Title level={5}>{lesson.title}</Title>
-          <Space>
-            <Text type="secondary">
-              <IoTimeOutline /> {lesson.duration}
-            </Text>
-            {lesson.completed && <Tag color="success">Đã xem</Tag>}
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Text type="secondary">{lesson.content}</Text>
+            <Space>
+              <Text type="secondary">
+                <IoTimeOutline />{' '}
+                {lesson.completedAt
+                  ? `Hoàn thành: ${new Date(
+                      lesson.completedAt,
+                    ).toLocaleDateString()}`
+                  : 'Chưa hoàn thành'}
+              </Text>
+              {lesson.isCompleted && <Tag color="success">Đã xem</Tag>}
+            </Space>
+            {/* Attachments */}
+            {lesson.attachments && lesson.attachments.length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <Text type="secondary">Tài liệu:</Text>
+                <ul style={{ margin: 0, paddingLeft: 16 }}>
+                  {lesson.attachments.map((att: any) => (
+                    <li key={att.fileId}>
+                      <a
+                        href={att.file.storagePath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {att.file.fileName}
+                      </a>{' '}
+                      <Text type="secondary">({att.type})</Text>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {/* Activities */}
+            {lesson.activities && lesson.activities.length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <Text strong>Hoạt động:</Text>
+                {lesson.activities.map((activity: any) =>
+                  renderActivityProgress(activity),
+                )}
+              </div>
+            )}
           </Space>
         </div>
         <Button type="primary" icon={<IoPlayOutline />} className="play-button">
-          {lesson.completed ? 'Xem lại' : 'Xem ngay'}
+          {lesson.isCompleted ? 'Xem lại' : 'Xem ngay'}
         </Button>
       </div>
     </Card>
   );
 
+  if (isLoading || !course?.data) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="course-detail">
-      <ScreenHeader title={courseData.title} />
+      <div className="screen-header">
+        <div className="screen-header-content">
+          <button
+            className="back-button"
+            onClick={() => navigate({ to: '/m/lecture-hall' })}
+          >
+            <IoArrowBack />
+          </button>
+          <Title level={4} className="screen-title">
+            {course.data.name}
+          </Title>
+        </div>
+      </div>
 
       <div className="course-header">
         <div className="course-thumbnail">
-          <img src={courseData.image} alt={courseData.title} />
+          <img src={course.data.bannerFileUrl} alt={course.data.name} />
         </div>
 
         <div className="course-info">
-          <Tag className="course-category">{courseData.category}</Tag>
-          <Title level={4}>{courseData.title}</Title>
-          <Text type="secondary">{courseData.description}</Text>
+          <Title level={4}>{course.data.name}</Title>
+          <Text type="secondary">{course.data.description}</Text>
 
           <div className="progress-section">
             <Progress
-              percent={courseData.progress}
+              percent={Math.round(course.data.progress)}
               strokeColor="#8B4513"
               showInfo={false}
             />
             <Space className="progress-text">
-              <Text>Tiến trình: {courseData.progress}%</Text>
+              <Text>Tiến trình: {Math.round(course.data.progress)}%</Text>{' '}
               <Text type="secondary">
-                {courseData.completedLessons} / {courseData.totalLessons} bài
-                giảng đã hoàn thành
+                {course.data.lessons.filter((l: any) => l.isCompleted).length} /{' '}
+                {course.data.lessons.length} bài giảng đã hoàn thành
               </Text>
             </Space>
           </div>
@@ -124,7 +179,9 @@ function CourseDetailComponent() {
             label: 'Lessons',
             children: (
               <div className="lessons-list">
-                {courseData.lessons.map((lesson) => renderLessonCard(lesson))}
+                {course.data.lessons.map((lesson: any) =>
+                  renderLessonCard(lesson),
+                )}
               </div>
             ),
           },
@@ -134,7 +191,7 @@ function CourseDetailComponent() {
             children: (
               <Card className="about-card">
                 <Title level={4}>Giới thiệu</Title>
-                <Text>{courseData.description}</Text>
+                <Text>{course.data.description}</Text>
               </Card>
             ),
           },

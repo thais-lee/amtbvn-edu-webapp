@@ -1,5 +1,7 @@
 import { BookOutlined } from '@ant-design/icons';
-import { Empty } from 'antd';
+import { Empty, Typography } from 'antd';
+
+import useApp from '@/hooks/use-app';
 
 interface NoCoursesFoundProps {
   message?: string;
@@ -62,8 +64,15 @@ export default function NoCoursesFound({
           style={{ height: 120, width: '100%' }}
           description={
             <div className="no-courses-content">
-              <h3 className="no-courses-title">{message}</h3>
-              <p className="no-courses-description">{description}</p>
+              <Typography.Title level={4} className="no-courses-title">
+                {message}
+              </Typography.Title>
+              <Typography.Paragraph
+                className="no-courses-description"
+                style={{ margin: 0 }}
+              >
+                {description}
+              </Typography.Paragraph>
             </div>
           }
         />

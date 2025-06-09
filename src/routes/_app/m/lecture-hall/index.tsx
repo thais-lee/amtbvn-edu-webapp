@@ -1,62 +1,103 @@
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Card, Skeleton, Tabs, Tag } from 'antd';
+import { createFileRoute } from '@tanstack/react-router';
+import { Skeleton, Tabs, Tag } from 'antd';
 import { useState } from 'react';
-import { IoChevronForward, IoTimeOutline } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 import categoryService from '@/modules/app/categories/category.service';
-import CourseCard from '@/modules/app/courses/components/course-card';
+import CurrentCourseCard from '@/modules/app/courses/components/current-course-card';
 import NoCoursesFound from '@/modules/app/courses/components/no-courses-found';
-import { TCourse, TCourseEnrolled } from '@/modules/app/courses/course.model';
+import OtherCourseCard from '@/modules/app/courses/components/other-course-card';
+import PendingCourseCard from '@/modules/app/courses/components/pending-course-card';
+import {
+  TCourseEnrolled,
+  TCourseItem,
+} from '@/modules/app/courses/course.model';
 import courseService from '@/modules/app/courses/course.service';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
+
+enum ECourseType {
+  AVAILABLE = 'AVAILABLE',
+  MY = 'MY',
+  PENDING = 'PENDING',
+}
 
 export const Route = createFileRoute('/_app/m/lecture-hall/')({
   component: LectureHallComponent,
 });
 
 function LectureHallComponent() {
+  const { t } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useApp();
 
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
-    queryFn: () =>
-      categoryService.getManyCategories({
-        parentId: 13,
-      }),
+    queryFn: () => categoryService.getAllCategories({ parentId: 13 }),
   });
 
-  const currentCoursesQuery = useQuery({
-    queryKey: ['courses', selectedCategory],
+  const myCoursesQuery = useQuery({
+    queryKey: ['current-courses', selectedCategory],
     queryFn: () =>
       courseService.getMyCourses({
-        categoryId: selectedCategory ?? 0,
+        categoryId: selectedCategory ?? undefined,
         status: 'PUBLIC',
       }),
   });
 
-  const otherCoursesQuery = useQuery({
-    queryKey: ['other-courses', selectedCategory],
+  const notEnrolledCoursesQuery = useQuery({
+    queryKey: ['courses', selectedCategory],
     queryFn: () =>
-      courseService.getManyCourses({
-        categoryId: selectedCategory ?? 0,
+      courseService.getNotEnrolledCourses({
+        categoryId: selectedCategory ?? undefined,
         status: 'PUBLIC',
+      }),
+  });
+
+  const pendingCoursesQuery = useQuery({
+    queryKey: ['pending-courses', selectedCategory],
+    queryFn: () =>
+      courseService.getPendingCourses({
+        categoryId: selectedCategory ?? undefined,
+        status: 'PUBLIC',
+        requireApproval: true,
       }),
   });
 
   const handleCategoryClick = (categoryId: number) => {
     setSelectedCategory(categoryId);
-    // Here you would typically fetch filtered courses
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1000); // Simulate API call
   };
 
-  const renderCourses = (courses: any[], isCurrent: boolean = false) => {
+  const renderEmpty = (type: ECourseType) => {
+    switch (type) {
+      case ECourseType.AVAILABLE:
+        return (
+          <NoCoursesFound
+            message={t('No Available Courses')}
+            description={''}
+          />
+        );
+      case ECourseType.MY:
+        return (
+          <NoCoursesFound
+            message={t('No Enrolled Courses')}
+            description={t(
+              'Explore more courses to find something interesting',
+            )}
+          />
+        );
+      case ECourseType.PENDING:
+        return (
+          <NoCoursesFound message={t('No Pending Approval')} description={''} />
+        );
+    }
+  };
+
+  const renderCourses = (type: ECourseType) => {
     if (isLoading) {
       return Array(3)
         .fill(0)
@@ -65,22 +106,33 @@ function LectureHallComponent() {
         ));
     }
 
-    if (courses.length === 0) {
-      return (
-        <NoCoursesFound
-          message={isCurrent ? 'No Enrolled Courses' : 'No Available Courses'}
-          description={
-            isCurrent
-              ? "You haven't enrolled in any courses yet. Browse our course catalog to find something interesting."
-              : 'There are no courses available in this category at the moment. Please check back later.'
-          }
-        />
-      );
+    switch (type) {
+      case ECourseType.AVAILABLE:
+        return notEnrolledCoursesQuery.data?.data.items?.length &&
+          notEnrolledCoursesQuery.data?.data.items?.length > 0
+          ? notEnrolledCoursesQuery.data?.data.items?.map(
+              (course: TCourseItem) => (
+                <OtherCourseCard key={course.id} course={course} />
+              ),
+            )
+          : renderEmpty(type);
+      case ECourseType.MY:
+        return myCoursesQuery.data?.data.items?.length &&
+          myCoursesQuery.data?.data.items?.length > 0
+          ? myCoursesQuery.data?.data.items?.map((course: TCourseEnrolled) => (
+              <CurrentCourseCard key={course.course.id} course={course} />
+            ))
+          : renderEmpty(type);
+      case ECourseType.PENDING:
+        return pendingCoursesQuery.data?.data.items?.length &&
+          pendingCoursesQuery.data?.data.items?.length > 0
+          ? pendingCoursesQuery.data?.data.items?.map((course: TCourseItem) => (
+              <PendingCourseCard key={course.id} course={course} />
+            ))
+          : renderEmpty(type);
+      default:
+        return [];
     }
-
-    return courses.map((course) => (
-      <CourseCard key={course.id} course={course} isCurrent={isCurrent} />
-    ));
   };
 
   return (
@@ -97,8 +149,11 @@ function LectureHallComponent() {
           >
             {t('All')}
           </Tag>
-          {categoriesQuery.data?.data?.items.map((category) => (
+          {categoriesQuery.data?.data?.items.map((category: any) => (
             <Tag
+              style={{
+                cursor: 'pointer',
+              }}
               key={category.id}
               className={`category-tag ${
                 selectedCategory === category.id ? 'active' : ''
@@ -112,46 +167,32 @@ function LectureHallComponent() {
       </div>
 
       <Tabs
-        defaultActiveKey="current"
+        defaultActiveKey="other"
         items={[
           {
-            key: 'current',
-            label: t('Current Courses'),
+            key: 'other',
+            label: t('Available Courses'),
             children: (
               <div className="courses-section">
-                <div className="courses-scroll">
-                  <div className="courses-container">
-                    {renderCourses(currentCoursesQuery.data?.data ?? [], true)}
-                  </div>
-                </div>
-                <Button type="link" className="watch-more-btn">
-                  Watch More <IoChevronForward />
-                </Button>
+                {renderCourses(ECourseType.AVAILABLE)}
               </div>
             ),
           },
           {
-            key: 'other',
-            label: 'Other Courses',
+            key: 'current',
+            label: t('My Courses'),
             children: (
               <div className="courses-section">
-                <div className="courses-scroll">
-                  <div
-                    className="courses-container"
-                    style={{
-                      //1 card per row fix height
-                      gap: 16,
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(1, 1fr)',
-                      // height: 300
-                    }}
-                  >
-                    {renderCourses(otherCoursesQuery.data?.data ?? [], false)}
-                  </div>
-                </div>
-                <Button type="link" className="watch-more-btn">
-                  Watch More <IoChevronForward />
-                </Button>
+                {renderCourses(ECourseType.MY)}
+              </div>
+            ),
+          },
+          {
+            key: 'pending',
+            label: t('Pending Approval'),
+            children: (
+              <div className="courses-section">
+                {renderCourses(ECourseType.PENDING)}
               </div>
             ),
           },
@@ -160,3 +201,5 @@ function LectureHallComponent() {
     </div>
   );
 }
+
+export default LectureHallComponent;

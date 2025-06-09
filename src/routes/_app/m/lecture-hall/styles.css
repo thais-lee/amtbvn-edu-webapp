@@ -6,12 +6,15 @@
   overflow-x: auto;
   margin: 16px 0;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
 }
 
 .categories-scroll::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .categories-container {
@@ -44,8 +47,9 @@
   margin-top: 16px;
 }
 
+/* Xóa scroll ngang cho courses-scroll và courses-container */
 .courses-scroll {
-  overflow-x: auto;
+  /* overflow-x: auto; */
   margin: 16px 0;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -57,10 +61,12 @@
 }
 
 .courses-container {
-  display: flex;
-  gap: 16px;
-  padding: 4px 0;
-  min-width: max-content;
+  /* display: flex; */
+  /* gap: 16px; */
+  /* padding: 4px 0; */
+  /* min-width: max-content; */
+  /* overflow-x: auto; */
+  /* Xóa các thuộc tính flex và scroll ngang, layout sẽ do grid ở index.tsx quyết định */
 }
 
 .course-card {
@@ -79,7 +85,8 @@
 
 .course-thumbnail {
   position: relative;
-  padding-top: 56.25%; /* 16:9 aspect ratio */
+  padding-top: 56.25%;
+  /* 16:9 aspect ratio */
 }
 
 .course-thumbnail img {
@@ -181,7 +188,8 @@
 
 .ant-skeleton-avatar {
   width: 100% !important;
-  height: 157.5px !important; /* 16:9 aspect ratio */
+  height: 157.5px !important;
+  /* 16:9 aspect ratio */
   border-radius: 12px 12px 0 0 !important;
 }
 

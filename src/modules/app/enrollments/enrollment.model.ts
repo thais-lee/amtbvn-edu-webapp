@@ -6,7 +6,7 @@ export interface TEnrollment {
   id: number;
   courseId: number;
   userId: number;
-  status: EnrollmentStatus;
+  status: EEnrollmentStatus;
   enrolledAt: string;
   completedAt: string;
   progressPercentage: number;
@@ -15,9 +15,9 @@ export interface TEnrollment {
   user: TUser;
 }
 
-enum EnrollmentStatus {
-  Enrolled = 'ENROLLED',
-  Accepted = 'ACCEPTED',
-  Rejected = 'REJECTED',
-  Cancelled = 'CANCELLED',
+export enum EEnrollmentStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
 }
