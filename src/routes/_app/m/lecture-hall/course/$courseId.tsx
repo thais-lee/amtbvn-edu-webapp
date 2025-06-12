@@ -3,7 +3,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Card, Progress, Space, Tabs, Tag, Typography } from 'antd';
 import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
 
+import useApp from '@/hooks/use-app';
+import ActivityList from '@/modules/app/activities/components/activity-list';
+import { TActivityDetailDto } from '@/modules/app/activities/dto/activity.dto';
 import courseService from '@/modules/app/courses/course.service';
+import LessonList from '@/modules/app/lessons/components/lesson-list';
 
 import './styles.css';
 
@@ -16,114 +20,13 @@ export const Route = createFileRoute('/_app/m/lecture-hall/course/$courseId')({
 function CourseDetailComponent() {
   const { courseId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useApp();
 
   const { data: course, isLoading } = useQuery({
     queryKey: ['/courses', courseId, 'user-progress'],
     queryFn: () => courseService.getCourseUserProgress(Number(courseId)),
     enabled: !!courseId,
   });
-
-  const handleLessonClick = (lessonId: number) => {
-    navigate({
-      to: '/m/lecture-hall/course/lesson/$lessonId',
-      params: { lessonId: lessonId.toString() },
-    });
-  };
-
-  const renderActivityProgress = (activity: any) => (
-    <Card size="small" style={{ marginBottom: 8 }}>
-      <Space direction="vertical" style={{ width: '100%' }}>
-        <Text strong>{activity.title}</Text>
-        <Space>
-          <Tag color="blue">{activity.type}</Tag>
-          <Tag color={activity.status === 'PUBLISHED' ? 'success' : 'default'}>
-            {activity.status === 'PUBLISHED' ? 'Đã phát hành' : 'Nháp'}
-          </Tag>
-          {activity.dueDate && (
-            <Tag color="orange">
-              Hạn: {new Date(activity.dueDate).toLocaleDateString()}
-            </Tag>
-          )}
-        </Space>
-        {activity.latestAttempt ? (
-          <Space>
-            <Tag
-              color={
-                activity.latestAttempt.completedAt ? 'success' : 'processing'
-              }
-            >
-              {activity.latestAttempt.completedAt ? 'Đã nộp' : 'Đang làm'}
-            </Tag>
-            <Text type="secondary">
-              Điểm: {activity.latestAttempt.score ?? 'Chưa chấm'}
-            </Text>
-          </Space>
-        ) : (
-          <Text type="secondary">Chưa làm</Text>
-        )}
-      </Space>
-    </Card>
-  );
-
-  const renderLessonCard = (lesson: any) => (
-    <Card
-      key={lesson.id}
-      className={`lesson-card ${lesson.isCompleted ? 'completed' : ''}`}
-      onClick={() => handleLessonClick(lesson.id)}
-    >
-      <div className="lesson-content">
-        <div className="lesson-info">
-          <Title level={5}>{lesson.title}</Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Text type="secondary">{lesson.content}</Text>
-            <Space>
-              <Text type="secondary">
-                <IoTimeOutline />{' '}
-                {lesson.completedAt
-                  ? `Hoàn thành: ${new Date(
-                      lesson.completedAt,
-                    ).toLocaleDateString()}`
-                  : 'Chưa hoàn thành'}
-              </Text>
-              {lesson.isCompleted && <Tag color="success">Đã xem</Tag>}
-            </Space>
-            {/* Attachments */}
-            {lesson.attachments && lesson.attachments.length > 0 && (
-              <div style={{ marginTop: 8 }}>
-                <Text type="secondary">Tài liệu:</Text>
-                <ul style={{ margin: 0, paddingLeft: 16 }}>
-                  {lesson.attachments.map((att: any) => (
-                    <li key={att.fileId}>
-                      <a
-                        href={att.file.storagePath}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {att.file.fileName}
-                      </a>{' '}
-                      <Text type="secondary">({att.type})</Text>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {/* Activities */}
-            {lesson.activities && lesson.activities.length > 0 && (
-              <div style={{ marginTop: 8 }}>
-                <Text strong>Hoạt động:</Text>
-                {lesson.activities.map((activity: any) =>
-                  renderActivityProgress(activity),
-                )}
-              </div>
-            )}
-          </Space>
-        </div>
-        <Button type="primary" icon={<IoPlayOutline />} className="play-button">
-          {lesson.isCompleted ? 'Xem lại' : 'Xem ngay'}
-        </Button>
-      </div>
-    </Card>
-  );
 
   if (isLoading || !course?.data) {
     return <div>Loading...</div>;
@@ -152,7 +55,10 @@ function CourseDetailComponent() {
 
         <div className="course-info">
           <Title level={4}>{course.data.name}</Title>
-          <Text type="secondary">{course.data.description}</Text>
+          <div
+            dangerouslySetInnerHTML={{ __html: course.data.description }}
+            style={{}}
+          />
 
           <div className="progress-section">
             <Progress
@@ -176,22 +82,33 @@ function CourseDetailComponent() {
         items={[
           {
             key: 'lessons',
-            label: 'Lessons',
-            children: (
-              <div className="lessons-list">
-                {course.data.lessons.map((lesson: any) =>
-                  renderLessonCard(lesson),
-                )}
-              </div>
-            ),
+            label: t('Lessons'),
+            children: <LessonList courseId={Number(courseId)} />,
+          },
+
+          {
+            key: 'activities',
+            label: t('Activities - Quiz'),
+            children: <ActivityList activities={course.data.activities} />,
           },
           {
-            key: 'about',
-            label: 'About',
+            key: 'introduction',
+            label: t('Introduction'),
             children: (
               <Card className="about-card">
-                <Title level={4}>Giới thiệu</Title>
-                <Text>{course.data.description}</Text>
+                <Title level={4}>{t('Introduction')}</Title>
+                {/* TODO: display rich text, no limit, ellipsis */}
+                <div
+                  dangerouslySetInnerHTML={{ __html: course.data.description }}
+                  style={{
+                    display: 'block',
+                    overflow: 'auto',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                  }}
+                />
               </Card>
             ),
           },

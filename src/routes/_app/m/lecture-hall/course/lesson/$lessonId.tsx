@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Button,
   Card,
+  Collapse,
   Divider,
   List,
   Skeleton,
@@ -13,6 +14,7 @@ import {
 } from 'antd';
 import {
   IoArrowBack,
+  IoClipboardOutline,
   IoDocumentAttachOutline,
   IoDocumentTextOutline,
   IoMusicalNotesOutline,
@@ -20,16 +22,21 @@ import {
   IoTimeOutline,
   IoVideocamOutline,
 } from 'react-icons/io5';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
-import lessonService, {
-  TAttachment,
-  TLesson,
-} from '@/modules/app/lessons/lesson.service';
+import useApp from '@/hooks/use-app';
+import { TActivity } from '@/modules/app/activities/activity.model';
+import { EActivityType } from '@/modules/app/activities/dto/activity.dto';
+import { TAttachmentDto } from '@/modules/app/attachments/dto/attachment.dto';
+import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
+import lessonService from '@/modules/app/lessons/lesson.service';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
 const { Title, Text, Paragraph } = Typography;
+const { Panel } = Collapse;
 
 export const Route = createFileRoute(
   '/_app/m/lecture-hall/course/lesson/$lessonId',
@@ -40,8 +47,9 @@ export const Route = createFileRoute(
 function LessonDetailComponent() {
   const { lessonId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useApp();
 
-  const { data: lesson, isLoading } = useQuery<TLesson>({
+  const { data: lesson, isLoading } = useQuery<TLessonDto>({
     queryKey: ['/lessons', lessonId],
     queryFn: async () => {
       const res = await lessonService.getOne(Number(lessonId));
@@ -50,13 +58,15 @@ function LessonDetailComponent() {
     enabled: !!lessonId,
   });
 
-  const videoAttachment = lesson?.videoAttachment;
   const attachments = lesson?.attachments || [];
-  const documentAttachments = attachments.filter(
-    (a: TAttachment) => a.type === 'DOCUMENT',
+  const documentAttachments: TAttachmentDto[] = attachments.filter(
+    (a: TAttachmentDto) => a.type === 'DOCUMENT',
   );
-  const audioAttachments = attachments.filter(
-    (a: TAttachment) => a.type === 'AUDIO',
+  const audioAttachments: TAttachmentDto[] = attachments.filter(
+    (a: TAttachmentDto) => a.type === 'AUDIO',
+  );
+  const videoAttachment: TAttachmentDto[] = attachments.filter(
+    (a: TAttachmentDto) => a.type === 'VIDEO',
   );
 
   // Helper for attachment icon
@@ -65,6 +75,38 @@ function LessonDetailComponent() {
     if (type === 'AUDIO') return <IoMusicalNotesOutline />;
     if (type === 'VIDEO') return <IoVideocamOutline />;
     return <IoDocumentTextOutline />;
+  };
+
+  // Helper for activity type tag color
+  const getActivityTypeColor = (type: TActivity['type']) => {
+    switch (type) {
+      case EActivityType.QUIZ:
+        return 'blue';
+      case EActivityType.ASSIGNMENT:
+        return 'orange';
+      case 'ESSAY':
+        return 'purple';
+      case 'SHORT_ANSWER':
+        return 'cyan';
+      case 'TRUE_FALSE':
+        return 'geekblue';
+      default:
+        return 'default';
+    }
+  };
+
+  // Helper for activity status tag color
+  const getActivityStatusColor = (status: TActivity['status']) => {
+    switch (status) {
+      case 'PUBLISHED':
+        return 'success';
+      case 'DRAFT':
+        return 'default';
+      case 'ARCHIVED':
+        return 'error';
+      default:
+        return 'default';
+    }
   };
 
   if (isLoading || !lesson) {
@@ -80,7 +122,7 @@ function LessonDetailComponent() {
             onClick={() =>
               navigate({
                 to: '/m/lecture-hall/course/$courseId',
-                params: { courseId: lesson.courseId.toString() },
+                params: { courseId: lesson?.courseId?.toString() },
               })
             }
           >
@@ -91,19 +133,71 @@ function LessonDetailComponent() {
           </Title>
         </div>
       </div>
-
-      <div style={{ padding: '16px 0 20px 16px' }}>
-        <Title level={4}>{lesson.title}</Title>
-      </div>
-
-      {/* Video Player Section */}
-      <div className="video-section">
-        {videoAttachment && videoAttachment.file?.storagePath ? (
+      <Card className="lesson-info-card" style={{ marginTop: 24 }}>
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          <div className="lesson-header-row">
+            <Title level={4} style={{ margin: 0, marginBottom: 12 }}>
+              {lesson.title}
+            </Title>
+            <Space>
+              <Tag
+                color={lesson.status === 'PUBLISHED' ? 'success' : 'default'}
+              >
+                {lesson.status === 'PUBLISHED' ? t('Published') : t('Draft')}
+              </Tag>
+              {lesson.isImportant && <Tag color="red">{t('Important')}</Tag>}
+            </Space>
+          </div>
+          <Space direction="horizontal" size="large">
+            <Space>
+              <Text type="secondary">
+                <IoTimeOutline />{' '}
+                {lesson.createdAt
+                  ? new Date(lesson.createdAt).toLocaleDateString()
+                  : ''}
+              </Text>
+            </Space>
+            <Space>
+              {lesson.previous && (
+                <Button
+                  icon={<IoArrowBack />}
+                  onClick={() =>
+                    lesson.previous &&
+                    navigate({
+                      to: '/m/lecture-hall/course/lesson/' + lesson.previous.id,
+                    })
+                  }
+                >
+                  {t('Previous lesson')}
+                </Button>
+              )}
+            </Space>
+            <Space>
+              {lesson.next && (
+                <Button
+                  type="primary"
+                  icon={<IoPlayOutline />}
+                  onClick={() =>
+                    lesson.next &&
+                    navigate({
+                      to: '/m/lecture-hall/course/lesson/' + lesson.next.id,
+                    })
+                  }
+                >
+                  {t('Next lesson')}
+                </Button>
+              )}
+            </Space>
+          </Space>
+        </Space>
+      </Card>
+      {videoAttachment[0]?.file?.storagePath ? (
+        <div className="video-section">
           <video
             className="lesson-video-player"
-            src={videoAttachment.file.storagePath}
+            src={videoAttachment[0].file.storagePath}
             controls
-            poster={videoAttachment.file.thumbnailUrl}
+            poster={videoAttachment[0].file.thumbnailUrl}
             style={{
               width: '100%',
               maxHeight: 420,
@@ -113,106 +207,146 @@ function LessonDetailComponent() {
           >
             Your browser does not support the video tag.
           </video>
-        ) : (
-          <div className="video-placeholder">
-            <IoVideocamOutline size={64} color="#bbb" />
-            <Text type="secondary">Không có video cho bài học này</Text>
-          </div>
-        )}
-      </div>
-
-      <Card className="lesson-info-card" style={{ marginTop: 24 }}>
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div className="lesson-header-row">
-            <Title level={4} style={{ margin: 0 }}>
-              {lesson.title}
-            </Title>
-            <Space>
-              <Tag
-                color={lesson.status === 'PUBLISHED' ? 'success' : 'default'}
-              >
-                {lesson.status === 'PUBLISHED' ? 'Đã phát hành' : 'Nháp'}
-              </Tag>
-              {lesson.isImportant && <Tag color="red">Quan trọng</Tag>}
-            </Space>
-          </div>
-          <Space>
-            <Text type="secondary">
-              <IoTimeOutline />{' '}
-              {lesson.createdAt
-                ? new Date(lesson.createdAt).toLocaleDateString()
-                : ''}
-            </Text>
-            {lesson.previous && (
-              <Button
-                icon={<IoArrowBack />}
-                onClick={() =>
-                  lesson.previous &&
-                  navigate({
-                    to: '/m/lecture-hall/course/lesson/' + lesson.previous.id,
-                  })
-                }
-              >
-                Bài trước
-              </Button>
-            )}
-            {lesson.next && (
-              <Button
-                type="primary"
-                icon={<IoPlayOutline />}
-                onClick={() =>
-                  lesson.next &&
-                  navigate({
-                    to: '/m/lecture-hall/course/lesson/' + lesson.next.id,
-                  })
-                }
-              >
-                Bài tiếp
-              </Button>
-            )}
-          </Space>
-          <Divider style={{ margin: '12px 0' }} />
-          <Paragraph className="lesson-content-text" style={{ fontSize: 16 }}>
-            {lesson.content}
-          </Paragraph>
-        </Space>
-      </Card>
+        </div>
+      ) : null}
 
       {/* Attachments Section */}
       {(documentAttachments.length > 0 || audioAttachments.length > 0) && (
         <Card className="lesson-attachments-card" style={{ marginTop: 24 }}>
-          <Title level={5} style={{ marginBottom: 12 }}>
-            Tài liệu đính kèm
-          </Title>
-          <List
-            itemLayout="horizontal"
-            dataSource={[...documentAttachments, ...audioAttachments]}
-            renderItem={(att) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={getAttachmentIcon(att.type)}
-                  title={
-                    <a
-                      href={att.file.storagePath}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {att.file.fileName}
-                    </a>
-                  }
-                  description={<Tag color="blue">{att.type}</Tag>}
-                />
-              </List.Item>
-            )}
-          />
+          <Collapse defaultActiveKey={['1']}>
+            <Panel
+              header={
+                <Space>
+                  <IoDocumentAttachOutline />
+                  <Text strong>{t('Attachments')}</Text>
+                  <Tag color="blue">
+                    {documentAttachments.length + audioAttachments.length}
+                  </Tag>
+                </Space>
+              }
+              key="1"
+            >
+              <List
+                itemLayout="horizontal"
+                dataSource={[...documentAttachments, ...audioAttachments]}
+                renderItem={(att) => (
+                  <List.Item key={att.fileId}>
+                    <List.Item.Meta
+                      avatar={getAttachmentIcon(att.type)}
+                      title={
+                        <a
+                          href={att.file.storagePath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {att.file.fileName}
+                        </a>
+                      }
+                      description={<Tag color="blue">{att.type}</Tag>}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Panel>
+          </Collapse>
         </Card>
       )}
-
-      {/* Activities Section (if you want to add in the future) */}
-      {/* <Card className="lesson-activities-card" style={{ marginTop: 24 }}>
-        <Title level={5}>Hoạt động</Title>
-        ...
-      </Card> */}
+      {/* Activities Section */}
+      {lesson.activities && lesson.activities.length > 0 && (
+        <Card className="lesson-activities-card" style={{ marginTop: 24 }}>
+          <Collapse defaultActiveKey={['1']}>
+            <Panel
+              header={
+                <Space>
+                  <IoClipboardOutline />
+                  <Text strong>{t('Activities')}</Text>
+                  <Tag color="blue">{lesson.activities.length}</Tag>
+                </Space>
+              }
+              key="1"
+            >
+              <List
+                itemLayout="horizontal"
+                dataSource={lesson.activities}
+                renderItem={(activity: TActivity) => (
+                  <List.Item
+                    key={activity.id}
+                    actions={[
+                      <Button
+                        key="view"
+                        type="primary"
+                        onClick={() =>
+                          navigate({
+                            to:
+                              '/m/lecture-hall/course/activity/' + activity.id,
+                          })
+                        }
+                      >
+                        {t('View')}
+                      </Button>,
+                    ]}
+                  >
+                    <List.Item.Meta
+                      title={activity.title}
+                      description={
+                        <Space>
+                          <Tag color={getActivityTypeColor(activity.type)}>
+                            {activity.type}
+                          </Tag>
+                          <Tag color={getActivityStatusColor(activity.status)}>
+                            {activity.status === 'PUBLISHED'
+                              ? t('Published')
+                              : activity.status === 'DRAFT'
+                                ? t('Draft')
+                                : t('Archived')}
+                          </Tag>
+                        </Space>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
+            </Panel>
+          </Collapse>
+        </Card>
+      )}
+      <Card className="lesson-content-card" style={{ marginTop: 24 }}>
+        <Title level={5} style={{ marginBottom: 12 }}>
+          {t('Content')}
+        </Title>
+        <Paragraph className="lesson-content-text" style={{ fontSize: 16 }}>
+          <div
+            // style={{ width: '100%', height: '100%', fontSize: 100 }}
+            className="quill-content-container"
+          >
+            <ReactQuill
+              value={lesson.content}
+              readOnly={true}
+              theme="bubble"
+              style={{ width: '100%', height: '100%' }}
+              modules={{
+                toolbar: false,
+              }}
+            />
+            <style>{`
+            .quill-content-container .ql-editor {
+              font-size: 17px; /* Điều chỉnh font-size ở đây */
+              line-height: 1.6;
+            }
+            /* Nếu muốn tiêu đề trong content cũng lớn hơn */
+            .quill-content-container .ql-editor h1 {
+              font-size: 2em;
+            }
+            .quill-content-container .ql-editor h2 {
+              font-size: 1.5em;
+            }
+            .quill-content-container .ql-editor h3 {
+              font-size: 1.17em;
+            }
+          `}</style>
+          </div>
+        </Paragraph>
+      </Card>
     </div>
   );
 }

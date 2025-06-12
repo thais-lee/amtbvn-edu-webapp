@@ -1,0 +1,74 @@
+/* MobileHeader.css */
+
+.mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Centers the title by default */
+    padding: 10px 15px;
+    /* Comfortable padding on top/bottom and sides */
+    background-color: #ffffff;
+    /* Clean white background */
+    border-bottom: 1px solid #e0e0e0;
+    /* Subtle light gray border at the bottom */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* Gentle shadow for depth */
+    height: 56px;
+    /* Common standard height for mobile headers */
+    position: sticky;
+    /* Keeps the header fixed at the top when scrolling */
+    top: 0;
+    z-index: 1000;
+    /* Ensures the header stays on top of other content */
+}
+
+.back-button {
+    background: none;
+    /* No background color */
+    border: none;
+    /* No border */
+    cursor: pointer;
+    /* Indicates it's clickable */
+    padding: 0;
+    /* Remove default button padding */
+    display: flex;
+    /* Use flex to easily center the icon */
+    align-items: center;
+    /* Vertically align the icon */
+    color: #333333;
+    /* Dark gray color for the icon */
+    font-size: 24px;
+    /* Matches the typical size for the icon (adjust if your react-icon is different) */
+    position: absolute;
+    /* Position the button independently for true title centering */
+    left: 15px;
+    /* Align to the left padding */
+}
+
+.back-button:active {
+    color: #007bff;
+    /* Change color when the button is pressed for visual feedback */
+    transform: scale(0.98);
+    /* Slight shrink effect on press */
+}
+
+.header-title {
+    flex-grow: 1;
+    /* Allows the title to take up available space */
+    text-align: center;
+    /* Center the text within its available space */
+    margin: 0;
+    /* Remove default margins */
+    font-size: 18px;
+    /* Good size for mobile titles */
+    font-weight: 600;
+    /* Slightly bolder for prominence */
+    color: #333333;
+    /* Dark gray color for the title */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    overflow: hidden;
+    /* Hide overflow content */
+    text-overflow: ellipsis;
+    /* Add ellipsis for long titles */
+}

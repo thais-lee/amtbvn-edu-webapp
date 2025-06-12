@@ -1,51 +1,29 @@
 import httpService from '@/shared/http-service';
 
-export interface TFile {
-  id: number;
-  fileName: string;
-  mimeType: string;
-  size: number;
-  storagePath: string;
-  uploadedBy?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  presignedUrl?: string;
-  thumbnailUrl?: string;
-}
-
-export interface TAttachment {
-  fileId: number;
-  type: 'VIDEO' | 'AUDIO' | 'DOCUMENT';
-  file: TFile;
-}
-
-export interface TLesson {
-  id: number;
-  title: string;
-  content: string;
-  courseId: number;
-  status?: string;
-  isImportant?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  attachments: TAttachment[];
-  videoAttachment?: TAttachment & { file: TFile };
-  previous?: { id: number; title: string };
-  next?: { id: number; title: string };
-}
+import { TLessonDto } from './dto/lesson.dto';
 
 class LessonService {
   getLessons() {
-    return httpService.request<TLesson[]>({
+    return httpService.request<TLessonDto[]>({
       url: '/api/lessons',
       method: 'GET',
     });
   }
 
   getOne(id: number) {
-    return httpService.request<{ data: TLesson }>({
+    return httpService.request<{ data: TLessonDto }>({
       url: `/api/lessons/${id}`,
       method: 'GET',
+    });
+  }
+
+  getAll(courseId: number) {
+    return httpService.request<{ data: TLessonDto[] }>({
+      url: `/api/lessons/user`,
+      method: 'GET',
+      params: {
+        courseId,
+      },
     });
   }
 }

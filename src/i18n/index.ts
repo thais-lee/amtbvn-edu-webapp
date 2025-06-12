@@ -4,10 +4,10 @@ import { initReactI18next } from 'react-i18next';
 import enTranslation from './en/translation.json';
 import viTranslation from './vi/translation.json';
 
-for (const key in enTranslation) {
-  if (Object.prototype.hasOwnProperty.call(enTranslation, key)) {
-    enTranslation[key as keyof typeof enTranslation] =
-      ((enTranslation as any)[key] as any) || key;
+for (const key in viTranslation) {
+  if (Object.prototype.hasOwnProperty.call(viTranslation, key)) {
+    viTranslation[key as keyof typeof viTranslation] =
+      ((viTranslation as any)[key] as any) || key;
   }
 }
 
