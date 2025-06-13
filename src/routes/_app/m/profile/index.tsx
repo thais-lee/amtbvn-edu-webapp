@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Avatar,
@@ -10,6 +11,7 @@ import {
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
+import { useCallback } from 'react';
 import {
   IoBookOutline,
   IoLanguageOutline,
@@ -19,6 +21,7 @@ import {
 } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
+import authService from '@/modules/auth/auth.service';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
@@ -62,13 +65,26 @@ function ProfileComponent() {
     // TODO: Implement change password functionality
   };
 
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-    navigate({
-      to: '/auth/login',
-    });
-  };
+  const logoutMutation = useMutation({
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      logout();
+      setUser(null);
+      navigate({
+        to: '/auth/login',
+      });
+    },
+    onError: (error) => {
+      setUser(null);
+      navigate({
+        to: '/auth/login',
+      });
+    },
+  });
+
+  const handleLogout = useCallback(() => {
+    logoutMutation.mutate();
+  }, [logoutMutation]);
 
   const handleLanguageChange = (value: string) => {
     // TODO: Implement language change functionality

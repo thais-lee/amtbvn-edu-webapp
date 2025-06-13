@@ -96,10 +96,10 @@ function LoginPage() {
         >
           <Image
             width={token.screenXL * 0.2}
-            src={'/icon.png'}
+            src={'/logo.png'}
             preview={false}
           />
-          <Typography.Title level={2}>{t('Welcome')}</Typography.Title>
+          {/* <Typography.Title level={2}>{t('Welcome')}</Typography.Title> */}
 
           <Form
             css={css`

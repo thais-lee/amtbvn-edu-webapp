@@ -148,17 +148,24 @@ function ActivityAttemptComponent({
                               },
                             ]}
                           >
-                            <Radio.Group>
-                              <Radio value={true}>Đúng</Radio>
-                              <Radio value={false}>Sai</Radio>
+                            <Radio.Group
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 8,
+                              }}
+                            >
+                              {question.options.map((option) => (
+                                <Radio key={option.id} value={option.id}>
+                                  {option.text}
+                                </Radio>
+                              ))}
                             </Radio.Group>
                           </Form.Item>
                         )}
                         {(question.type ===
                           EActivityQuestionType.SHORT_ANSWER ||
-                          question.type === EActivityQuestionType.ESSAY ||
-                          question.type ===
-                            EActivityQuestionType.TRUE_FALSE) && (
+                          question.type === EActivityQuestionType.ESSAY) && (
                           <Form.Item
                             name={`answer_${question.id}`}
                             rules={[

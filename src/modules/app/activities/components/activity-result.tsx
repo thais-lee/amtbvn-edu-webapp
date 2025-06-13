@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import { Alert, Button, Card, List, Space, Tag, Typography } from 'antd';
 import { IoArrowBack } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 
+import activityService from '../activity.service';
 import { TActivityAttemptDto } from '../dto/activity.dto';
 
 const { Title, Text } = Typography;
@@ -19,6 +21,12 @@ function ActivityResultComponent({
   const getScoreColor = (score: number, passScore: number) => {
     return score >= passScore ? 'success' : 'error';
   };
+
+  const { data: resultData, isLoading: isResultLoading } = useQuery({
+    queryKey: ['activity-result', result.id],
+    queryFn: () => activityService.getAttemptResult(result.id),
+    enabled: !!result.id,
+  });
 
   return (
     <div className="activity-result">

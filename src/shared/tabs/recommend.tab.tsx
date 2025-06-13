@@ -1,99 +1,67 @@
 import { RightOutlined } from '@ant-design/icons';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Card, Carousel, List, Typography } from 'antd';
 import Title from 'antd/es/skeleton/Title';
+import dayjs from 'dayjs';
+
+import useApp from '@/hooks/use-app';
+import articleService from '@/modules/app/articles/article.service';
 
 import ArticleItem from '../components/articleItem';
 import SectionTitle from '../components/section-title';
-
-// Mock data for articles
-const pinnedArticles = [
-  {
-    id: '1',
-    title: 'Giới thiệu về Tịnh Độ Tông',
-    image: '/assets/images/articles/pinned1.jpg',
-    date: '2024-04-27',
-    category: 'Giới thiệu',
-  },
-  {
-    id: '2',
-    title: 'Phương pháp niệm Phật',
-    image: '/assets/images/articles/pinned2.jpg',
-    date: '2024-04-26',
-    category: 'Phương pháp',
-  },
-];
-
-const subjectArticles = [
-  {
-    id: '1',
-    title: 'Phương pháp niệm Phật',
-    image: '/assets/images/articles/subject1.jpg',
-    date: '2024-04-26',
-    category: 'Phương pháp',
-  },
-  {
-    id: '2',
-    title: 'Ý nghĩa của Tịnh Độ',
-    image: '/assets/images/articles/subject2.jpg',
-    date: '2024-04-25',
-    category: 'Giáo lý',
-  },
-  {
-    id: '3',
-    title: 'Hành trì Tịnh Độ',
-    image: '/assets/images/articles/subject3.jpg',
-    date: '2024-04-24',
-    category: 'Thực hành',
-  },
-];
-
-const recentArticles = [
-  {
-    id: '1',
-    title: 'Bài giảng mới nhất về Tịnh Độ',
-    image: '/assets/images/articles/recent1.jpg',
-    date: '2024-04-27',
-    category: 'Bài giảng',
-  },
-  {
-    id: '2',
-    title: 'Khai thị về niệm Phật',
-    image: '/assets/images/articles/recent2.jpg',
-    date: '2024-04-26',
-    category: 'Khai thị',
-  },
-  {
-    id: '3',
-    title: 'Vấn đáp về Tịnh Độ',
-    image: '/assets/images/articles/recent3.jpg',
-    date: '2024-04-25',
-    category: 'Vấn đáp',
-  },
-];
 
 const sliderImages = [
   {
     id: '1',
     image: '/assets/images/slider/banner1.jpg',
-    title: 'Welcome to AMTBVN',
-    description: 'Discover the path to enlightenment',
   },
   {
     id: '2',
     image: '/assets/images/slider/banner2.jpg',
-    title: 'Pure Land Buddhism',
-    description: 'Learn the teachings of Amitabha Buddha',
   },
   {
     id: '3',
     image: '/assets/images/slider/banner3.jpg',
-    title: 'Dharma Talks',
-    description: 'Listen to inspiring teachings',
   },
 ];
 
 const RecommendTab = () => {
   const { Title } = Typography;
+  const { t } = useApp();
+  const navigate = useNavigate();
+  const { data: newestArticle } = useQuery({
+    queryKey: ['newestArticle'],
+    queryFn: () =>
+      articleService.getArticles({
+        take: 3,
+        skip: 0,
+      }),
+    select: (data) => data.data.items,
+  });
+
+  const { data: pinnedArticles } = useQuery({
+    queryKey: ['pinnedArticles'],
+    queryFn: () =>
+      articleService.getArticles({
+        take: 3,
+        skip: 0,
+        categoryId: 42,
+      }),
+    select: (data) => data.data.items,
+  });
+
+  const { data: subjectArticles } = useQuery({
+    queryKey: ['subjectArticles'],
+    queryFn: () =>
+      articleService.getArticles({
+        take: 3,
+        skip: 0,
+        categoryId: 50,
+      }),
+    select: (data) => data.data.items,
+  });
+
   return (
     <div style={{ background: '#f8f5ef', padding: 10 }}>
       <div className="slider-container">
@@ -102,17 +70,10 @@ const RecommendTab = () => {
             <div key={slide.id} className="slider-item">
               <img
                 src={slide.image}
-                alt={slide.title}
+                alt={slide.id}
                 className="slider-image"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
-              <div className="slider-content">
-                <Typography.Title level={3} className="slider-title">
-                  {slide.title}
-                </Typography.Title>
-                <Typography.Text className="slider-description">
-                  {slide.description}
-                </Typography.Text>
-              </div>
             </div>
           ))}
         </Carousel>
@@ -120,7 +81,7 @@ const RecommendTab = () => {
 
       {/* Pinned Articles Section */}
       <div style={{ backgroundColor: 'white', borderRadius: 10, padding: 10 }}>
-        <SectionTitle title="Bài viết nổi bật" />
+        <SectionTitle title={t('Thông báo')} />
         <List
           itemLayout="vertical"
           size="default"
@@ -129,11 +90,19 @@ const RecommendTab = () => {
             <List.Item>
               <ArticleItem
                 title={item.title}
-                date={item.date}
-                category={item.category}
-                image={item.image}
-                link={`/articles/${item.id}`}
+                date={dayjs(item.createdAt).format('DD/MM/YYYY')}
+                category={item.category?.name ?? ''}
+                image={item.thumbnailUrl ?? ''}
                 className="pinned-article-link"
+                onClick={() => {
+                  navigate({
+                    to: '/m/home/articles/$categoryId/$articleId',
+                    params: {
+                      categoryId: item.categoryId.toString(),
+                      articleId: item.id.toString(),
+                    },
+                  });
+                }}
               />
             </List.Item>
           )}
@@ -151,18 +120,23 @@ const RecommendTab = () => {
           </a>
         </div>
         <div className="subject-articles">
-          {subjectArticles.map((article) => (
+          {subjectArticles?.map((article) => (
             <a
               key={article.id}
-              href={`/articles/${article.id}`}
+              href={`/m/home/articles/${article.categoryId}/${article.id}`}
               className="subject-article-link"
             >
               <Card className="subject-article-card">
                 <div className="subject-article-image">
-                  <img src={article.image} alt={article.title} />
+                  <img
+                    src={article.thumbnailUrl ?? '/assets/images/tranh-anh.jpg'}
+                    alt={article.title}
+                  />
                 </div>
                 <div className="subject-article-content">
-                  <div className="article-category">{article.category}</div>
+                  <div className="article-category">
+                    {article.category?.name ?? ''}
+                  </div>
                   <Title level={5} className="article-title">
                     {article.title}
                   </Title>
@@ -184,16 +158,24 @@ const RecommendTab = () => {
           }}
           itemLayout="vertical"
           size="default"
-          dataSource={recentArticles}
+          dataSource={newestArticle}
           renderItem={(item) => (
             <List.Item>
               <ArticleItem
                 title={item.title}
-                date={item.date}
-                category={item.category}
-                image={item.image}
-                link={`/articles/${item.id}`}
+                date={dayjs(item.createdAt).format('DD/MM/YYYY')}
+                category={item.category?.name ?? ''}
+                image={item.thumbnailUrl ?? ''}
                 className="recent-article-link"
+                onClick={() => {
+                  navigate({
+                    to: '/m/home/articles/$categoryId/$articleId',
+                    params: {
+                      categoryId: item.categoryId.toString(),
+                      articleId: item.id.toString(),
+                    },
+                  });
+                }}
               />
             </List.Item>
           )}

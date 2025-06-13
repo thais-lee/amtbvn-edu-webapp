@@ -35,6 +35,7 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
           flexDirection: 'row',
           display: 'flex',
           justifyContent: 'space-between',
+          width: '100%',
         }}
       >
         <div
@@ -44,9 +45,10 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
             flexDirection: 'column',
             width: '65%',
             justifyContent: 'space-between',
+            flexGrow: 1,
           }}
         >
-          <div className="article-title" style={{ fontSize: 18 }}>
+          <div className="article-title" style={{ fontSize: 18, flexGrow: 1 }}>
             {title}
           </div>
           <div
@@ -67,9 +69,25 @@ const ArticleItem: React.FC<ArticleItemProps> = ({
         </div>
         <div
           className="article-image"
-          style={{ borderRadius: 10, width: '35%' }}
+          style={{
+            borderRadius: 10,
+            width: '35%',
+            aspectRatio: '16/9',
+            overflow: 'hidden',
+            background: '#f5f5f5',
+            minWidth: 100,
+            minHeight: 56,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <img src={imgSrc} alt={title} onError={() => setImgSrc(ALT_IMAGE)} />
+          <img
+            src={imgSrc || '/assets/images/tranh-anh.jpg'}
+            alt={title}
+            onError={() => setImgSrc(ALT_IMAGE)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
         </div>
       </div>
     </a>

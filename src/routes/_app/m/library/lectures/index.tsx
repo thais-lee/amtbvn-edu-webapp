@@ -30,7 +30,7 @@ function RouteComponent() {
   const parentCategoryQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () =>
-      categoryService.getManyCategories({
+      categoryService.getAllCategories({
         parentId: 18,
       }),
   });
@@ -47,7 +47,7 @@ function RouteComponent() {
     queryKey: ['categories', activeTab],
     enabled: !!activeTab,
     queryFn: () =>
-      categoryService.getManyCategories({
+      categoryService.getAllCategories({
         parentId: activeTab!,
       }),
   });

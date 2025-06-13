@@ -34,7 +34,11 @@ import { Route as AppDNotificationsIndexImport } from './routes/_app/d/notificat
 import { Route as AppDLibraryIndexImport } from './routes/_app/d/library/index'
 import { Route as AppDLectureHallIndexImport } from './routes/_app/d/lecture-hall/index'
 import { Route as AppDHomeIndexImport } from './routes/_app/d/home/index'
+import { Route as AppMLibraryTalksIndexImport } from './routes/_app/m/library/talks/index'
+import { Route as AppMLibraryPodcastsIndexImport } from './routes/_app/m/library/podcasts/index'
 import { Route as AppMLibraryLecturesIndexImport } from './routes/_app/m/library/lectures/index'
+import { Route as AppMLibraryImagesIndexImport } from './routes/_app/m/library/images/index'
+import { Route as AppMLibraryBooksIndexImport } from './routes/_app/m/library/books/index'
 import { Route as AppMHomeArticlesIndexImport } from './routes/_app/m/home/articles/index'
 import { Route as AppMLectureHallCourseCourseIdImport } from './routes/_app/m/lecture-hall/course/$courseId'
 import { Route as AppMHomeArticlesArticleIdImport } from './routes/_app/m/home/articles/$articleId'
@@ -181,9 +185,33 @@ const AppDHomeIndexRoute = AppDHomeIndexImport.update({
   getParentRoute: () => AppDRouteRoute,
 } as any)
 
+const AppMLibraryTalksIndexRoute = AppMLibraryTalksIndexImport.update({
+  id: '/library/talks/',
+  path: '/library/talks/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
+const AppMLibraryPodcastsIndexRoute = AppMLibraryPodcastsIndexImport.update({
+  id: '/library/podcasts/',
+  path: '/library/podcasts/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
 const AppMLibraryLecturesIndexRoute = AppMLibraryLecturesIndexImport.update({
   id: '/library/lectures/',
   path: '/library/lectures/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
+const AppMLibraryImagesIndexRoute = AppMLibraryImagesIndexImport.update({
+  id: '/library/images/',
+  path: '/library/images/',
+  getParentRoute: () => AppMRouteRoute,
+} as any)
+
+const AppMLibraryBooksIndexRoute = AppMLibraryBooksIndexImport.update({
+  id: '/library/books/',
+  path: '/library/books/',
   getParentRoute: () => AppMRouteRoute,
 } as any)
 
@@ -434,11 +462,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMHomeArticlesIndexImport
       parentRoute: typeof AppMRouteImport
     }
+    '/_app/m/library/books/': {
+      id: '/_app/m/library/books/'
+      path: '/library/books'
+      fullPath: '/m/library/books'
+      preLoaderRoute: typeof AppMLibraryBooksIndexImport
+      parentRoute: typeof AppMRouteImport
+    }
+    '/_app/m/library/images/': {
+      id: '/_app/m/library/images/'
+      path: '/library/images'
+      fullPath: '/m/library/images'
+      preLoaderRoute: typeof AppMLibraryImagesIndexImport
+      parentRoute: typeof AppMRouteImport
+    }
     '/_app/m/library/lectures/': {
       id: '/_app/m/library/lectures/'
       path: '/library/lectures'
       fullPath: '/m/library/lectures'
       preLoaderRoute: typeof AppMLibraryLecturesIndexImport
+      parentRoute: typeof AppMRouteImport
+    }
+    '/_app/m/library/podcasts/': {
+      id: '/_app/m/library/podcasts/'
+      path: '/library/podcasts'
+      fullPath: '/m/library/podcasts'
+      preLoaderRoute: typeof AppMLibraryPodcastsIndexImport
+      parentRoute: typeof AppMRouteImport
+    }
+    '/_app/m/library/talks/': {
+      id: '/_app/m/library/talks/'
+      path: '/library/talks'
+      fullPath: '/m/library/talks'
+      preLoaderRoute: typeof AppMLibraryTalksIndexImport
       parentRoute: typeof AppMRouteImport
     }
     '/_app/d/lecture-hall/course/lesson/$lessonId': {
@@ -518,7 +574,11 @@ interface AppMRouteRouteChildren {
   AppMHomeArticlesArticleIdRoute: typeof AppMHomeArticlesArticleIdRoute
   AppMLectureHallCourseCourseIdRoute: typeof AppMLectureHallCourseCourseIdRoute
   AppMHomeArticlesIndexRoute: typeof AppMHomeArticlesIndexRoute
+  AppMLibraryBooksIndexRoute: typeof AppMLibraryBooksIndexRoute
+  AppMLibraryImagesIndexRoute: typeof AppMLibraryImagesIndexRoute
   AppMLibraryLecturesIndexRoute: typeof AppMLibraryLecturesIndexRoute
+  AppMLibraryPodcastsIndexRoute: typeof AppMLibraryPodcastsIndexRoute
+  AppMLibraryTalksIndexRoute: typeof AppMLibraryTalksIndexRoute
   AppMHomeArticlesCategoryIdArticleIdRoute: typeof AppMHomeArticlesCategoryIdArticleIdRoute
   AppMLectureHallCourseActivityActivityIdRoute: typeof AppMLectureHallCourseActivityActivityIdRoute
   AppMLectureHallCourseLessonLessonIdRoute: typeof AppMLectureHallCourseLessonLessonIdRoute
@@ -535,7 +595,11 @@ const AppMRouteRouteChildren: AppMRouteRouteChildren = {
   AppMHomeArticlesArticleIdRoute: AppMHomeArticlesArticleIdRoute,
   AppMLectureHallCourseCourseIdRoute: AppMLectureHallCourseCourseIdRoute,
   AppMHomeArticlesIndexRoute: AppMHomeArticlesIndexRoute,
+  AppMLibraryBooksIndexRoute: AppMLibraryBooksIndexRoute,
+  AppMLibraryImagesIndexRoute: AppMLibraryImagesIndexRoute,
   AppMLibraryLecturesIndexRoute: AppMLibraryLecturesIndexRoute,
+  AppMLibraryPodcastsIndexRoute: AppMLibraryPodcastsIndexRoute,
+  AppMLibraryTalksIndexRoute: AppMLibraryTalksIndexRoute,
   AppMHomeArticlesCategoryIdArticleIdRoute:
     AppMHomeArticlesCategoryIdArticleIdRoute,
   AppMLectureHallCourseActivityActivityIdRoute:
@@ -615,7 +679,11 @@ export interface FileRoutesByFullPath {
   '/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
   '/m/home/articles': typeof AppMHomeArticlesIndexRoute
+  '/m/library/books': typeof AppMLibraryBooksIndexRoute
+  '/m/library/images': typeof AppMLibraryImagesIndexRoute
   '/m/library/lectures': typeof AppMLibraryLecturesIndexRoute
+  '/m/library/podcasts': typeof AppMLibraryPodcastsIndexRoute
+  '/m/library/talks': typeof AppMLibraryTalksIndexRoute
   '/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/m/home/articles/$categoryId/$articleId': typeof AppMHomeArticlesCategoryIdArticleIdRoute
   '/m/lecture-hall/course/activity/$activityId': typeof AppMLectureHallCourseActivityActivityIdRoute
@@ -649,7 +717,11 @@ export interface FileRoutesByTo {
   '/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
   '/m/home/articles': typeof AppMHomeArticlesIndexRoute
+  '/m/library/books': typeof AppMLibraryBooksIndexRoute
+  '/m/library/images': typeof AppMLibraryImagesIndexRoute
   '/m/library/lectures': typeof AppMLibraryLecturesIndexRoute
+  '/m/library/podcasts': typeof AppMLibraryPodcastsIndexRoute
+  '/m/library/talks': typeof AppMLibraryTalksIndexRoute
   '/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/m/home/articles/$categoryId/$articleId': typeof AppMHomeArticlesCategoryIdArticleIdRoute
   '/m/lecture-hall/course/activity/$activityId': typeof AppMLectureHallCourseActivityActivityIdRoute
@@ -685,7 +757,11 @@ export interface FileRoutesById {
   '/_app/m/home/articles/$articleId': typeof AppMHomeArticlesArticleIdRoute
   '/_app/m/lecture-hall/course/$courseId': typeof AppMLectureHallCourseCourseIdRoute
   '/_app/m/home/articles/': typeof AppMHomeArticlesIndexRoute
+  '/_app/m/library/books/': typeof AppMLibraryBooksIndexRoute
+  '/_app/m/library/images/': typeof AppMLibraryImagesIndexRoute
   '/_app/m/library/lectures/': typeof AppMLibraryLecturesIndexRoute
+  '/_app/m/library/podcasts/': typeof AppMLibraryPodcastsIndexRoute
+  '/_app/m/library/talks/': typeof AppMLibraryTalksIndexRoute
   '/_app/d/lecture-hall/course/lesson/$lessonId': typeof AppDLectureHallCourseLessonLessonIdRoute
   '/_app/m/home/articles/$categoryId/$articleId': typeof AppMHomeArticlesCategoryIdArticleIdRoute
   '/_app/m/lecture-hall/course/activity/$activityId': typeof AppMLectureHallCourseActivityActivityIdRoute
@@ -721,7 +797,11 @@ export interface FileRouteTypes {
     | '/m/home/articles/$articleId'
     | '/m/lecture-hall/course/$courseId'
     | '/m/home/articles'
+    | '/m/library/books'
+    | '/m/library/images'
     | '/m/library/lectures'
+    | '/m/library/podcasts'
+    | '/m/library/talks'
     | '/d/lecture-hall/course/lesson/$lessonId'
     | '/m/home/articles/$categoryId/$articleId'
     | '/m/lecture-hall/course/activity/$activityId'
@@ -754,7 +834,11 @@ export interface FileRouteTypes {
     | '/m/home/articles/$articleId'
     | '/m/lecture-hall/course/$courseId'
     | '/m/home/articles'
+    | '/m/library/books'
+    | '/m/library/images'
     | '/m/library/lectures'
+    | '/m/library/podcasts'
+    | '/m/library/talks'
     | '/d/lecture-hall/course/lesson/$lessonId'
     | '/m/home/articles/$categoryId/$articleId'
     | '/m/lecture-hall/course/activity/$activityId'
@@ -788,7 +872,11 @@ export interface FileRouteTypes {
     | '/_app/m/home/articles/$articleId'
     | '/_app/m/lecture-hall/course/$courseId'
     | '/_app/m/home/articles/'
+    | '/_app/m/library/books/'
+    | '/_app/m/library/images/'
     | '/_app/m/library/lectures/'
+    | '/_app/m/library/podcasts/'
+    | '/_app/m/library/talks/'
     | '/_app/d/lecture-hall/course/lesson/$lessonId'
     | '/_app/m/home/articles/$categoryId/$articleId'
     | '/_app/m/lecture-hall/course/activity/$activityId'
@@ -868,7 +956,11 @@ export const routeTree = rootRoute
         "/_app/m/home/articles/$articleId",
         "/_app/m/lecture-hall/course/$courseId",
         "/_app/m/home/articles/",
+        "/_app/m/library/books/",
+        "/_app/m/library/images/",
         "/_app/m/library/lectures/",
+        "/_app/m/library/podcasts/",
+        "/_app/m/library/talks/",
         "/_app/m/home/articles/$categoryId/$articleId",
         "/_app/m/lecture-hall/course/activity/$activityId",
         "/_app/m/lecture-hall/course/lesson/$lessonId",
@@ -965,8 +1057,24 @@ export const routeTree = rootRoute
       "filePath": "_app/m/home/articles/index.tsx",
       "parent": "/_app/m"
     },
+    "/_app/m/library/books/": {
+      "filePath": "_app/m/library/books/index.tsx",
+      "parent": "/_app/m"
+    },
+    "/_app/m/library/images/": {
+      "filePath": "_app/m/library/images/index.tsx",
+      "parent": "/_app/m"
+    },
     "/_app/m/library/lectures/": {
       "filePath": "_app/m/library/lectures/index.tsx",
+      "parent": "/_app/m"
+    },
+    "/_app/m/library/podcasts/": {
+      "filePath": "_app/m/library/podcasts/index.tsx",
+      "parent": "/_app/m"
+    },
+    "/_app/m/library/talks/": {
+      "filePath": "_app/m/library/talks/index.tsx",
       "parent": "/_app/m"
     },
     "/_app/d/lecture-hall/course/lesson/$lessonId": {

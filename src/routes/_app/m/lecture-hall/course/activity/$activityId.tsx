@@ -1,29 +1,20 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
-  Alert,
   Button,
   Card,
   Descriptions,
   Divider,
-  Input,
   List,
   Modal,
-  Radio,
   Space,
-  Table,
   Tag,
   Typography,
   message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import {
-  IoArrowBack,
-  IoClipboardOutline,
-  IoTimeOutline,
-  IoWarningOutline,
-} from 'react-icons/io5';
+import { IoArrowBack, IoTimeOutline, IoWarningOutline } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 import activityService from '@/modules/app/activities/activity.service';
@@ -33,7 +24,6 @@ import {
   EActivityStatus,
   EActivityType,
   TActivityAttemptDto,
-  TActivityAttemptSubmitDto,
 } from '@/modules/app/activities/dto/activity.dto';
 
 import './styles.css';
@@ -52,7 +42,8 @@ function ActivityDetailComponent() {
   const [attempt, setAttempt] = useState<TActivityAttemptDto | null>(null);
   const [result, setResult] = useState<TActivityAttemptDto | null>(null);
   const { t } = useApp();
-  const [reviewAttempt, setReviewAttempt] = useState(null);
+  const [reviewAttempt, setReviewAttempt] =
+    useState<TActivityAttemptDto | null>(null);
   const [isReviewVisible, setIsReviewVisible] = useState(false);
 
   const {
@@ -114,17 +105,22 @@ function ActivityDetailComponent() {
   };
 
   const submitMutation = useMutation({
-    mutationFn: async (answers: TActivityAttemptSubmitDto) => {
+    mutationFn: async (answers: any) => {
       const res = await activityService.submitAttempt(
         attempt?.id ?? 0,
         answers,
       );
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       setAttempt(null);
-      setResult(data);
-      message.success('Nộp bài thành công.');
+      if (data && typeof data === 'object' && 'success' in data) {
+        setResult(null);
+        message.success(data.message || 'Nộp bài thành công.');
+      } else {
+        setResult(data as any);
+        message.success('Nộp bài thành công.');
+      }
       refetch();
     },
     onError: () => {
@@ -132,7 +128,7 @@ function ActivityDetailComponent() {
     },
   });
 
-  const handleViewAttempt = (attempt) => {
+  const handleViewAttempt = (attempt: TActivityAttemptDto) => {
     setReviewAttempt(attempt);
     setIsReviewVisible(true);
   };
@@ -157,9 +153,19 @@ function ActivityDetailComponent() {
   }
 
   if (result) {
-    return (
-      <ActivityResultComponent result={result} onBack={() => setResult(null)} />
-    );
+    if (
+      typeof result === 'object' &&
+      result !== null &&
+      'id' in result &&
+      'activityId' in result
+    ) {
+      return (
+        <ActivityResultComponent
+          result={result as TActivityAttemptDto}
+          onBack={() => setResult(null)}
+        />
+      );
+    }
   }
 
   return (
@@ -205,31 +211,29 @@ function ActivityDetailComponent() {
               </Space>
             </div>
             <Descriptions column={1}>
-              <Descriptions.Item label={t('Description')}>
+              <Descriptions.Item label="Mô tả">
                 <Paragraph>{activity?.description}</Paragraph>
               </Descriptions.Item>
               {activity?.timeLimitMinutes && (
-                <Descriptions.Item label={t('Thời gian làm bài')}>
+                <Descriptions.Item label="Thời gian làm bài">
                   <Space>
                     <IoTimeOutline />
-                    <Text>
-                      {activity?.timeLimitMinutes} {t('phút')}
-                    </Text>
+                    <Text>{activity?.timeLimitMinutes} phút</Text>
                   </Space>
                 </Descriptions.Item>
               )}
               {activity?.maxAttempts && (
-                <Descriptions.Item label={t('Số lần làm tối đa')}>
+                <Descriptions.Item label="Số lần làm tối đa">
                   <Text>{activity?.maxAttempts} lần</Text>
                 </Descriptions.Item>
               )}
               {activity?.passScore && (
-                <Descriptions.Item label={t('Điểm đạt')}>
+                <Descriptions.Item label="Điểm đạt">
                   <Text>{activity?.passScore}%</Text>
                 </Descriptions.Item>
               )}
               {activity?.dueDate && (
-                <Descriptions.Item label={t('Hạn nộp')}>
+                <Descriptions.Item label="Hạn nộp">
                   <Text>
                     {dayjs(activity?.dueDate).format('HH:mm DD/MM/YYYY')}
                   </Text>
@@ -247,6 +251,7 @@ function ActivityDetailComponent() {
                       key={item.id}
                       actions={[
                         <Button
+                          key={item.id}
                           size="small"
                           onClick={() => handleViewAttempt(item)}
                         >
@@ -333,7 +338,7 @@ function ActivityDetailComponent() {
                   <Space>
                     <IoWarningOutline color="#faad14" />
                     <Text type="warning">
-                      {t('Hoạt động này chưa được phát hành')}
+                      Hoạt động này chưa được phát hành
                     </Text>
                   </Space>
                 </div>
@@ -349,47 +354,63 @@ function ActivityDetailComponent() {
         footer={null}
         width={700}
       >
-        {reviewAttempt && (
-          <div>
-            <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              <Text strong>Điểm: {reviewAttempt.score ?? 'Chưa chấm'}</Text>
-              <List
-                dataSource={reviewAttempt.answers}
-                renderItem={(ans, idx) => (
-                  <List.Item key={ans.id}>
-                    <Card style={{ width: '100%' }}>
-                      <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text strong>
-                          Câu {idx + 1}: {ans.question?.question}
-                        </Text>
-                        <Text>
-                          Đáp án của bạn:{' '}
-                          {ans.selectedOptionId
-                            ? ans.question?.options?.find(
-                                (o) => o.id === ans.selectedOptionId,
-                              )?.text
-                            : ans.answer}
-                        </Text>
-                        {ans.question?.options &&
-                          ans.question.options.some((o) => o.isCorrect) && (
-                            <Text>
-                              Đáp án đúng:{' '}
-                              {
-                                ans.question.options.find((o) => o.isCorrect)
-                                  ?.text
-                              }
-                            </Text>
+        {reviewAttempt &&
+          typeof reviewAttempt === 'object' &&
+          reviewAttempt !== null &&
+          'answers' in reviewAttempt &&
+          Array.isArray((reviewAttempt as any).answers) && (
+            <div>
+              <Space
+                direction="vertical"
+                size="large"
+                style={{ width: '100%' }}
+              >
+                <Text strong>
+                  Điểm:{' '}
+                  {(reviewAttempt as TActivityAttemptDto).score ?? 'Chưa chấm'}
+                </Text>
+                <List
+                  dataSource={(reviewAttempt as TActivityAttemptDto).answers}
+                  renderItem={(ans: any, idx: number) => (
+                    <List.Item key={ans.id}>
+                      <Card style={{ width: '100%' }}>
+                        <Space direction="vertical" style={{ width: '100%' }}>
+                          <Text strong>
+                            Câu {idx + 1}: {ans.question?.question}
+                          </Text>
+                          <Text>
+                            Đáp án của bạn:{' '}
+                            {ans.selectedOptionId
+                              ? ans.question?.options?.find(
+                                  (o: any) => o.id === ans.selectedOptionId,
+                                )?.text
+                              : ans.answer}
+                          </Text>
+                          {ans.question?.options &&
+                            ans.question.options.some(
+                              (o: any) => o.isCorrect,
+                            ) && (
+                              <Text>
+                                Đáp án đúng:{' '}
+                                {
+                                  ans.question.options.find(
+                                    (o: any) => o.isCorrect,
+                                  )?.text
+                                }
+                              </Text>
+                            )}
+                          <Text>Điểm: {ans.score ?? 0}</Text>
+                          {ans.feedback && (
+                            <Text>Phản hồi: {ans.feedback}</Text>
                           )}
-                        <Text>Điểm: {ans.score ?? 0}</Text>
-                        {ans.feedback && <Text>Phản hồi: {ans.feedback}</Text>}
-                      </Space>
-                    </Card>
-                  </List.Item>
-                )}
-              />
-            </Space>
-          </div>
-        )}
+                        </Space>
+                      </Card>
+                    </List.Item>
+                  )}
+                />
+              </Space>
+            </div>
+          )}
       </Modal>
     </div>
   );

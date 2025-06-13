@@ -137,7 +137,7 @@ function LectureHallComponent() {
 
   return (
     <div className="lecture-hall">
-      <ScreenHeader title="Lecture Hall" />
+      <ScreenHeader title={t('Giảng Đường')} />
 
       <div className="categories-scroll">
         <div className="categories-container">

@@ -53,6 +53,7 @@ function CategoryArticleListPage() {
     queryFn: async () => {
       const response = await articleService.getArticles({
         categoryId: parseInt(categoryId),
+        order: 'ASC',
       });
       return response.data;
     },
@@ -106,7 +107,11 @@ function CategoryArticleListPage() {
           >
             <ArticleItem
               title={article.title}
-              image={article.thumbnailUrl || 'https://via.placeholder.com/150'}
+              image={
+                article.thumbnailUrl
+                  ? article.thumbnailUrl
+                  : '/assets/images/tranh-anh.jpg'
+              }
               date={dayjs(article.createdAt).format('DD/MM/YYYY')}
               category={categoryData?.name || ''}
               onClick={() => {
