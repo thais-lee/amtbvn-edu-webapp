@@ -27,12 +27,12 @@ const categories: CategoryCard[] = [
     path: '/m/library/podcasts',
     image: '/assets/images/podcasts.jpg',
   },
-  {
-    id: 'enlightenment',
-    title: 'Khai Thị',
-    path: '/m/library/enlightenment',
-    image: '/assets/images/khai-thi.jpg',
-  },
+  // {
+  //   id: 'enlightenment',
+  //   title: 'Khai Thị',
+  //   path: '/m/library/talks',
+  //   image: '/assets/images/khai-thi.jpg',
+  // },
   {
     id: 'images',
     title: 'Tranh Ảnh',
@@ -42,7 +42,7 @@ const categories: CategoryCard[] = [
   {
     id: 'pureland-books',
     title: 'Kinh Sách Tịnh Tông',
-    path: '/m/library/pureland-books',
+    path: '/m/library/books',
     image: '/assets/images/kinh-sach-tinh-tong.jpg',
   },
 ];
