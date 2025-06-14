@@ -89,7 +89,12 @@ function CourseDetailComponent() {
           {
             key: 'activities',
             label: t('Activities - Quiz'),
-            children: <ActivityList activities={course.data.activities} />,
+            children: (
+              <ActivityList
+                activities={course.data.activities}
+                routePrefix="m"
+              />
+            ),
           },
           {
             key: 'introduction',

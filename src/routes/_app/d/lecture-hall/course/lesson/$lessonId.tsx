@@ -1,12 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Card, Col, Row, Space, Tag, Typography } from 'antd';
+import { Button, Card, Col, Row, Skeleton, Space, Tag, Typography } from 'antd';
 import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
+import useApp from '@/hooks/use-app';
+import {
+  ELessonAttachmentType,
+  TAttachmentDto,
+} from '@/modules/app/attachments/dto/attachment.dto';
+import courseService from '@/modules/app/courses/course.service';
+import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
+import lessonService from '@/modules/app/lessons/lesson.service';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 export const Route = createFileRoute(
   '/_app/d/lecture-hall/course/lesson/$lessonId',
@@ -14,87 +25,115 @@ export const Route = createFileRoute(
   component: LessonDetailComponent,
 });
 
-// Mock data - replace with actual data from your API
-const lessonData = {
-  id: '1',
-  title: '第1講: Introduction',
-  description:
-    'This is a detailed description of the lesson. It explains what students will learn in this specific lesson.',
-  duration: '45:30',
-  videoUrl: 'https://example.com/video.mp4',
-  courseId: '1',
-  courseTitle: '淨土大經科註',
-  completed: true,
-  nextLessonId: '2',
-  previousLessonId: null,
-  courseLessons: [
-    {
-      id: '1',
-      title: '第1講: Introduction',
-      duration: '45:30',
-      completed: true,
-    },
-    {
-      id: '2',
-      title: '第2講: Basic Concepts',
-      duration: '52:15',
-      completed: false,
-    },
-    {
-      id: '3',
-      title: '第3講: Advanced Topics',
-      duration: '48:20',
-      completed: false,
-    },
-    {
-      id: '4',
-      title: '第4講: Practical Applications',
-      duration: '55:10',
-      completed: false,
-    },
-  ],
-};
-
 function LessonDetailComponent() {
   const { lessonId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useApp();
+
+  // Always call all hooks at the top
+  const { data: lesson, isLoading } = useQuery({
+    queryKey: ['/lessons', lessonId],
+    queryFn: async () => {
+      const res = await lessonService.getOne(Number(lessonId));
+      return res.data?.data ?? res.data;
+    },
+    enabled: !!lessonId,
+  });
+
+  // Get courseId from lesson (may be undefined on first render)
+  const courseId = lesson?.courseId;
+
+  // Always call this hook, but only enable when courseId is available
+  const { data: courseData } = useQuery({
+    queryKey: ['course-detail', courseId],
+    queryFn: () => courseService.getOneCourse(Number(courseId)),
+    enabled: !!courseId,
+    select: (res) => res.data,
+  });
+
+  if (isLoading || !lesson) {
+    return <Skeleton active paragraph={{ rows: 8 }} />;
+  }
 
   const handlePreviousLesson = () => {
-    if (lessonData.previousLessonId) {
+    if (lesson.previous) {
       navigate({
         to: '/d/lecture-hall/course/lesson/$lessonId',
-        params: { lessonId: lessonData.previousLessonId },
+        params: { lessonId: lesson.previous.id.toString() },
       });
     }
   };
 
   const handleNextLesson = () => {
-    if (lessonData.nextLessonId) {
+    if (lesson.next) {
       navigate({
         to: '/d/lecture-hall/course/lesson/$lessonId',
-        params: { lessonId: lessonData.nextLessonId },
+        params: { lessonId: lesson.next.id.toString() },
       });
     }
   };
 
+  const handleLessonSidebarClick = (id: string | number) => {
+    navigate({
+      to: '/d/lecture-hall/course/lesson/$lessonId',
+      params: { lessonId: id.toString() },
+    });
+  };
+
+  // Find the first video attachment
+  const videoAttachment = lesson.attachments?.find(
+    (a: TAttachmentDto) => a.type === ELessonAttachmentType.VIDEO,
+  );
+
+  const courseTitle = courseData?.name || '';
+  const lessonsList: TLessonDto[] = courseData?.lessons || [];
+
   return (
     <div className="lesson-detail">
-      <ScreenHeader title={lessonData.courseTitle} showBackButton />
+      <Space
+        direction="horizontal"
+        size="middle"
+        style={{ width: '100%', alignItems: 'center', marginBottom: 16 }}
+      >
+        <Button
+          icon={<IoArrowBack />}
+          onClick={() =>
+            navigate({
+              to: '/d/lecture-hall/course/$courseId',
+              params: {
+                courseId: courseId?.toString() ?? '',
+              },
+            })
+          }
+        >
+          {t('Go back')}
+        </Button>
+      </Space>
+      <Title level={3}>{courseTitle}</Title>
 
       <Row gutter={24}>
-        <Col span={16}>
+        <Col span={15}>
           <div className="lesson-content">
             <div className="video-container">
-              <video controls autoPlay className="video-player">
-                <source
-                  src="http://localhost:9000/main/video%2Fcamung.mp4"
-                  type="video/mp4"
+              {videoAttachment?.file?.storagePath ? (
+                <video controls className="video-player">
+                  <source
+                    src={videoAttachment.file.storagePath}
+                    type="video/mp4"
+                  />
+                </video>
+              ) : (
+                <div
+                  style={{
+                    height: 320,
+                    background: '#eee',
+                    borderRadius: 8,
+                  }}
                 />
-              </video>
+              )}
             </div>
-
             <Card className="lesson-info">
-              <Title level={4}>{lessonData.title}</Title>
+              <Title level={4}>{lesson.title}</Title>
               <Space
                 direction="vertical"
                 size="middle"
@@ -102,30 +141,75 @@ function LessonDetailComponent() {
               >
                 <div className="lesson-meta">
                   <Space>
-                    <Text type="secondary">
-                      <IoTimeOutline /> {lessonData.duration}
-                    </Text>
-                    {lessonData.completed && (
-                      <Text type="success">Completed</Text>
+                    {lesson.isCompleted && (
+                      <Text type="success">{t('Completed')}</Text>
                     )}
                   </Space>
                 </div>
-
-                <Text>{lessonData.description}</Text>
-
+                <div className="lesson-content">
+                  <ReactQuill
+                    value={lesson.content}
+                    readOnly={true}
+                    theme="bubble"
+                    modules={{
+                      toolbar: false,
+                    }}
+                    style={{
+                      textAlign: 'justify',
+                    }}
+                  />
+                  <style>{`
+                    .lesson-content .ql-editor {
+                      padding: 0;
+                      font-size: 16px;
+                      line-height: 1.8;
+                      text-align: justify;
+                    }
+                    .lesson-content .ql-editor p {
+                      margin-bottom: 1em;
+                      text-align: justify;
+                    }
+                    .lesson-content .ql-editor h1,
+                    .lesson-content .ql-editor h2,
+                    .lesson-content .ql-editor h3,
+                    .lesson-content .ql-editor h4 {
+                      margin-top: 1.5em;
+                      margin-bottom: 0.5em;
+                      text-align: left;
+                    }
+                    .lesson-content .ql-editor ul,
+                    .lesson-content .ql-editor ol {
+                      margin-bottom: 1em;
+                      padding-left: 2em;
+                      text-align: justify;
+                    }
+                    .lesson-content .ql-editor blockquote {
+                      border-left: 4px solid #ccc;
+                      margin: 1em 0;
+                      padding-left: 1em;
+                      color: #666;
+                      text-align: justify;
+                    }
+                    .lesson-content .ql-editor img {
+                      max-width: 100%;
+                      height: auto;
+                      margin: 1em 0;
+                    }
+                  `}</style>
+                </div>
                 <div className="navigation-buttons">
                   <Space>
-                    {lessonData.previousLessonId && (
+                    {lesson.previous && (
                       <Button
                         icon={<IoArrowBack />}
                         onClick={handlePreviousLesson}
                       >
-                        Previous Lesson
+                        {t('Previous lesson')}
                       </Button>
                     )}
-                    {lessonData.nextLessonId && (
+                    {lesson.next && (
                       <Button type="primary" onClick={handleNextLesson}>
-                        Next Lesson
+                        {t('Next lesson')}
                       </Button>
                     )}
                   </Space>
@@ -134,35 +218,24 @@ function LessonDetailComponent() {
             </Card>
           </div>
         </Col>
-
-        <Col span={8}>
+        <Col span={9}>
           <Card className="sidebar">
-            <Title level={5}>Course Lessons</Title>
-            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-              {lessonData.courseLessons.map((lesson) => (
-                <Card
-                  key={lesson.id}
-                  className={`lesson-item ${
-                    lesson.id === lessonId ? 'active' : ''
-                  } ${lesson.completed ? 'completed' : ''}`}
-                  onClick={() => {
-                    /* Handle lesson navigation */
-                  }}
+            <Title level={5}>{t('Lessons')}</Title>
+            <div className="lesson-list-sidebar">
+              {lessonsList.map((l: TLessonDto, idx: number) => (
+                <div
+                  key={l.id}
+                  className={`lesson-sidebar-item${
+                    String(l.id) === String(lessonId) ? ' active' : ''
+                  }${l.isCompleted ? ' completed' : ''}`}
+                  onClick={() => handleLessonSidebarClick(l.id)}
                 >
-                  <div className="lesson-item-content">
-                    <div className="lesson-item-info">
-                      <Text strong={lesson.id === lessonId}>
-                        {lesson.title}
-                      </Text>
-                      <Text type="secondary">
-                        <IoTimeOutline /> {lesson.duration}
-                      </Text>
-                    </div>
-                    {lesson.completed && <Tag color="success">Completed</Tag>}
-                  </div>
-                </Card>
+                  <div className="lesson-sidebar-index">{idx + 1}</div>
+                  <div className="lesson-sidebar-title">{l.title}</div>
+                  {l.isCompleted && <Tag color="success">{t('Completed')}</Tag>}
+                </div>
               ))}
-            </Space>
+            </div>
           </Card>
         </Col>
       </Row>

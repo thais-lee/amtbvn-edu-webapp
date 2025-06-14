@@ -32,6 +32,7 @@ function LectureHallComponent() {
   const { t } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState('other');
 
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
@@ -70,6 +71,15 @@ function LectureHallComponent() {
     setSelectedCategory(categoryId);
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1000); // Simulate API call
+  };
+
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+    
+    // Refetch data when switching to My Courses tab
+    if (key === 'current') {
+      myCoursesQuery.refetch();
+    }
   };
 
   const renderEmpty = (type: ECourseType) => {
@@ -112,7 +122,21 @@ function LectureHallComponent() {
           notEnrolledCoursesQuery.data?.data.items?.length > 0
           ? notEnrolledCoursesQuery.data?.data.items?.map(
               (course: TCourseItem) => (
-                <OtherCourseCard key={course.id} course={course} />
+                <OtherCourseCard 
+                  key={course.id} 
+                  course={course}
+                  onEnrollSuccess={(_, status) => {
+                    if (status === 'current') {
+                      handleTabChange('current');
+                      myCoursesQuery.refetch();
+                      notEnrolledCoursesQuery.refetch();
+                    } else if (status === 'pending') {
+                      handleTabChange('pending');
+                      pendingCoursesQuery.refetch();
+                      notEnrolledCoursesQuery.refetch();
+                    }
+                  }}
+                />
               ),
             )
           : renderEmpty(type);
@@ -127,7 +151,20 @@ function LectureHallComponent() {
         return pendingCoursesQuery.data?.data.items?.length &&
           pendingCoursesQuery.data?.data.items?.length > 0
           ? pendingCoursesQuery.data?.data.items?.map((course: TCourseItem) => (
-              <PendingCourseCard key={course.id} course={course} />
+              <PendingCourseCard
+                key={course.id}
+                course={course}
+                onEnrollSuccess={(_, status) => {
+                  if (status === 'other') {
+                    handleTabChange('other');
+                    notEnrolledCoursesQuery.refetch();
+                  } else {
+                    // Re-enroll: just refetch, don't switch tab
+                    pendingCoursesQuery.refetch();
+                    notEnrolledCoursesQuery.refetch();
+                  }
+                }}
+              />
             ))
           : renderEmpty(type);
       default:
@@ -167,7 +204,8 @@ function LectureHallComponent() {
       </div>
 
       <Tabs
-        defaultActiveKey="other"
+        activeKey={activeTabKey}
+        onChange={handleTabChange}
         items={[
           {
             key: 'other',

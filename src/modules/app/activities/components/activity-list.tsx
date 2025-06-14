@@ -8,7 +8,12 @@ import { TActivity } from '../activity.model';
 
 const { Text } = Typography;
 
-function ActivityList({ activities }: { activities: TActivity[] }) {
+interface IActivityListProps {
+  activities: TActivity[];
+  routePrefix: string;
+}
+
+function ActivityList({ activities, routePrefix }: IActivityListProps) {
   const { t } = useApp();
   const navigate = useNavigate();
 
@@ -19,7 +24,7 @@ function ActivityList({ activities }: { activities: TActivity[] }) {
         style={{ marginBottom: 8 }}
         onClick={() => {
           navigate({
-            to: '/m/lecture-hall/course/activity/$activityId',
+            to: `/${routePrefix}/lecture-hall/course/activity/$activityId`,
             params: { activityId: activity.id.toString() },
           });
         }}

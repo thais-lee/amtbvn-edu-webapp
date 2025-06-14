@@ -1,5 +1,6 @@
 import { TActivity } from '../../activities/activity.model';
 import { TAttachmentDto } from '../../attachments/dto/attachment.dto';
+import { TCourse } from '../../courses/course.model';
 
 export interface TFileDto {
   id: number;
@@ -37,4 +38,5 @@ export interface TLessonDto {
   next?: TLessonDto;
   previous?: TLessonDto;
   activities?: TActivity[];
+  course?: TCourse;
 }

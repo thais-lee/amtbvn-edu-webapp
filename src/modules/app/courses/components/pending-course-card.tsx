@@ -1,6 +1,6 @@
 // src/modules/app/courses/components/course-card.tsx
 import { BookOutlined, UserOutlined } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 // Import BookOutlined for lessons
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Card, Space, Tag, Typography, message } from 'antd';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 // Import useState for local state management
 import useApp from '@/hooks/use-app';
 import { EEnrollmentStatus } from '@/modules/app/enrollments/enrollment.model';
+import enrollmentService from '@/modules/app/enrollments/enrollment.service';
 
 // Assuming useApp provides t() for translation
 import { TCourseDetail, TCourseItem } from '../course.model';
@@ -19,43 +20,59 @@ const { Title, Text } = Typography;
 
 type TProps = {
   course: TCourseItem;
-  onEnrollSuccess?: (courseId: number) => void; // Optional callback for successful enrollment
+  onEnrollSuccess?: (courseId: number, status: string) => void; // Optional callback for successful enrollment
+  routePrefix?: 'm' | 'd';
 };
 
-export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
+export default function PendingCourseCard({
+  course,
+  onEnrollSuccess,
+  routePrefix = 'm',
+}: TProps) {
   const navigate = useNavigate();
   const { t } = useApp(); // Access translation function
   const [isEnrolling, setIsEnrolling] = useState(false); // State to manage enrollment loading
   const [isEnrolled, setIsEnrolled] = useState(false); // State to track enrollment status
 
-  const handleCourseClick = (courseId: number) => {
-    // navigate({
-    //   to: '/m/lecture-hall/course/$courseId',
-    //   params: { courseId: courseId.toString() },
-    // });
-  };
+  const handleCourseClick = (courseId: number) => {};
+
+  const reEnrollMutation = useMutation({
+    mutationFn: () => enrollmentService.reEnrollCourse(course.id),
+    onSuccess: (data: any) => {
+      const status = data?.data?.status;
+      if (status === 'ACCEPTED') {
+        message.success(t('Enrolled successfully'));
+        setIsEnrolled(true);
+        onEnrollSuccess?.(course.id, 'current');
+      } else if (status === 'PENDING') {
+        message.info(t('Enrollment request submitted. Awaiting approval.'));
+        setIsEnrolled(true);
+        onEnrollSuccess?.(course.id, 'pending');
+      }
+    },
+    onError: () => {
+      message.error(t('An error occurred'));
+    },
+  });
 
   const handleEnrollClick = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click from triggering when button is clicked
-    if (isEnrolled) return; // Don't do anything if already enrolled
-
-    setIsEnrolling(true);
-    try {
-      // Simulate API call for enrollment
-      // Replace with your actual API call to enroll in the course
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-
-      // Assuming enrollment is successful and requires admin approval
-      message.success(t('Enrollment request submitted. Awaiting approval.'));
-      setIsEnrolled(true); // Update local state to reflect enrollment
-      onEnrollSuccess?.(course.id); // Trigger optional callback
-    } catch (error) {
-      console.error('Enrollment failed:', error);
-      message.error(t('Failed to enroll in the course. Please try again.'));
-    } finally {
-      setIsEnrolling(false);
-    }
+    e.stopPropagation();
+    if (isEnrolled) return;
+    reEnrollMutation.mutate();
   };
+
+  const cancelMutation = useMutation({
+    mutationFn: () =>
+      enrollmentService.deleteEnrollment({ courseId: course.id }),
+    onSuccess: () => {
+      message.success(t('Deleted successfully'));
+      setIsEnrolled(false);
+      onEnrollSuccess?.(course.id, 'other');
+    },
+    onError: () => {
+      message.error(t('An error occurred'));
+    },
+  });
 
   const renderEnrollmentButton = () => {
     switch (course.enrollments[0]?.status) {
@@ -67,8 +84,9 @@ export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
             block
             onClick={(e) => {
               e.stopPropagation();
-              handleCancelRequest(course.id);
+              cancelMutation.mutate();
             }}
+            loading={cancelMutation.status === 'pending'}
           >
             {t('Cancel')}
           </Button>
@@ -82,8 +100,9 @@ export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
               e.stopPropagation();
               handleEnrollClick(e);
             }}
+            loading={reEnrollMutation.status === 'pending'}
           >
-            {t('Enroll now')}
+            {t('Re-enroll')}
           </Button>
         );
       default:
@@ -100,24 +119,11 @@ export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
     }
   };
 
-  const handleCancelRequest = async (courseId: number) => {
-    setIsEnrolling(true);
-    try {
-      // TODO: Replace with actual API call to cancel enrollment
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success(t('Deleted successfully'));
-      onEnrollSuccess?.(courseId);
-    } catch (error) {
-      console.error('Failed to cancel enrollment:', error);
-      message.error(t('An error occurred'));
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
-
   return (
     <Card
       className="course-card"
+      hoverable
+      onClick={() => handleCourseClick(course.id)}
       cover={
         <img
           src={course.imageFileUrl ?? '/assets/images/alt-image.jpg'}
@@ -158,20 +164,18 @@ export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
             {t('Lessons')}: {course._count.lessons ?? 0}
           </Text>
         </Space>
+
+        {course.enrollments[0]?.status === EEnrollmentStatus.REJECTED && (
+          <Tag color="error">{t('Rejected')}</Tag>
+        )}
+
+        {course.enrollments[0]?.status === EEnrollmentStatus.PENDING && (
+          <Tag color="warning">{t('Pending Approval')}</Tag>
+        )}
       </Space>
 
       {/* Enrollment Button */}
-      {isEnrolled ? (
-        <Button
-          type="default"
-          block
-          onClick={() => handleCourseClick(course.id)}
-        >
-          {t('Enrolled - Pending Approval')}
-        </Button>
-      ) : (
-        renderEnrollmentButton()
-      )}
+      {renderEnrollmentButton()}
     </Card>
   );
 }

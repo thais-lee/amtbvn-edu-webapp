@@ -1,70 +1,46 @@
 import { HomeOutlined, MenuOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import { Link, Outlet, createRoute } from '@tanstack/react-router';
 import { Button, Layout, Spin } from 'antd';
 import React, { Suspense, useState } from 'react';
 
-import { DesktopDrawerNav } from '@/shared/components/layouts/app/desktop-drawer-nav';
+import useApp from '@/hooks/use-app';
+import MainSideNav from '@/shared/components/layouts/app/main-side-nav';
+import MainTopBar from '@/shared/components/layouts/app/main-top-bar';
 
 // Import drawer nav
 import { appRoute } from '../route';
 
 // Import layout cha (_app)
 
-const { Header, Content } = Layout;
-
 const DesktopLayoutComponent: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const showDrawer = () => setDrawerOpen(true);
   const closeDrawer = () => setDrawerOpen(false);
+  const [collapsed, setCollapsed] = useState(false);
 
+  const { t, token } = useApp();
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          background: '#fff',
-          padding: '0 24px',
-          borderBottom: '1px solid #f0f0f0',
-        }}
-      >
-        <Button
-          type="text"
-          icon={<MenuOutlined />}
-          onClick={showDrawer}
-          style={{ marginRight: '16px' }}
-        />
-        <Link
-          to="/d/home"
-          style={{
-            color: 'inherit',
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-          }}
+      <MainSideNav collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Layout>
+        <MainTopBar collapsed={collapsed} setCollapse={setCollapsed} />
+        <Layout.Content
+          className="main-content"
+          css={css`
+            margin: ${token.margin}px;
+            padding: ${token.padding}px;
+            background-color: ${token.colorBgContainer};
+            border-radius: ${token.borderRadius}px;
+            height: calc(100dvh - 64px - 2 * ${token.margin}px);
+            overflow-y: auto;
+            overflow: -moz-scrollbars-none;
+            -ms-overflow-style: none;
+          `}
         >
-          <HomeOutlined style={{ marginRight: '8px', fontSize: '20px' }} />
-          <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
-            OLS (Desktop)
-          </span>
-        </Link>
-        {/* Thêm User menu, etc. */}
-        <div style={{ flexGrow: 1 }}></div> {/* Spacer */}
-        {/* User Profile Dropdown? */}
-      </Header>
-      <DesktopDrawerNav open={drawerOpen} onClose={closeDrawer} />
-      <Content style={{ padding: '24px 48px', background: '#f0f2f5' }}>
-        <Suspense
-          fallback={
-            <div style={{ textAlign: 'center', marginTop: 50 }}>
-              <Spin />
-            </div>
-          }
-        >
-          <Outlet /> {/* Render các trang con trong thư mục d/ */}
-        </Suspense>
-      </Content>
-      {/* Optional Footer */}
+          <Outlet />
+        </Layout.Content>
+      </Layout>
     </Layout>
   );
 };

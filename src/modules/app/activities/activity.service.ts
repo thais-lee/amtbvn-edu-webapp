@@ -33,8 +33,11 @@ class ActivityService {
 
   async getAttempts(activityId: number) {
     return httpService.request<TActivityAttemptDto[]>({
-      url: `/api/activities/${activityId}/attempts`,
+      url: `/api/activities/attempts`,
       method: 'GET',
+      params: {
+        activityId,
+      },
     });
   }
 

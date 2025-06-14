@@ -12,9 +12,7 @@ import { Suspense, useEffect, useState } from 'react';
 const { useBreakpoint } = Grid;
 
 // Define context if needed
-interface MyRouterContext {
-  // auth?: AuthState;
-}
+type MyRouterContext = object;
 
 function RootComponent() {
   const navigate = useNavigate();
@@ -90,7 +88,7 @@ function RootComponent() {
     if (targetPath && targetPath !== currentPath) {
       navigate({
         to: targetPath,
-        search: currentSearch, // Giữ lại query params
+        // search: currentSearch, // Giữ lại query params
         hash: currentHash, // Giữ lại hash
         replace: true, // Thay thế lịch sử trình duyệt, không tạo back về trang gốc
       });
@@ -99,21 +97,12 @@ function RootComponent() {
 
   // Hiển thị loading trong khi chờ xác định màn hình và điều hướng ban đầu
   if (!initialCheckDone && isScreensReady) {
-    return (
-      <Spin 
-        fullscreen 
-        tip="Đang tải giao diện..." 
-      />
-    );
+    return <Spin fullscreen tip="Đang tải giao diện..." />;
   }
 
   return (
     // Suspense bao ngoài Outlet để hỗ trợ lazy loading routes
-    <Suspense
-      fallback={
-        <Spin fullscreen />
-      }
-    >
+    <Suspense fallback={<Spin fullscreen />}>
       <Outlet />
     </Suspense>
     // Optional DevTools

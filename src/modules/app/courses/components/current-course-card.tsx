@@ -14,9 +14,13 @@ const { Title, Text } = Typography;
 
 type TProps = {
   course: TCourseEnrolled;
+  routePrefix?: 'm' | 'd';
 };
 
-export default function CurrentCourseCard({ course }: TProps) {
+export default function CurrentCourseCard({
+  course,
+  routePrefix = 'm',
+}: TProps) {
   const navigate = useNavigate();
   const { t } = useApp();
 
@@ -25,7 +29,7 @@ export default function CurrentCourseCard({ course }: TProps) {
 
   const handleCourseClick = (courseId: number) => {
     navigate({
-      to: '/m/lecture-hall/course/$courseId',
+      to: `/${routePrefix}/lecture-hall/course/$courseId`,
       params: { courseId: courseId.toString() },
     });
   };

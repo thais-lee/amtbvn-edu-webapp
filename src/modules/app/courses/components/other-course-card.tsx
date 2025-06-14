@@ -1,10 +1,12 @@
 import { BookOutlined, UserOutlined } from '@ant-design/icons';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Card, Space, Tag, Typography, message } from 'antd';
 import { useState } from 'react';
 
 import useApp from '@/hooks/use-app';
 
+import enrollmentService from '../../enrollments/enrollment.service';
 import { TCourseItem } from '../course.model';
 import './course-card.css';
 
@@ -12,10 +14,15 @@ const { Title, Text } = Typography;
 
 type TProps = {
   course: TCourseItem;
-  onEnrollSuccess?: (courseId: number) => void;
+  onEnrollSuccess?: (courseId: number, status: string) => void;
+  routePrefix?: 'm' | 'd';
 };
 
-export default function OtherCourseCard({ course, onEnrollSuccess }: TProps) {
+export default function OtherCourseCard({
+  course,
+  onEnrollSuccess,
+  routePrefix = 'm',
+}: TProps) {
   const navigate = useNavigate();
   const { t } = useApp();
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -23,28 +30,34 @@ export default function OtherCourseCard({ course, onEnrollSuccess }: TProps) {
 
   const handleCourseClick = (courseId: number) => {
     navigate({
-      to: '/m/lecture-hall/course/$courseId',
+      to: `/${routePrefix}/lecture-hall/course/$courseId`,
       params: { courseId: courseId.toString() },
     });
   };
 
-  const handleEnrollClick = async (e: React.MouseEvent) => {
+  const enrollMutation = useMutation({
+    mutationFn: () => enrollmentService.enrollCourse(course.id),
+    onSuccess: (data: any) => {
+      const status = data?.data?.status;
+      if (status === 'ACCEPTED') {
+        message.success('Enrolled successfully');
+        setIsEnrolled(true);
+        onEnrollSuccess?.(course.id, 'current');
+      } else if (status === 'PENDING') {
+        message.info('Enrollment request submitted. Awaiting approval.');
+        setIsEnrolled(true);
+        onEnrollSuccess?.(course.id, 'pending');
+      }
+    },
+    onError: () => {
+      message.error('Failed to enroll in the course. Please try again.');
+    },
+  });
+
+  const handleEnrollClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isEnrolled) return;
-
-    setIsEnrolling(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      message.success(t('Enrollment request submitted. Awaiting approval.'));
-      setIsEnrolled(true);
-      onEnrollSuccess?.(course.id);
-    } catch (error) {
-      console.error('Enrollment failed:', error);
-      message.error(t('Failed to enroll in the course. Please try again.'));
-    } finally {
-      setIsEnrolling(false);
-    }
+    enrollMutation.mutate();
   };
 
   return (
@@ -93,14 +106,14 @@ export default function OtherCourseCard({ course, onEnrollSuccess }: TProps) {
 
       {isEnrolled ? (
         <Button type="default" disabled block>
-          {t('Enrolled - Pending Approval')}
+          Enrolled - Pending Approval
         </Button>
       ) : (
         <Button
           type="primary"
           block
           onClick={handleEnrollClick}
-          loading={isEnrolling}
+          loading={enrollMutation.status === 'pending'}
         >
           {t('Enroll now')}
         </Button>

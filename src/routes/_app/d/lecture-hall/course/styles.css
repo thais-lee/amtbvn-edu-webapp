@@ -97,4 +97,57 @@
 .completed {
   background-color: #f6ffed;
   border-color: #b7eb8f;
+}
+
+.lesson-list-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lesson-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #faf7f3;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s, border 0.2s;
+}
+
+.lesson-sidebar-item:hover {
+  background: #f5e9dd;
+  border: 1px solid #a15318;
+}
+
+.lesson-sidebar-item.active {
+  background: #a15318;
+  color: #fff;
+  border: 1.5px solid #a15318;
+}
+
+.lesson-sidebar-item.active .lesson-sidebar-title,
+.lesson-sidebar-item.active .lesson-sidebar-index {
+  color: #fff;
+}
+
+.lesson-sidebar-item.completed .lesson-sidebar-title {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.lesson-sidebar-index {
+  font-weight: bold;
+  min-width: 28px;
+  text-align: center;
+  color: #a15318;
+}
+
+.lesson-sidebar-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  color: #a15318;
 } 

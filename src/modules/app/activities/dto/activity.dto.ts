@@ -100,7 +100,7 @@ export interface TStudentAnswerDto {
   updatedAt: Date;
 
   activityAttempt: TActivityAttemptDto;
-  activityQuestion: TActivityQuestionDto;
+  question: TActivityQuestionDto;
   selectedOption?: TActivityQuestionOptionDto;
   file?: TFileDto;
 }

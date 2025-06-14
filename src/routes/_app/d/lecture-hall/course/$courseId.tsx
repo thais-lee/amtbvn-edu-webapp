@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Button,
@@ -5,130 +6,217 @@ import {
   Col,
   Progress,
   Row,
+  Skeleton,
   Space,
   Tabs,
   Tag,
   Typography,
+  message,
 } from 'antd';
-import { IoBookOutline, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+import dayjs from 'dayjs';
+import {
+  IoArrowBack,
+  IoBookOutline,
+  IoPlayOutline,
+  IoTimeOutline,
+} from 'react-icons/io5';
 
+import useApp from '@/hooks/use-app';
+import ActivityList from '@/modules/app/activities/components/activity-list';
+import courseService from '@/modules/app/courses/course.service';
+import enrollmentService from '@/modules/app/enrollments/enrollment.service';
+import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 export const Route = createFileRoute('/_app/d/lecture-hall/course/$courseId')({
   component: CourseDetailComponent,
 });
 
-// Mock data - replace with actual data from your API
-const courseData = {
-  id: '1',
-  title: '淨土大經科註',
-  description:
-    'This is a detailed description of the course. It explains what students will learn and the benefits of taking this course.',
-  progress: 65,
-  totalLessons: 20,
-  completedLessons: 13,
-  category: '淨土宗',
-  image: '/lectures/02-037.jpg',
-  lessons: [
-    {
-      id: '1',
-      title: '第1講: Introduction',
-      duration: '45:30',
-      completed: true,
-    },
-    {
-      id: '2',
-      title: '第2講: Basic Concepts',
-      duration: '52:15',
-      completed: true,
-    },
-    {
-      id: '3',
-      title: '第3講: Advanced Topics',
-      duration: '48:20',
-      completed: false,
-    },
-    {
-      id: '4',
-      title: '第4講: Practical Applications',
-      duration: '55:10',
-      completed: false,
-    },
-  ],
-};
-
 function CourseDetailComponent() {
   const { courseId } = Route.useParams();
+  const { t } = useApp();
   const navigate = useNavigate();
 
-  const handleLessonClick = (lessonId: string) => {
+  const {
+    data: course,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['course-detail', courseId],
+    queryFn: () => courseService.getOneCourse(Number(courseId)),
+    enabled: !!courseId,
+    select: (res) => res.data,
+  });
+
+  // Enroll mutation
+  const enrollMutation = useMutation({
+    mutationFn: () => enrollmentService.enrollCourse(Number(courseId)),
+    onSuccess: (res) => {
+      let status = 'PENDING';
+      if (res && typeof res === 'object') {
+        if (res.data && typeof res.data === 'object' && 'status' in res.data) {
+          status = String(res.data.status);
+        }
+      }
+      if (status === 'ACCEPTED') {
+        message.success('Enrolled successfully!');
+        navigate({ to: '/d/lecture-hall', search: { tab: 'current' } });
+      } else if (status === 'PENDING') {
+        message.info('Enrollment request submitted. Awaiting approval.');
+        navigate({ to: '/d/lecture-hall', search: { tab: 'pending' } });
+      }
+    },
+    onError: () => {
+      message.error('Failed to enroll.');
+    },
+  });
+
+  const handleLessonClick = (lessonId: string | number) => {
     navigate({
       to: '/d/lecture-hall/course/lesson/$lessonId',
-      params: { lessonId },
+      params: { lessonId: lessonId.toString() },
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="course-detail">
+        <Skeleton active paragraph={{ rows: 8 }} />
+      </div>
+    );
+  }
+
+  if (isError || !course) {
+    return (
+      <div className="course-detail">
+        <Text type="danger">Course not found.</Text>
+      </div>
+    );
+  }
+
+  // Calculate progress
+  const totalLessons = course.lessons?.length || 0;
+  const completedLessons =
+    course.lessons?.filter((l: any) => l.isCompleted).length || 0;
+  const progress =
+    totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
   return (
     <div className="course-detail">
-      <ScreenHeader title={courseData.title} showBackButton />
-
+      <Space
+        direction="horizontal"
+        size="middle"
+        style={{ width: '100%', alignItems: 'center', marginBottom: 16 }}
+      >
+        <Button
+          icon={<IoArrowBack />}
+          onClick={() =>
+            navigate({
+              to: '/d/lecture-hall',
+            })
+          }
+        >
+          {t('Go back')}
+        </Button>
+      </Space>
       <Row gutter={24}>
-        <Col span={16}>
+        <Col span={15}>
           <div className="course-content">
             <div className="course-thumbnail">
-              <img src={courseData.image} alt={courseData.title} />
+              <img
+                src={course.imageFileUrl ?? '/assets/images/alt-image.jpg'}
+                alt={course.name}
+              />
             </div>
-
             <Card className="course-info">
-              <Tag className="course-category">{courseData.category}</Tag>
-              <Title level={4}>{courseData.title}</Title>
-              <Text type="secondary">{courseData.description}</Text>
-
+              <Tag className="course-category">{course.category?.name}</Tag>
+              <Title level={4}>{course.name}</Title>
+              <Button
+                type="primary"
+                loading={enrollMutation.status === 'pending'}
+                onClick={() => enrollMutation.mutate()}
+                style={{ marginBottom: 16 }}
+              >
+                Enroll in this course
+              </Button>
+              <Paragraph>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: course.description ?? '',
+                  }}
+                />
+              </Paragraph>
               <div className="progress-section">
                 <Progress
-                  percent={courseData.progress}
+                  percent={progress}
                   strokeColor="#8B4513"
                   showInfo={false}
                 />
                 <Space className="progress-text">
-                  <Text>Progress: {courseData.progress}%</Text>
+                  <Text>
+                    {t('Progress')}: {progress}%
+                  </Text>
                   <Text type="secondary">
-                    {courseData.completedLessons} of {courseData.totalLessons}{' '}
-                    lessons completed
+                    {t('Completed Lessons')}: {completedLessons}
+                    {' /'}
+                    {totalLessons} {t('Lessons')}
                   </Text>
                 </Space>
               </div>
             </Card>
-
             <Tabs
               defaultActiveKey="lessons"
               items={[
                 {
                   key: 'lessons',
-                  label: 'Lessons',
+                  label: t('Lessons'),
                   children: (
                     <div className="lessons-list">
-                      {courseData.lessons.map((lesson) => (
+                      {course.lessons?.map((lesson: TLessonDto) => (
                         <Card
                           key={lesson.id}
                           className={`lesson-card ${
-                            lesson.completed ? 'completed' : ''
+                            lesson.isCompleted ? 'completed' : ''
                           }`}
                           onClick={() => handleLessonClick(lesson.id)}
                         >
-                          <div className="lesson-content">
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'flex-start',
+                              justifyContent: 'flex-start',
+                              gap: 16,
+                            }}
+                          >
                             <div className="lesson-info">
                               <Title level={5}>{lesson.title}</Title>
+                              <Text type="secondary">
+                                <IoTimeOutline />{' '}
+                                {dayjs(lesson.createdAt).format('DD/MM/YYYY')}
+                              </Text>
                               <Space>
-                                <Text type="secondary">
-                                  <IoTimeOutline /> {lesson.duration}
-                                </Text>
-                                {lesson.completed && (
-                                  <Tag color="success">Completed</Tag>
+                                <Paragraph
+                                  style={{
+                                    textAlign: 'justify',
+                                    whiteSpace: 'pre-line',
+                                  }}
+                                  ellipsis={{
+                                    rows: 2,
+                                  }}
+                                >
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: lesson.content ?? '',
+                                    }}
+                                  />
+                                </Paragraph>
+                                {lesson.isCompleted && (
+                                  <Tag color="success">{t('Completed')}</Tag>
                                 )}
                               </Space>
                             </div>
@@ -136,8 +224,11 @@ function CourseDetailComponent() {
                               type="primary"
                               icon={<IoPlayOutline />}
                               className="play-button"
+                              style={{ alignSelf: 'flex-start' }}
                             >
-                              {lesson.completed ? 'Watch Again' : 'Watch Now'}
+                              {lesson.isCompleted
+                                ? t('Watch Again')
+                                : t('Watch Now')}
                             </Button>
                           </div>
                         </Card>
@@ -146,12 +237,30 @@ function CourseDetailComponent() {
                   ),
                 },
                 {
+                  key: 'activities',
+                  label: t('Activities'),
+                  children: (
+                    <div className="activities-list">
+                      <ActivityList
+                        activities={course.activities || []}
+                        routePrefix="d"
+                      />
+                    </div>
+                  ),
+                },
+                {
                   key: 'about',
-                  label: 'About',
+                  label: t('About'),
                   children: (
                     <Card className="about-card">
-                      <Title level={4}>About This Course</Title>
-                      <Text>{courseData.description}</Text>
+                      <Title level={4}>{t('About This Course')}</Title>
+                      <Paragraph>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: course.description ?? '',
+                          }}
+                        />
+                      </Paragraph>
                     </Card>
                   ),
                 },
@@ -159,27 +268,26 @@ function CourseDetailComponent() {
             />
           </div>
         </Col>
-
-        <Col span={8}>
+        <Col span={9}>
           <Card className="sidebar">
-            <Title level={5}>Course Details</Title>
+            <Title level={5}>{t('Course Details')}</Title>
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <div className="detail-item">
-                <Text type="secondary">Category</Text>
-                <Text strong>{courseData.category}</Text>
+                <Text type="secondary">{t('Category')}</Text>
+                <Text strong>{course.category?.name}</Text>
               </div>
               <div className="detail-item">
-                <Text type="secondary">Total Lessons</Text>
-                <Text strong>{courseData.totalLessons}</Text>
+                <Text type="secondary">{t('Total Lessons')}</Text>
+                <Text strong>{totalLessons}</Text>
               </div>
               <div className="detail-item">
-                <Text type="secondary">Completed Lessons</Text>
-                <Text strong>{courseData.completedLessons}</Text>
+                <Text type="secondary">{t('Completed Lessons')}</Text>
+                <Text strong>{completedLessons}</Text>
               </div>
               <div className="detail-item">
-                <Text type="secondary">Progress</Text>
+                <Text type="secondary">{t('Progress')}</Text>
                 <Progress
-                  percent={courseData.progress}
+                  percent={progress}
                   size="small"
                   strokeColor="#8B4513"
                 />

@@ -1,186 +1,286 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Card, Col, Empty, Row, Skeleton, Tabs, Tag } from 'antd';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
-  IoBookOutline,
-  IoChevronForward,
-  IoTimeOutline,
-} from 'react-icons/io5';
+  createFileRoute,
+  useNavigate,
+  useSearch,
+} from '@tanstack/react-router';
+import { Col, ConfigProvider, Row, Skeleton, Tabs, Tag } from 'antd';
+import { useState } from 'react';
 
+import useApp from '@/hooks/use-app';
+import categoryService from '@/modules/app/categories/category.service';
+import CurrentCourseCard from '@/modules/app/courses/components/current-course-card';
+import NoCoursesFound from '@/modules/app/courses/components/no-courses-found';
+import OtherCourseCard from '@/modules/app/courses/components/other-course-card';
+import PendingCourseCard from '@/modules/app/courses/components/pending-course-card';
+import {
+  TCourseEnrolled,
+  TCourseItem,
+} from '@/modules/app/courses/course.model';
+import courseService from '@/modules/app/courses/course.service';
+import { PageHeader } from '@/shared/components/layouts/app/page-header';
 import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
+
+enum ECourseType {
+  AVAILABLE = 'AVAILABLE',
+  MY = 'MY',
+  PENDING = 'PENDING',
+}
 
 export const Route = createFileRoute('/_app/d/lecture-hall/')({
   component: LectureHallComponent,
 });
 
-// Mock data - replace with actual data from your API
-const categories = ['All', '淨土宗', '禪宗', '密宗', '律宗', '天台宗'];
-
-const currentCourses = [
-  {
-    id: '1',
-    title: '淨土大經科註',
-    progress: 65,
-    lastLesson: '第12講',
-    image: '/lectures/02-037.jpg',
-    category: '淨土宗',
-  },
-  {
-    id: '2',
-    title: '二零一四淨土大經科註',
-    progress: 30,
-    lastLesson: '第5講',
-    image: '/lectures/02-041.jpg',
-    category: '淨土宗',
-  },
-];
-
-const otherCourses = [
-  {
-    id: '3',
-    title: '淨土大經解演義',
-    category: '淨土宗',
-    image: '/lectures/02-039.jpg',
-  },
-  {
-    id: '4',
-    title: '二零一二淨土大經科註',
-    category: '淨土宗',
-    image: '/lectures/02-040.jpg',
-  },
-];
-
 function LectureHallComponent() {
+  const { t } = useApp();
+  const search = Route.useSearch();
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTabKey, setActiveTabKey] = useState(search.tab || 'other');
 
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
+  const categoriesQuery = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryService.getAllCategories({ parentId: 13 }),
+  });
+
+  const myCoursesQuery = useQuery({
+    queryKey: ['current-courses', selectedCategory],
+    queryFn: () =>
+      courseService.getMyCourses({
+        categoryId: selectedCategory ?? undefined,
+        status: 'PUBLIC',
+      }),
+  });
+
+  const notEnrolledCoursesQuery = useQuery({
+    queryKey: ['courses', selectedCategory],
+    queryFn: () =>
+      courseService.getNotEnrolledCourses({
+        categoryId: selectedCategory ?? undefined,
+        status: 'PUBLIC',
+      }),
+  });
+
+  const pendingCoursesQuery = useQuery({
+    queryKey: ['pending-courses', selectedCategory],
+    queryFn: () =>
+      courseService.getPendingCourses({
+        categoryId: selectedCategory ?? undefined,
+        status: 'PUBLIC',
+        requireApproval: true,
+      }),
+  });
+
+  const handleCategoryClick = (categoryId: number | null) => {
+    setSelectedCategory(categoryId);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => setIsLoading(false), 1000); // Simulate API call
   };
 
-  const handleCourseClick = (courseId: string) => {
-    navigate({ to: '/d/lecture-hall/course/$courseId', params: { courseId } });
-  };
+  const handleTabChange = (key: string) => {
+    setActiveTabKey(key);
+    navigate({ to: '/d/lecture-hall', search: { tab: key } });
 
-  const renderCourseCard = (course: any, isCurrent: boolean = false) => (
-    <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-      <Card
-        key={course.id}
-        className="course-card"
-        onClick={() => handleCourseClick(course.id)}
-        cover={
-          <div className="course-thumbnail">
-            <img src={course.image} alt={course.title} />
-            {isCurrent && (
-              <div className="progress-bar">
-                <div
-                  className="progress-fill"
-                  style={{ width: `${course.progress}%` }}
-                />
-              </div>
-            )}
-          </div>
-        }
-      >
-        <Card.Meta
-          title={course.title}
-          description={
-            <div className="course-info">
-              {isCurrent && (
-                <>
-                  <div className="progress-text">
-                    {course.progress}% Complete
-                  </div>
-                  <div className="last-lesson">
-                    <IoTimeOutline /> Last: {course.lastLesson}
-                  </div>
-                </>
-              )}
-              <Tag className="course-category">{course.category}</Tag>
-            </div>
-          }
-        />
-      </Card>
-    </Col>
-  );
-
-  const renderCourses = (courses: any[], isCurrent: boolean = false) => {
-    if (isLoading) {
-      return Array(4)
-        .fill(0)
-        .map((_, index) => (
-          <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
-            <Skeleton active className="course-card" />
-          </Col>
-        ));
+    // Refetch data when switching to My Courses tab
+    if (key === 'current') {
+      myCoursesQuery.refetch();
     }
+  };
 
-    if (courses.length === 0) {
+  const renderEmpty = (type: ECourseType) => {
+    switch (type) {
+      case ECourseType.AVAILABLE:
+        return (
+          <NoCoursesFound
+            message={t('No Available Courses')}
+            description={''}
+          />
+        );
+      case ECourseType.MY:
+        return (
+          <NoCoursesFound
+            message={t('No Enrolled Courses')}
+            description={t(
+              'Explore more courses to find something interesting',
+            )}
+          />
+        );
+      case ECourseType.PENDING:
+        return (
+          <NoCoursesFound message={t('No Pending Approval')} description={''} />
+        );
+    }
+  };
+
+  const renderCourses = (type: ECourseType) => {
+    if (isLoading) {
       return (
-        <Col span={24}>
-          <Empty description="No courses found" className="empty-state" />
-        </Col>
+        <Row gutter={[24, 24]}>
+          {Array(6)
+            .fill(0)
+            .map((_, index) => (
+              <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
+                <Skeleton active className="course-card" />
+              </Col>
+            ))}
+        </Row>
       );
     }
 
-    return courses.map((course) => renderCourseCard(course, isCurrent));
+    let items: any[] = [];
+    switch (type) {
+      case ECourseType.AVAILABLE:
+        items = notEnrolledCoursesQuery.data?.data.items || [];
+        break;
+      case ECourseType.MY:
+        items = myCoursesQuery.data?.data.items || [];
+        break;
+      case ECourseType.PENDING:
+        items = pendingCoursesQuery.data?.data.items || [];
+        break;
+    }
+    if (!items.length) {
+      return (
+        <Row>
+          <Col span={24}>{renderEmpty(type)}</Col>
+        </Row>
+      );
+    }
+    return (
+      <Row gutter={[24, 24]}>
+        {items.map((course: any) => {
+          if (type === ECourseType.MY) {
+            return (
+              <Col key={course.course.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                <CurrentCourseCard course={course} routePrefix="d" />
+              </Col>
+            );
+          } else if (type === ECourseType.PENDING) {
+            return (
+              <Col key={course.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                <PendingCourseCard
+                  course={course}
+                  routePrefix="d"
+                  onEnrollSuccess={(_, status) => {
+                    if (status === 'other') {
+                      handleTabChange('other');
+                      notEnrolledCoursesQuery.refetch();
+                    } else {
+                      // Re-enroll: just refetch, don't switch tab
+                      pendingCoursesQuery.refetch();
+                      notEnrolledCoursesQuery.refetch();
+                    }
+                  }}
+                />
+              </Col>
+            );
+          } else {
+            return (
+              <Col key={course.id} xs={24} sm={12} md={8} lg={6} xl={6}>
+                <OtherCourseCard
+                  course={course}
+                  routePrefix="d"
+                  onEnrollSuccess={(_, status) => {
+                    if (status === 'current') {
+                      handleTabChange('current');
+                      myCoursesQuery.refetch();
+                      notEnrolledCoursesQuery.refetch();
+                    } else if (status === 'pending') {
+                      handleTabChange('pending');
+                      pendingCoursesQuery.refetch();
+                      notEnrolledCoursesQuery.refetch();
+                    }
+                  }}
+                />
+              </Col>
+            );
+          }
+        })}
+      </Row>
+    );
   };
 
   return (
     <div className="lecture-hall">
-      <ScreenHeader title="Lecture Hall" />
+      <PageHeader title={t('Lecture Hall')} />
 
-      <div className="categories-section">
-        <div className="categories-container">
-          {categories.map((category) => (
+      <div className="categories-section" style={{ marginBottom: 32 }}>
+        <div
+          className="categories-container"
+          style={{ gap: 16, flexWrap: 'wrap' }}
+        >
+          <Tag
+            className="category-tag"
+            onClick={() => handleCategoryClick(null)}
+            style={{
+              fontSize: 18,
+              padding: '8px 24px',
+              marginBottom: 8,
+              cursor: 'pointer',
+              background: selectedCategory === null ? '#a15318' : '#f5f5f5',
+              color: selectedCategory === null ? '#fff' : '#a15318',
+              border: 'none',
+              fontWeight: selectedCategory === null ? 600 : 400,
+              transition: 'all 0.2s',
+            }}
+          >
+            {t('All')}
+          </Tag>
+          {categoriesQuery.data?.data?.items.map((category: any) => (
             <Tag
-              key={category}
-              className={`category-tag ${
-                selectedCategory === category ? 'active' : ''
-              }`}
-              onClick={() => handleCategoryClick(category)}
+              style={{
+                fontSize: 18,
+                padding: '8px 24px',
+                marginBottom: 8,
+                cursor: 'pointer',
+                background:
+                  selectedCategory === category.id ? '#a15318' : '#f5f5f5',
+                color: selectedCategory === category.id ? '#fff' : '#a15318',
+                border: 'none',
+                fontWeight: selectedCategory === category.id ? 600 : 400,
+                transition: 'all 0.2s',
+              }}
+              key={category.id}
+              className="category-tag"
+              onClick={() => handleCategoryClick(category.id)}
             >
-              {category}
+              {category.name}
             </Tag>
           ))}
         </div>
       </div>
 
       <Tabs
-        defaultActiveKey="current"
+        activeKey={activeTabKey as string}
+        onChange={handleTabChange}
         items={[
           {
-            key: 'current',
-            label: 'Current Courses',
+            key: 'other',
+            label: t('Available Courses'),
             children: (
               <div className="courses-section">
-                <Row gutter={[16, 16]}>
-                  {renderCourses(currentCourses, true)}
-                </Row>
-                <div className="watch-more-container">
-                  <Button type="link" className="watch-more-btn">
-                    Watch More <IoChevronForward />
-                  </Button>
-                </div>
+                {renderCourses(ECourseType.AVAILABLE)}
               </div>
             ),
           },
           {
-            key: 'other',
-            label: 'Other Courses',
+            key: 'current',
+            label: t('My Courses'),
             children: (
               <div className="courses-section">
-                <Row gutter={[16, 16]}>{renderCourses(otherCourses)}</Row>
-                <div className="watch-more-container">
-                  <Button type="link" className="watch-more-btn">
-                    Watch More <IoChevronForward />
-                  </Button>
-                </div>
+                {renderCourses(ECourseType.MY)}
+              </div>
+            ),
+          },
+          {
+            key: 'pending',
+            label: t('Pending Approval'),
+            children: (
+              <div className="courses-section">
+                {renderCourses(ECourseType.PENDING)}
               </div>
             ),
           },
@@ -189,3 +289,5 @@ function LectureHallComponent() {
     </div>
   );
 }
+
+export default LectureHallComponent;

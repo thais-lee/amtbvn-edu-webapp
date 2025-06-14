@@ -14,31 +14,31 @@ interface CategoryCard {
 
 const categories: CategoryCard[] = [
   {
-    id: 'lectures',
+    id: '/d/library/lectures',
     title: 'Bài Giảng',
     image: '/assets/images/bai-giang.png',
     path: '/lectures',
   },
   {
-    id: 'podcasts',
+    id: '/d/library/podcasts',
     title: 'Podcast',
     image: '/assets/images/podcasts.jpg',
     path: '/podcasts',
   },
+  // {
+  //   id: '/d/library/talks',
+  //   title: 'Khai Thị',
+  //   image: '/assets/images/khai-thi.jpg',
+  //   path: '/dharma',
+  // },
   {
-    id: 'dharma',
-    title: 'Khai Thị',
-    image: '/assets/images/khai-thi.jpg',
-    path: '/dharma',
-  },
-  {
-    id: 'gallery',
+    id: '/d/library/images',
     title: 'Tranh Ảnh',
     image: '/assets/images/tranh-anh.jpg',
     path: '/gallery',
   },
   {
-    id: 'books',
+    id: '/d/library/books',
     title: 'Kinh Sách Tịnh Tông',
     image: '/assets/images/kinh-sach-tinh-tong.jpg',
     path: '/books',
@@ -60,11 +60,7 @@ function DLibraryComponent() {
       <div className="library-content">
         <div className="category-grid">
           {categories.map((category) => (
-            <Link
-              key={category.id}
-              to={category.path}
-              className="category-link"
-            >
+            <Link key={category.id} to={category.id} className="category-link">
               <Card
                 className="category-card no-padding"
                 hoverable
