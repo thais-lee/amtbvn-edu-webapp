@@ -42,8 +42,8 @@ const SharedAppLayout: React.FC = () => {
         <Layout.Content
           className="main-content"
           css={css`
-            margin: ${isMobile ? 0 : token.margin}px;
-            padding: ${isMobile ? 0 : token.padding}px;
+            margin: ${isMobile ? 0 : 0}px;
+            padding: ${isMobile ? 0 : 0}px;
             background-color: ${token.colorBgContainer};
             border-radius: ${token.borderRadius}px;
             height: calc(100dvh - 64px - 2 * ${token.margin}px);

@@ -14,9 +14,6 @@ import { appRoute } from '../route';
 // Import layout cha (_app)
 
 const DesktopLayoutComponent: React.FC = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const showDrawer = () => setDrawerOpen(true);
-  const closeDrawer = () => setDrawerOpen(false);
   const [collapsed, setCollapsed] = useState(false);
 
   const { t, token } = useApp();
