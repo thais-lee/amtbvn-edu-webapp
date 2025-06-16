@@ -34,7 +34,6 @@ export const Route = createFileRoute('/_app/m/profile/')({
   component: ProfileComponent,
 });
 
-// Mock data - replace with actual data from your API
 const userData = {
   name: 'John Doe',
   email: 'john.doe@example.com',
@@ -51,12 +50,12 @@ const userData = {
 };
 
 function ProfileComponent() {
-  const { t } = useApp();
   const logout = useAuthStore((state) => state.logout);
   const setUser = useAuthStore((state) => state.setUser);
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-
+  const { antdApp } = useApp();
+  const { message } = antdApp;
   const handleEditProfile = () => {
     // TODO: Implement edit profile functionality
   };
@@ -76,6 +75,7 @@ function ProfileComponent() {
     },
     onError: (error) => {
       setUser(null);
+      message.error(error.message);
       navigate({
         to: '/auth/login',
       });
@@ -85,14 +85,6 @@ function ProfileComponent() {
   const handleLogout = useCallback(() => {
     logoutMutation.mutate();
   }, [logoutMutation]);
-
-  const handleLanguageChange = (value: string) => {
-    // TODO: Implement language change functionality
-  };
-
-  const handleNotificationToggle = (checked: boolean) => {
-    // TODO: Implement notification toggle functionality
-  };
 
   return (
     <div className="profile">
@@ -138,11 +130,7 @@ function ProfileComponent() {
                 <IoLanguageOutline />
                 <Text>Language</Text>
               </Space>
-              <Select
-                defaultValue="en"
-                style={{ width: 120 }}
-                onChange={handleLanguageChange}
-              >
+              <Select defaultValue="en" style={{ width: 120 }}>
                 <Option value="en">English</Option>
                 <Option value="zh">中文</Option>
                 <Option value="vi">Tiếng Việt</Option>
@@ -153,7 +141,7 @@ function ProfileComponent() {
                 <IoBookOutline />
                 <Text>Notifications</Text>
               </Space>
-              <Switch defaultChecked onChange={handleNotificationToggle} />
+              <Switch defaultChecked />
             </List.Item>
           </List>
         </Card>

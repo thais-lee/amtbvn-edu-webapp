@@ -4,11 +4,6 @@ import React, { Suspense } from 'react';
 
 import BottomNavBar from '@/shared/components/layouts/app/bottom-nav-bar';
 
-// Import nav bar
-import { appRoute } from '../route';
-
-// Import layout cha (_app)
-
 const { Content } = Layout;
 
 const MobileLayoutComponent: React.FC = () => {
@@ -22,10 +17,10 @@ const MobileLayoutComponent: React.FC = () => {
             </div>
           }
         >
-          <Outlet /> {/* Render các trang con trong thư mục m/ */}
+          <Outlet />
         </Suspense>
       </Content>
-      <BottomNavBar /> {/* Thanh điều hướng dưới */}
+      <BottomNavBar />
     </Layout>
   );
 };

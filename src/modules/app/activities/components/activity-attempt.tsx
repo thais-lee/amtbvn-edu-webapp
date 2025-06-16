@@ -4,13 +4,12 @@ import {
   Button,
   Card,
   Form,
-  Input,
   List,
   Radio,
   Space,
   Typography,
 } from 'antd';
-import { useState } from 'react';
+import TextArea from 'antd/es/input/TextArea';
 import { IoArrowBack } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
@@ -23,7 +22,6 @@ import {
 } from '../dto/activity.dto';
 
 const { Title, Text } = Typography;
-const { TextArea } = Input;
 
 function ActivityAttemptComponent({
   attempt,
@@ -43,7 +41,6 @@ function ActivityAttemptComponent({
   const [form] = Form.useForm();
 
   const handleSubmit = (values: Record<string, any>) => {
-    // Format answers according to question type
     const formattedAnswers: TSubmitAnswerDto[] = (
       attemptData?.data.activity.questions || []
     ).map((question) => {
@@ -110,7 +107,7 @@ function ActivityAttemptComponent({
                     <Card style={{ width: '100%' }}>
                       <Space direction="vertical" style={{ width: '100%' }}>
                         <Text strong>
-                          Câu {idx + 1}: {question.question}
+                          {t('Question')} {idx + 1}: {question.question}
                         </Text>
                         {question.type === 'MULTIPLE_CHOICE' &&
                           question.options && (

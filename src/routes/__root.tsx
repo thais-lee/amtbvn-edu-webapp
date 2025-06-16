@@ -39,7 +39,6 @@ function RootComponent() {
 
     const isMobile = screens.xs || !screens.md; // Mobile = xs, sm. Desktop = md+
     const currentPath = location.pathname;
-    const currentSearch = location.searchStr; // Lấy search params
     const currentHash = location.hash;
 
     console.log(

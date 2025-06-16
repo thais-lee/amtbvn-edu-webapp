@@ -17,7 +17,6 @@ import {
   Tabs,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
@@ -49,16 +48,15 @@ function RouteComponent() {
     undefined,
   );
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { antdApp } = useApp();
+  const { message } = antdApp;
   const navigate = useNavigate();
 
-  // Fetch parent categories (parentId = 22 for podcasts, adjust as needed)
   const parentCategoryQuery = useQuery({
     queryKey: ['categories-podcasts'],
     queryFn: () => categoryService.getAllCategories({ parentId: 22 }),
   });
 
-  // Fetch child categories for the selected parent
   const childCategoryQuery = useQuery({
     queryKey: ['categories-podcasts', activeTab],
     enabled: !!activeTab,
@@ -68,13 +66,11 @@ function RouteComponent() {
     },
   });
 
-  // Determine if the active parent has children
   const hasChildren =
     childCategoryQuery.data &&
     childCategoryQuery.data.length > 0 &&
     !!activeTab;
 
-  // Fetch library materials for the selected (child or parent) category
   const { data: libraryMaterials, isLoading: isMaterialsLoading } = useQuery({
     queryKey: [
       'library-materials-podcasts',
@@ -105,7 +101,7 @@ function RouteComponent() {
       }
     },
     onError: () => {
-      messageApi.error(t('An error occurred'));
+      message.error(t('An error occurred'));
     },
   });
 
@@ -122,7 +118,6 @@ function RouteComponent() {
     }
   }, [activeChildTab]);
 
-  // Build parent tabs, showing child categories if present
   const parentTabs = useMemo(() => {
     if (!parentCategoryQuery.data?.data?.items) return [];
     return parentCategoryQuery.data.data.items.map((item) => {
@@ -135,7 +130,6 @@ function RouteComponent() {
         key: item.id.toString(),
         children: hasChildren ? (
           <LibraryMaterialChildTab
-            parentId={item.id}
             activeChildTab={activeChildTab}
             setActiveChildTab={setActiveChildTab}
             childCategories={childCategoryQuery.data || []}
@@ -336,7 +330,6 @@ function RouteComponent() {
           )}
         </Modal>
       </ConfigProvider>
-      {contextHolder}
     </div>
   );
 }

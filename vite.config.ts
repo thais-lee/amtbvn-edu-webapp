@@ -11,6 +11,9 @@ export default defineConfig({
     }),
     TanStackRouterVite(),
     VitePWA({
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {

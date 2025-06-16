@@ -3,14 +3,12 @@ import { Tag } from 'antd';
 import { TCategory } from '../../categories/category.model';
 
 interface LibraryMaterialChildTabProps {
-  parentId: number;
   activeChildTab?: number;
   setActiveChildTab: (id: number) => void;
   childCategories: TCategory[];
 }
 
 export default function LibraryMaterialChildTab({
-  parentId,
   activeChildTab,
   setActiveChildTab,
   childCategories,

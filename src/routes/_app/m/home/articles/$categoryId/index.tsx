@@ -44,11 +44,11 @@ function CategoryArticleListPage() {
     });
   };
 
-  const {
-    data: articlesData,
-    isLoading: isArticlesLoading,
-    isError: isArticlesError,
-  } = useQuery<TPaginated<TArticle>, Error, TPaginated<TArticle>>({
+  const { data: articlesData, isLoading: isArticlesLoading } = useQuery<
+    TPaginated<TArticle>,
+    Error,
+    TPaginated<TArticle>
+  >({
     queryKey: ['articles', categoryId],
     queryFn: async () => {
       const response = await articleService.getArticles({

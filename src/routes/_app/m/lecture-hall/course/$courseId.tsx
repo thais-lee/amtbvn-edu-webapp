@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Card, Progress, Space, Tabs, Tag, Typography } from 'antd';
-import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+import { Card, Progress, Space, Tabs, Typography } from 'antd';
+import { IoArrowBack } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 import ActivityList from '@/modules/app/activities/components/activity-list';
-import { TActivityDetailDto } from '@/modules/app/activities/dto/activity.dto';
 import courseService from '@/modules/app/courses/course.service';
 import LessonList from '@/modules/app/lessons/components/lesson-list';
 

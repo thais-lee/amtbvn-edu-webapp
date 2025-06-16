@@ -1,10 +1,4 @@
-// src/routes/_app/m/home/articles/$categoryId/$articleId.tsx
-import Icon, {
-  EyeOutlined,
-  LeftOutlined,
-  LikeOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import Icon, { LeftOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, FloatButton, Space, Spin, Typography } from 'antd';
@@ -18,8 +12,6 @@ import articleService from '@/modules/app/articles/article.service';
 import NoArticlesFound from '@/modules/app/articles/components/no-article-found';
 import { TCategory } from '@/modules/app/categories/category.model';
 import categoryService from '@/modules/app/categories/category.service';
-
-// Import categoryService to get category name
 
 const { Title, Text } = Typography;
 
@@ -36,7 +28,6 @@ function ArticleDetailComponent() {
   };
   const navigate = useNavigate();
 
-  // Fetch article details
   const {
     data: articleData,
     isLoading: isArticleLoading,
@@ -45,26 +36,19 @@ function ArticleDetailComponent() {
   } = useQuery<TArticle, Error, TArticle>({
     queryKey: ['article', articleId],
     queryFn: async () => {
-      // Assuming articleService.getArticleById exists and returns TArticle
       const response = await articleService.getArticleById(parseInt(articleId));
       return response.data;
     },
     enabled: !!articleId,
   });
 
-  // Fetch category details to get the category name for display
-  const {
-    data: categoryData,
-    isLoading: isCategoryLoading,
-    isError: isCategoryError,
-  } = useQuery<any, Error, TCategory>({
-    // Use any here as getManyCategories returns TPaginated<TCategory>
+  const { data: categoryData } = useQuery<any, Error, TCategory>({
     queryKey: ['category', categoryId],
     queryFn: async () => {
       const response = await categoryService.getOne(parseInt(categoryId));
       return response.data;
     },
-    enabled: !!categoryId && !isArticleLoading, // Only fetch category if article is loading (to show title) or article data is available
+    enabled: !!categoryId && !isArticleLoading,
   });
 
   const likeMutation = useMutation({
@@ -105,7 +89,6 @@ function ArticleDetailComponent() {
           backgroundColor: '#fff',
         }}
       >
-        {/* Title and image are now within the content area */}
         <Title
           level={4}
           style={{
@@ -139,7 +122,6 @@ function ArticleDetailComponent() {
             flexDirection: 'row',
             alignItems: 'center',
             padding: '4px 0px 16px 0px',
-            // backgroundColor: '#f8f5ef',
           }}
         >
           <Text
@@ -147,7 +129,6 @@ function ArticleDetailComponent() {
             style={{ display: 'block', fontSize: 14, color: '#a87332' }}
           >
             {(categoryData?.name || articleData.categoryId) + ' | '}{' '}
-            {/* Display category name or ID as fallback */}
             {dayjs(articleData.createdAt).format('DD/MM/YYYY')}
           </Text>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
@@ -189,10 +170,7 @@ function ArticleDetailComponent() {
           </div>
         </div>
 
-        <div
-          // style={{ width: '100%', height: '100%', fontSize: 100 }}
-          className="quill-content-container"
-        >
+        <div className="quill-content-container">
           <ReactQuill
             value={articleData.content}
             readOnly={true}

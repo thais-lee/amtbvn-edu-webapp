@@ -1,6 +1,5 @@
 import httpService from '@/shared/http-service';
 
-import { TActivity } from './activity.model';
 import {
   TActivityAttemptDto,
   TActivityAttemptResultDto,

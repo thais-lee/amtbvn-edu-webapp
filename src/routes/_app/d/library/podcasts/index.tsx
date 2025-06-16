@@ -2,16 +2,19 @@ import {
   ArrowLeftOutlined,
   CloseOutlined,
   DownloadOutlined,
-  FileOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Button,
+  Card,
+  Col,
   ConfigProvider,
   Empty,
   List,
   Modal,
+  Row,
   Skeleton,
   Space,
   Spin,
@@ -26,39 +29,22 @@ import useApp from '@/hooks/use-app';
 import categoryService from '@/modules/app/categories/category.service';
 import LibraryChildTabDesktop from '@/modules/app/library-materials/components/library-child-tab-desktop';
 import libraryMaterialService from '@/modules/app/library-materials/library-material.service';
-import { PageHeader } from '@/shared/components/layouts/app/page-header';
 
-import '../styles.css';
-
-export const Route = createFileRoute('/_app/d/library/books/')({
-  component: RouteComponent,
-});
-
-const { Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const tabTheme = {
-  components: {
-    Tabs: {
-      inkBarColor: '#8B4513',
-      itemSelectedColor: '#8B4513',
-      itemColor: '#666',
-      horizontalItemGutter: 16,
-      horizontalMargin: '0 0 0 0',
-      horizontalItemPadding: '8px 0',
-      cardPadding: '0',
-    },
+  Tabs: {
+    inkBarColor: '#8B4513',
+    itemSelectedColor: '#8B4513',
+    itemColor: '#666',
   },
 };
 
-function formatFileSize(size: number) {
-  if (!size) return '';
-  if (size < 1024) return size + ' B';
-  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + ' KB';
-  if (size < 1024 * 1024 * 1024) return (size / 1024 / 1024).toFixed(1) + ' MB';
-  return (size / 1024 / 1024 / 1024).toFixed(1) + ' GB';
-}
+export const Route = createFileRoute('/_app/d/library/podcasts/')({
+  component: PodcastsDesktopPage,
+});
 
-function RouteComponent() {
+function PodcastsDesktopPage() {
   const navigate = useNavigate();
   const { t } = useApp();
   const [activeTab, setActiveTab] = useState<number | undefined>(undefined);
@@ -69,38 +55,39 @@ function RouteComponent() {
   const { antdApp } = useApp();
   const { message } = antdApp;
 
-  // Fetch parent categories (parentId = 19 for books)
+  // Fetch parent categories (parentId = 22 for podcasts)
   const parentCategoryQuery = useQuery({
-    queryKey: ['categories-books'],
-    queryFn: () =>
-      categoryService.getAllCategories({
-        parentId: 19,
-      }),
+    queryKey: ['categories-podcasts'],
+    queryFn: () => categoryService.getAllCategories({ parentId: 22 }),
   });
 
   // Fetch child categories for the selected parent
   const childCategoryQuery = useQuery({
-    queryKey: ['categories-books', activeTab],
+    queryKey: ['categories-podcasts', activeTab],
     enabled: !!activeTab,
-    queryFn: () =>
-      categoryService.getAllCategories({
-        parentId: activeTab!,
-      }),
+    queryFn: () => categoryService.getAllCategories({ parentId: activeTab! }),
     select(data) {
       return data.data.items;
     },
   });
 
-  // Fetch library materials for the selected child category
+  // Fetch podcasts (library materials) for the selected category
+  const hasChildren =
+    childCategoryQuery.data &&
+    childCategoryQuery.data.length > 0 &&
+    !!activeTab;
   const { data: libraryMaterials, isLoading: isMaterialsLoading } = useQuery({
-    queryKey: ['library-materials-books', activeChildTab],
+    queryKey: [
+      'library-materials-podcasts',
+      hasChildren ? activeChildTab : activeTab,
+    ],
     queryFn: () =>
       libraryMaterialService.getAllLibraryMaterials({
-        categoryId: activeChildTab,
+        categoryId: hasChildren ? activeChildTab : activeTab,
         take: 20,
         skip: 0,
       }),
-    enabled: !!activeChildTab,
+    enabled: !!(hasChildren ? activeChildTab : activeTab),
   });
 
   const downloadMutation = useMutation({
@@ -161,11 +148,10 @@ function RouteComponent() {
           Quay lại
         </Button>
       </div>
-      <PageHeader
-        title={t('Kinh Sách')}
-        subtitle="Kho sách kinh điển, sách tham khảo, sách học Phật"
-      />
-      <ConfigProvider theme={tabTheme}>
+      <Title level={2} style={{ marginBottom: 24 }}>
+        Podcasts
+      </Title>
+      <ConfigProvider theme={{ components: tabTheme }}>
         <div className="">
           {parentCategoryQuery.isLoading ? (
             <Spin />
@@ -206,7 +192,7 @@ function RouteComponent() {
                     }}
                   >
                     <div style={{ marginRight: 20 }}>
-                      <FileOutlined
+                      <PlayCircleOutlined
                         style={{ fontSize: 44, color: '#a15318' }}
                       />
                     </div>
@@ -226,7 +212,7 @@ function RouteComponent() {
                       >
                         {item.description}
                       </Paragraph>
-                      <Space>
+                      <Space style={{ marginTop: 8, marginBottom: 0 }} wrap>
                         {item.tags?.map((tag: string) => (
                           <Tag
                             key={tag}
@@ -244,108 +230,105 @@ function RouteComponent() {
                           ? dayjs(item.createdAt).format('DD/MM/YYYY')
                           : ''}
                       </div>
+                      <audio
+                        src={item.files?.[0]?.storagePath}
+                        controls
+                        style={{ width: '100%', marginTop: 12 }}
+                      />
                     </div>
-                    <FileOutlined
-                      style={{ fontSize: 32, color: '#a15318', marginLeft: 12 }}
-                    />
                   </List.Item>
                 )}
               />
             )}
           </div>
-        </div>
-        <Modal
-          open={!!selectedItem}
-          onCancel={() => setSelectedItem(null)}
-          footer={null}
-          centered
-          styles={{ body: { padding: 0 } }}
-          width={480}
-          style={{ top: 0, maxWidth: 480 }}
-          closeIcon={
-            <button
-              style={{
-                background: '#fff',
-                border: 'none',
-                borderRadius: '50%',
-                width: 40,
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-                position: 'absolute',
-                top: 12,
-                right: 12,
-                zIndex: 10,
-                cursor: 'pointer',
-              }}
-              aria-label="Close"
-            >
-              <CloseOutlined style={{ fontSize: 22, color: '#a15318' }} />
-            </button>
-          }
-        >
-          {selectedItem && (
-            <div>
-              <div style={{ padding: 24 }}>
-                <Space style={{ marginBottom: 12 }}>
-                  {selectedItem.tags?.map((tag: string) => (
-                    <Tag
-                      key={tag}
-                      color="gold"
-                      style={{ borderRadius: 8, fontSize: 12 }}
-                    >
-                      {tag}
-                    </Tag>
-                  ))}
-                </Space>
-                <div style={{ color: '#aaa', fontSize: 12, marginBottom: 4 }}>
-                  {selectedItem.createdAt
-                    ? dayjs(selectedItem.createdAt).format('DD/MM/YYYY')
-                    : ''}
-                </div>
-                <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>
-                  {selectedItem.title}
-                </div>
-                <Paragraph
-                  style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
-                >
-                  {selectedItem.description}
-                </Paragraph>
-                {selectedItem.files?.[0] && (
-                  <div style={{ marginTop: 12 }}>
-                    <div style={{ fontWeight: 500, marginBottom: 4 }}>
-                      {selectedItem.files[0].fileName}
-                    </div>
-                    <a
-                      onClick={(e) => {
-                        e.preventDefault();
-                        downloadMutation.mutate({
-                          materialId: selectedItem.id,
-                          fileId: selectedItem.files[0].id,
-                        });
-                      }}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        color: '#a15318',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <DownloadOutlined style={{ marginRight: 6 }} />
-                      {t('Download')}
-                      {selectedItem.files[0].size
-                        ? `(${formatFileSize(selectedItem.files[0].size)})`
-                        : ''}
-                    </a>
+          <Modal
+            open={!!selectedItem}
+            onCancel={() => setSelectedItem(null)}
+            footer={null}
+            centered
+            styles={{ body: { padding: 0 } }}
+            width={480}
+            style={{ top: 0, maxWidth: 480 }}
+            closeIcon={
+              <button
+                style={{
+                  background: '#fff',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 40,
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                  position: 'absolute',
+                  top: 12,
+                  right: 12,
+                  zIndex: 10,
+                  cursor: 'pointer',
+                }}
+                aria-label="Close"
+              >
+                <CloseOutlined style={{ fontSize: 22, color: '#a15318' }} />
+              </button>
+            }
+          >
+            {selectedItem && (
+              <div>
+                <div style={{ padding: 24 }}>
+                  <Space style={{ marginBottom: 12 }}>
+                    {selectedItem.tags?.map((tag: string) => (
+                      <Tag
+                        key={tag}
+                        color="gold"
+                        style={{ borderRadius: 8, fontSize: 12 }}
+                      >
+                        {tag}
+                      </Tag>
+                    ))}
+                  </Space>
+                  <div style={{ color: '#aaa', fontSize: 12, marginBottom: 4 }}>
+                    {selectedItem.createdAt
+                      ? dayjs(selectedItem.createdAt).format('DD/MM/YYYY')
+                      : ''}
                   </div>
-                )}
+                  <div
+                    style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}
+                  >
+                    {selectedItem.title}
+                  </div>
+                  <Paragraph
+                    style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
+                  >
+                    {selectedItem.description}
+                  </Paragraph>
+                  {selectedItem.files?.[0] && (
+                    <div style={{ marginTop: 12 }}>
+                      <audio
+                        src={selectedItem.files[0].storagePath}
+                        controls
+                        style={{ width: '100%' }}
+                      />
+                      <Button
+                        type="primary"
+                        icon={<DownloadOutlined />}
+                        onClick={() =>
+                          downloadMutation.mutate({
+                            materialId: selectedItem.id,
+                            fileId: selectedItem.files[0].id,
+                          })
+                        }
+                        style={{ marginTop: 12 }}
+                      >
+                        {t('Download')}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </Modal>
+            )}
+          </Modal>
+        </div>
       </ConfigProvider>
     </div>
   );

@@ -19,11 +19,10 @@ const SharedAppLayout: React.FC = () => {
   const router = useRouter();
 
   const authQuery = useAuth();
-  const { token, antdApp } = useApp();
+  const { token } = useApp();
   const { isMobile } = useDeviceSize();
 
   const user = useAuthStore((state) => state.user);
-  const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     if (authQuery.isError) {
@@ -78,5 +77,4 @@ export const Route = createFileRoute('/_app')({
   },
 });
 
-// Export để các route con tham chiếu
 export const appRoute = Route;

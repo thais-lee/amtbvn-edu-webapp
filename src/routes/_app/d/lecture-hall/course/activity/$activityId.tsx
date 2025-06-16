@@ -18,11 +18,7 @@ import useApp from '@/hooks/use-app';
 import activityService from '@/modules/app/activities/activity.service';
 import ActivityAttemptComponent from '@/modules/app/activities/components/activity-attempt';
 import ActivityResultComponent from '@/modules/app/activities/components/activity-result';
-import {
-  EActivityStatus,
-  EActivityType,
-  TActivityDetailDto,
-} from '@/modules/app/activities/dto/activity.dto';
+import { EActivityStatus } from '@/modules/app/activities/dto/activity.dto';
 
 const { Title, Text, Paragraph } = Typography;
 

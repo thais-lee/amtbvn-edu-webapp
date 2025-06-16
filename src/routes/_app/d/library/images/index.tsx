@@ -2,7 +2,6 @@ import {
   ArrowLeftOutlined,
   CloseOutlined,
   DownloadOutlined,
-  FileImageOutlined,
 } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -19,7 +18,6 @@ import {
   Tabs,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
@@ -60,7 +58,8 @@ function RouteComponent() {
     undefined,
   );
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { antdApp } = useApp();
+  const { message } = antdApp;
 
   // Fetch parent categories (parentId = 21 for images)
   const parentCategoryQuery = useQuery({
@@ -115,7 +114,7 @@ function RouteComponent() {
       }
     },
     onError: () => {
-      messageApi.error(t('An error occurred'));
+      message.error(t('An error occurred'));
     },
   });
 
@@ -335,7 +334,6 @@ function RouteComponent() {
           )}
         </Modal>
       </ConfigProvider>
-      {contextHolder}
     </div>
   );
 }

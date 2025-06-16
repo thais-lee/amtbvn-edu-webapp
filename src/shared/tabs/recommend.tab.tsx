@@ -2,7 +2,6 @@ import { RightOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, Carousel, List, Typography } from 'antd';
-import Title from 'antd/es/skeleton/Title';
 import dayjs from 'dayjs';
 
 import useApp from '@/hooks/use-app';
@@ -79,7 +78,6 @@ const RecommendTab = () => {
         </Carousel>
       </div>
 
-      {/* Pinned Articles Section */}
       <div style={{ backgroundColor: 'white', borderRadius: 10, padding: 10 }}>
         <SectionTitle title={t('Thông báo')} />
         <List
@@ -109,7 +107,6 @@ const RecommendTab = () => {
         />
       </div>
 
-      {/* Subject Articles Section */}
       <div className="section-container">
         <div className="section-header">
           <Title level={4} className="section-title">
@@ -147,7 +144,6 @@ const RecommendTab = () => {
         </div>
       </div>
 
-      {/* Recent Articles Section */}
       <div style={{ backgroundColor: 'white', borderRadius: 10, padding: 10 }}>
         <SectionTitle title="Bài viết mới nhất" />
         <List

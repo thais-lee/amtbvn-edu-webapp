@@ -1,7 +1,7 @@
 import { BookOutlined, UserOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, Card, Space, Tag, Typography, message } from 'antd';
+import { Button, Card, Space, Tag, Typography } from 'antd';
 import { useState } from 'react';
 
 import useApp from '@/hooks/use-app';
@@ -24,8 +24,9 @@ export default function OtherCourseCard({
   routePrefix = 'm',
 }: TProps) {
   const navigate = useNavigate();
+  const { antdApp } = useApp();
   const { t } = useApp();
-  const [isEnrolling, setIsEnrolling] = useState(false);
+  const { message } = antdApp;
   const [isEnrolled, setIsEnrolled] = useState(false);
 
   const handleCourseClick = (courseId: number) => {
@@ -106,7 +107,7 @@ export default function OtherCourseCard({
 
       {isEnrolled ? (
         <Button type="default" disabled block>
-          Enrolled - Pending Approval
+          {t('Enrolled')} - {t('Pending Approval')}
         </Button>
       ) : (
         <Button

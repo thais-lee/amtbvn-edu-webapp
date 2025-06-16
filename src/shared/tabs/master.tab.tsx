@@ -37,7 +37,7 @@ const tabContent = [
   },
 ];
 
-const MasterContent = (input: MasterContentProps) => {
+const MasterContent = (_: MasterContentProps) => {
   const navigate = useNavigate();
   return (
     <div>

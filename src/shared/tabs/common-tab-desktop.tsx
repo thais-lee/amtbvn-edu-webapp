@@ -19,7 +19,6 @@ export interface CommonTabDesktopProps {
 }
 
 function CommonTabDesktop({
-  categoryId,
   title,
   articles,
   onArticleClick,

@@ -10,7 +10,6 @@ import {
   Space,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -41,7 +40,8 @@ function ActivityDetailComponent() {
   const navigate = useNavigate();
   const [attempt, setAttempt] = useState<TActivityAttemptDto | null>(null);
   const [result, setResult] = useState<TActivityAttemptDto | null>(null);
-  const { t } = useApp();
+  const { antdApp } = useApp();
+  const { message } = antdApp;
   const [reviewAttempt, setReviewAttempt] =
     useState<TActivityAttemptDto | null>(null);
   const [isReviewVisible, setIsReviewVisible] = useState(false);
@@ -49,7 +49,6 @@ function ActivityDetailComponent() {
   const {
     data: activity,
     isLoading,
-    error,
     refetch,
   } = useQuery({
     queryKey: ['activity', activityId],
@@ -81,25 +80,13 @@ function ActivityDetailComponent() {
         return 'default';
     }
   };
-  const getActivityStatusColor = (status: EActivityStatus) => {
-    switch (status) {
-      case EActivityStatus.PUBLISHED:
-        return 'success';
-      case EActivityStatus.DRAFT:
-        return 'default';
-      case EActivityStatus.ARCHIVED:
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
 
   const handleStart = async () => {
     try {
       const attempt = await activityService.startAttempt(+activityId);
       setAttempt(attempt.data);
       refetch();
-    } catch (e) {
+    } catch (_) {
       message.error('Không thể bắt đầu làm bài.');
     }
   };
@@ -240,7 +227,6 @@ function ActivityDetailComponent() {
                 </Descriptions.Item>
               )}
             </Descriptions>
-            {/* Attempt History */}
             {attempts.length > 0 && (
               <>
                 <Divider orientation="left">Lịch sử làm bài</Divider>
@@ -281,7 +267,6 @@ function ActivityDetailComponent() {
                 />
               </>
             )}
-            {/* Action Buttons */}
             <div style={{ marginTop: 24 }}>
               {activity?.type === EActivityType.QUIZ &&
                 activity?.status === EActivityStatus.PUBLISHED && (

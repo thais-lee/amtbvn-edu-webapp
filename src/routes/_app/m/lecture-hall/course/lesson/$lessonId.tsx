@@ -4,13 +4,11 @@ import {
   Button,
   Card,
   Collapse,
-  Divider,
   List,
   Skeleton,
   Space,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import {
   IoArrowBack,
@@ -31,7 +29,6 @@ import { EActivityType } from '@/modules/app/activities/dto/activity.dto';
 import { TAttachmentDto } from '@/modules/app/attachments/dto/attachment.dto';
 import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
 import lessonService from '@/modules/app/lessons/lesson.service';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
@@ -69,7 +66,6 @@ function LessonDetailComponent() {
     (a: TAttachmentDto) => a.type === 'VIDEO',
   );
 
-  // Helper for attachment icon
   const getAttachmentIcon = (type: string) => {
     if (type === 'DOCUMENT') return <IoDocumentAttachOutline />;
     if (type === 'AUDIO') return <IoMusicalNotesOutline />;
@@ -77,7 +73,6 @@ function LessonDetailComponent() {
     return <IoDocumentTextOutline />;
   };
 
-  // Helper for activity type tag color
   const getActivityTypeColor = (type: TActivity['type']) => {
     switch (type) {
       case EActivityType.QUIZ:
@@ -95,7 +90,6 @@ function LessonDetailComponent() {
     }
   };
 
-  // Helper for activity status tag color
   const getActivityStatusColor = (status: TActivity['status']) => {
     switch (status) {
       case 'PUBLISHED':
@@ -210,7 +204,6 @@ function LessonDetailComponent() {
         </div>
       ) : null}
 
-      {/* Attachments Section */}
       {(documentAttachments.length > 0 || audioAttachments.length > 0) && (
         <Card className="lesson-attachments-card" style={{ marginTop: 24 }}>
           <Collapse defaultActiveKey={['1']}>
@@ -251,7 +244,6 @@ function LessonDetailComponent() {
           </Collapse>
         </Card>
       )}
-      {/* Activities Section */}
       {lesson.activities && lesson.activities.length > 0 && (
         <Card className="lesson-activities-card" style={{ marginTop: 24 }}>
           <Collapse defaultActiveKey={['1']}>
@@ -315,10 +307,7 @@ function LessonDetailComponent() {
           {t('Content')}
         </Title>
         <Paragraph className="lesson-content-text" style={{ fontSize: 16 }}>
-          <div
-            // style={{ width: '100%', height: '100%', fontSize: 100 }}
-            className="quill-content-container"
-          >
+          <div className="quill-content-container">
             <ReactQuill
               value={lesson.content}
               readOnly={true}
@@ -330,10 +319,9 @@ function LessonDetailComponent() {
             />
             <style>{`
             .quill-content-container .ql-editor {
-              font-size: 17px; /* Điều chỉnh font-size ở đây */
+              font-size: 17px;
               line-height: 1.6;
             }
-            /* Nếu muốn tiêu đề trong content cũng lớn hơn */
             .quill-content-container .ql-editor h1 {
               font-size: 2em;
             }

@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  createFileRoute,
-  useNavigate,
-  useSearch,
-} from '@tanstack/react-router';
-import { Col, ConfigProvider, Row, Skeleton, Tabs, Tag } from 'antd';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Col, Row, Skeleton, Tabs, Tag } from 'antd';
 import { useState } from 'react';
 
 import useApp from '@/hooks/use-app';
@@ -13,13 +9,8 @@ import CurrentCourseCard from '@/modules/app/courses/components/current-course-c
 import NoCoursesFound from '@/modules/app/courses/components/no-courses-found';
 import OtherCourseCard from '@/modules/app/courses/components/other-course-card';
 import PendingCourseCard from '@/modules/app/courses/components/pending-course-card';
-import {
-  TCourseEnrolled,
-  TCourseItem,
-} from '@/modules/app/courses/course.model';
 import courseService from '@/modules/app/courses/course.service';
 import { PageHeader } from '@/shared/components/layouts/app/page-header';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
@@ -77,14 +68,12 @@ function LectureHallComponent() {
   const handleCategoryClick = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000); // Simulate API call
+    setTimeout(() => setIsLoading(false), 1000);
   };
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key);
     navigate({ to: '/d/lecture-hall', search: { tab: key } });
-
-    // Refetch data when switching to My Courses tab
     if (key === 'current') {
       myCoursesQuery.refetch();
     }
@@ -169,7 +158,6 @@ function LectureHallComponent() {
                       handleTabChange('other');
                       notEnrolledCoursesQuery.refetch();
                     } else {
-                      // Re-enroll: just refetch, don't switch tab
                       pendingCoursesQuery.refetch();
                       notEnrolledCoursesQuery.refetch();
                     }

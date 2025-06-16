@@ -17,7 +17,6 @@ import {
   Tabs,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
@@ -42,10 +41,6 @@ const tabTheme = {
   },
 };
 
-function isAudio(file: any) {
-  return file?.mimeType?.startsWith('audio');
-}
-
 function isVideo(file: any) {
   return file?.mimeType?.startsWith('video');
 }
@@ -57,7 +52,8 @@ function RouteComponent() {
     undefined,
   );
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { antdApp } = useApp();
+  const { message } = antdApp;
   const navigate = useNavigate();
 
   // Fetch parent categories (parentId = 23 for talks, adjust as needed)
@@ -113,7 +109,7 @@ function RouteComponent() {
       }
     },
     onError: () => {
-      messageApi.error(t('An error occurred'));
+      message.error(t('An error occurred'));
     },
   });
 
@@ -143,7 +139,6 @@ function RouteComponent() {
         key: item.id.toString(),
         children: hasChildren ? (
           <LibraryMaterialChildTab
-            parentId={item.id}
             activeChildTab={activeChildTab}
             setActiveChildTab={setActiveChildTab}
             childCategories={childCategoryQuery.data || []}
@@ -200,7 +195,6 @@ function RouteComponent() {
               grid={{ gutter: 24, column: 1 }}
               dataSource={libraryMaterials?.data?.items || []}
               renderItem={(item) => {
-                const file = item.files?.[0];
                 return (
                   <List.Item
                     onClick={() => setSelectedItem(item)}
@@ -370,7 +364,6 @@ function RouteComponent() {
           )}
         </Modal>
       </ConfigProvider>
-      {contextHolder}
     </div>
   );
 }

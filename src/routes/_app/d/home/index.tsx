@@ -1,25 +1,20 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
-  Button,
   Card,
   Carousel,
   Col,
   ConfigProvider,
   List,
   Row,
-  Space,
   Tabs,
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import useApp from '@/hooks/use-app';
 import articleService from '@/modules/app/articles/article.service';
-import authService from '@/modules/auth/auth.service';
-import { useAuthStore } from '@/modules/auth/auth.zustand';
 import ArticleItemDesktop from '@/shared/components/article-item-desktop';
 import CommonTabDesktop from '@/shared/tabs/common-tab-desktop';
 import MasterTabDesktop from '@/shared/tabs/master-tab-desktop';
@@ -49,57 +44,12 @@ const sliderImages = [
   },
 ];
 
-// Mock data for demonstration
-const mockArticles = [
-  {
-    id: 1,
-    title: 'THÔNG BÁO BẢO TRÌ HỆ THỐNG',
-    date: '12/06/2025',
-    image: '/assets/images/slider/banner1.jpg',
-    summary: 'Thông báo bảo trì hệ thống...',
-  },
-  {
-    id: 2,
-    title: 'THÔNG BẠCH',
-    date: '23/05/2025',
-    image: '/assets/images/slider/banner2.jpg',
-    summary: 'Thông bạch mới nhất...',
-  },
-  {
-    id: 3,
-    title: 'Chủ đề 1',
-    image: '/assets/images/slider/banner3.jpg',
-    summary: 'Chủ đề nổi bật 1...',
-  },
-  {
-    id: 4,
-    title: 'Chủ đề 2',
-    image: '/assets/images/slider/banner1.jpg',
-    summary: 'Chủ đề nổi bật 2...',
-  },
-  {
-    id: 5,
-    title: 'Chủ đề 3',
-    image: '/assets/images/slider/banner2.jpg',
-    summary: 'Chủ đề nổi bật 3...',
-  },
-  {
-    id: 6,
-    title: 'Chủ đề 4',
-    image: '/assets/images/slider/banner3.jpg',
-    summary: 'Chủ đề nổi bật 4...',
-  },
-];
-
 export const Route = createFileRoute('/_app/d/home/')({
   component: DHomeComponent,
 });
 
 function DHomeComponent() {
-  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
-  const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState('recommended');
   const { t } = useApp();
 

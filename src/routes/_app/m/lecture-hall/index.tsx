@@ -75,7 +75,7 @@ function LectureHallComponent() {
 
   const handleTabChange = (key: string) => {
     setActiveTabKey(key);
-    
+
     // Refetch data when switching to My Courses tab
     if (key === 'current') {
       myCoursesQuery.refetch();
@@ -122,8 +122,8 @@ function LectureHallComponent() {
           notEnrolledCoursesQuery.data?.data.items?.length > 0
           ? notEnrolledCoursesQuery.data?.data.items?.map(
               (course: TCourseItem) => (
-                <OtherCourseCard 
-                  key={course.id} 
+                <OtherCourseCard
+                  key={course.id}
                   course={course}
                   onEnrollSuccess={(_, status) => {
                     if (status === 'current') {

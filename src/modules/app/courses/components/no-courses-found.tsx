@@ -1,8 +1,6 @@
 import { BookOutlined } from '@ant-design/icons';
 import { Empty, Typography } from 'antd';
 
-import useApp from '@/hooks/use-app';
-
 interface NoCoursesFoundProps {
   message?: string;
   description?: string;

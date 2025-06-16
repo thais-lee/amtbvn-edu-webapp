@@ -5,12 +5,12 @@ import {
   useNavigate,
   useParams,
 } from '@tanstack/react-router';
-import { Button, Card, List, Spin, Typography } from 'antd';
+import { Button, List, Spin, Typography } from 'antd';
 
 import articleService from '@/modules/app/articles/article.service';
 import ArticleItemDesktop from '@/shared/components/article-item-desktop';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title } = Typography;
 
 export const Route = createFileRoute('/_app/d/home/articles/$categoryId/')({
   component: RouteComponent,

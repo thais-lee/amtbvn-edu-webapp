@@ -14,19 +14,13 @@ import {
   message,
 } from 'antd';
 import dayjs from 'dayjs';
-import {
-  IoArrowBack,
-  IoBookOutline,
-  IoPlayOutline,
-  IoTimeOutline,
-} from 'react-icons/io5';
+import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
 
 import useApp from '@/hooks/use-app';
 import ActivityList from '@/modules/app/activities/components/activity-list';
 import courseService from '@/modules/app/courses/course.service';
 import enrollmentService from '@/modules/app/enrollments/enrollment.service';
 import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 

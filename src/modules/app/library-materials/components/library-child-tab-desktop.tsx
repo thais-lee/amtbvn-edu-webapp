@@ -10,7 +10,6 @@ interface LibraryChildTabDesktopProps {
 }
 
 export default function LibraryChildTabDesktop({
-  parentId,
   activeChildTab,
   setActiveChildTab,
   childCategories,

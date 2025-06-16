@@ -1,19 +1,14 @@
 // src/modules/app/courses/components/course-card.tsx
 import { BookOutlined, UserOutlined } from '@ant-design/icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
-// Import BookOutlined for lessons
-import { useNavigate } from '@tanstack/react-router';
-import { Button, Card, Space, Tag, Typography, message } from 'antd';
-// Import Button and message for notifications
+import { useMutation } from '@tanstack/react-query';
+import { Button, Card, Space, Tag, Typography } from 'antd';
 import { useState } from 'react';
 
-// Import useState for local state management
 import useApp from '@/hooks/use-app';
 import { EEnrollmentStatus } from '@/modules/app/enrollments/enrollment.model';
 import enrollmentService from '@/modules/app/enrollments/enrollment.service';
 
-// Assuming useApp provides t() for translation
-import { TCourseDetail, TCourseItem } from '../course.model';
+import { TCourseItem } from '../course.model';
 import './course-card.css';
 
 const { Title, Text } = Typography;
@@ -24,17 +19,10 @@ type TProps = {
   routePrefix?: 'm' | 'd';
 };
 
-export default function PendingCourseCard({
-  course,
-  onEnrollSuccess,
-  routePrefix = 'm',
-}: TProps) {
-  const navigate = useNavigate();
-  const { t } = useApp(); // Access translation function
-  const [isEnrolling, setIsEnrolling] = useState(false); // State to manage enrollment loading
+export default function PendingCourseCard({ course, onEnrollSuccess }: TProps) {
+  const { t, antdApp } = useApp(); // Access translation function
+  const { message } = antdApp;
   const [isEnrolled, setIsEnrolled] = useState(false); // State to track enrollment status
-
-  const handleCourseClick = (courseId: number) => {};
 
   const reEnrollMutation = useMutation({
     mutationFn: () => enrollmentService.reEnrollCourse(course.id),
@@ -111,7 +99,7 @@ export default function PendingCourseCard({
             type="primary"
             block
             onClick={handleEnrollClick}
-            loading={isEnrolling}
+            loading={reEnrollMutation.status === 'pending'}
           >
             {t('Enroll now')}
           </Button>
@@ -123,7 +111,6 @@ export default function PendingCourseCard({
     <Card
       className="course-card"
       hoverable
-      onClick={() => handleCourseClick(course.id)}
       cover={
         <img
           src={course.imageFileUrl ?? '/assets/images/alt-image.jpg'}

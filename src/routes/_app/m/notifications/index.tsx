@@ -38,24 +38,21 @@ function MNotificationsComponent() {
   const [notifications, setNotifications] = useState(initialNotifications);
   const [swipeId, setSwipeId] = useState<number | null>(null);
 
-  // Mark as read when clicking a notification
   const handleRead = (id: number) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, unread: false } : n)),
     );
   };
 
-  // Delete notification
   const handleDelete = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
     message.success('Đã xóa thông báo');
   };
 
-  // Simple swipe-to-delete logic for mobile
-  const handleTouchStart = (e: React.TouchEvent, id: number) => {
+  const handleTouchStart = (_: React.TouchEvent, id: number) => {
     setSwipeId(id);
   };
-  const handleTouchEnd = (e: React.TouchEvent, id: number) => {
+  const handleTouchEnd = (_: React.TouchEvent, __: number) => {
     setTimeout(() => setSwipeId(null), 500);
   };
 

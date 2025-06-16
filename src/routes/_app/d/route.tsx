@@ -1,8 +1,7 @@
-import { HomeOutlined, MenuOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Link, Outlet, createRoute } from '@tanstack/react-router';
-import { Button, Layout, Spin } from 'antd';
-import React, { Suspense, useState } from 'react';
+import { Outlet, createRoute } from '@tanstack/react-router';
+import { Layout } from 'antd';
+import React, { useState } from 'react';
 
 import useApp from '@/hooks/use-app';
 import MainSideNav from '@/shared/components/layouts/app/main-side-nav';
@@ -16,7 +15,7 @@ import { appRoute } from '../route';
 const DesktopLayoutComponent: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
-  const { t, token } = useApp();
+  const { token } = useApp();
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <MainSideNav collapsed={collapsed} setCollapsed={setCollapsed} />

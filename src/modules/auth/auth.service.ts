@@ -92,7 +92,7 @@ class AuthService {
 
       return true;
     } catch (error) {
-      return false;
+      return error;
     }
   }
 

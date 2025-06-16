@@ -1,12 +1,7 @@
 import httpService from '@/shared/http-service';
 import { TPaginated } from '@/shared/types/paginated.type';
 
-import {
-  TCourse,
-  TCourseDetail,
-  TCourseEnrolled,
-  TCourseItem,
-} from './course.model';
+import { TCourseDetail, TCourseEnrolled, TCourseItem } from './course.model';
 import { TGetManyCoursesInput } from './dto/get-many-course';
 
 class CourseService {

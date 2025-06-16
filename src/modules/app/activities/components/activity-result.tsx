@@ -114,7 +114,7 @@ function ActivityResultComponent({
                           />
                         </Space>
                         <Space align="start">
-                          <Text>Đáp án của bạn:</Text>
+                          <Text>{t('Your answer')}:</Text>
                           {isMCQ ? (
                             <Tag
                               color={

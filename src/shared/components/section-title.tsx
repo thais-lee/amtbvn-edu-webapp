@@ -1,6 +1,5 @@
-//section title
 import { Link } from '@tanstack/react-router';
-import { Col, Row, Space, Typography } from 'antd';
+import { Space, Typography } from 'antd';
 import React from 'react';
 import { TbLabelImportantFilled } from 'react-icons/tb';
 
@@ -10,12 +9,8 @@ interface SectionTitleProps {
   watchMore?: boolean;
 }
 
-const SectionTitle: React.FC<SectionTitleProps> = ({
-  title,
-  description,
-  watchMore,
-}) => {
-  const { Title, Text } = Typography;
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, watchMore }) => {
+  const { Title } = Typography;
 
   return (
     <div className="section-title">

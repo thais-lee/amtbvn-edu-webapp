@@ -51,13 +51,7 @@ const tabContent = [
   },
 ];
 
-function MasterTabDesktop({
-  title,
-  content,
-  cover,
-  articles,
-  onArticleClick,
-}: MasterTabDesktopProps) {
+function MasterTabDesktop({ onArticleClick }: MasterTabDesktopProps) {
   const [activeTab, setActiveTab] = useState(37);
 
   const masterData = useQuery({

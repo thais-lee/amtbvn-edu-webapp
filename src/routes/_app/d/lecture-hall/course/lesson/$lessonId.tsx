@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Card, Col, Row, Skeleton, Space, Tag, Typography } from 'antd';
-import { IoArrowBack, IoPlayOutline, IoTimeOutline } from 'react-icons/io5';
+import { IoArrowBack } from 'react-icons/io5';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -13,11 +13,10 @@ import {
 import courseService from '@/modules/app/courses/course.service';
 import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
 import lessonService from '@/modules/app/lessons/lesson.service';
-import ScreenHeader from '@/shared/components/layouts/app/screen-header';
 
 import './styles.css';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 export const Route = createFileRoute(
   '/_app/d/lecture-hall/course/lesson/$lessonId',

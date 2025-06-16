@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 
 import useApp from '@/hooks/use-app';
 
-import { TCourseDetail, TCourseEnrolled } from '../course.model';
+import { TCourseEnrolled } from '../course.model';
 import './course-card.css';
 
 const { Title, Text } = Typography;

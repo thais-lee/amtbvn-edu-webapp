@@ -1,15 +1,12 @@
 import {
   CloseOutlined,
   DownloadOutlined,
-  FileOutlined,
   PlayCircleOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   ConfigProvider,
-  Divider,
   Empty,
   List,
   Modal,
@@ -19,7 +16,6 @@ import {
   Tabs,
   Tag,
   Typography,
-  message,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
@@ -59,7 +55,8 @@ function RouteComponent() {
     undefined,
   );
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { antdApp } = useApp();
+  const { message } = antdApp;
 
   const navigate = useNavigate();
 
@@ -98,7 +95,7 @@ function RouteComponent() {
       }
     },
     onError: () => {
-      messageApi.error(t('An error occurred'));
+      message.error(t('An error occurred'));
     },
   });
 
@@ -134,7 +131,6 @@ function RouteComponent() {
       key: item.id.toString(),
       children: (
         <LibraryMaterialChildTab
-          parentId={item.id}
           activeChildTab={activeChildTab}
           setActiveChildTab={setActiveChildTab}
           childCategories={childCategoryQuery.data || []}
@@ -352,7 +348,6 @@ function RouteComponent() {
           )}
         </Modal>
       </ConfigProvider>
-      {contextHolder}
     </div>
   );
 }

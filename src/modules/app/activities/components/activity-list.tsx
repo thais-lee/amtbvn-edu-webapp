@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, List, Space, Tag, Typography } from 'antd';
 
@@ -35,7 +34,8 @@ function ActivityList({ activities, routePrefix }: IActivityListProps) {
             <Tag color="blue">{activity.type}</Tag>
             {activity.dueDate && (
               <Tag color="orange">
-                Hạn: {new Date(activity.dueDate).toLocaleDateString()}
+                {t('Due date')}:{' '}
+                {new Date(activity.dueDate).toLocaleDateString()}
               </Tag>
             )}
           </Space>

@@ -39,7 +39,7 @@ import { Route as AppMLibraryPodcastsIndexImport } from './routes/_app/m/library
 import { Route as AppMLibraryLecturesIndexImport } from './routes/_app/m/library/lectures/index'
 import { Route as AppMLibraryImagesIndexImport } from './routes/_app/m/library/images/index'
 import { Route as AppMLibraryBooksIndexImport } from './routes/_app/m/library/books/index'
-import { Route as AppDLibraryPodcatsIndexImport } from './routes/_app/d/library/podcats/index'
+import { Route as AppDLibraryPodcastsIndexImport } from './routes/_app/d/library/podcasts/index'
 import { Route as AppDLibraryLecturesIndexImport } from './routes/_app/d/library/lectures/index'
 import { Route as AppDLibraryImagesIndexImport } from './routes/_app/d/library/images/index'
 import { Route as AppDLibraryBooksIndexImport } from './routes/_app/d/library/books/index'
@@ -220,9 +220,9 @@ const AppMLibraryBooksIndexRoute = AppMLibraryBooksIndexImport.update({
   getParentRoute: () => AppMRouteRoute,
 } as any)
 
-const AppDLibraryPodcatsIndexRoute = AppDLibraryPodcatsIndexImport.update({
-  id: '/library/podcats/',
-  path: '/library/podcats/',
+const AppDLibraryPodcastsIndexRoute = AppDLibraryPodcastsIndexImport.update({
+  id: '/library/podcasts/',
+  path: '/library/podcasts/',
   getParentRoute: () => AppDRouteRoute,
 } as any)
 
@@ -507,11 +507,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDLibraryLecturesIndexImport
       parentRoute: typeof AppDRouteImport
     }
-    '/_app/d/library/podcats/': {
-      id: '/_app/d/library/podcats/'
-      path: '/library/podcats'
-      fullPath: '/d/library/podcats'
-      preLoaderRoute: typeof AppDLibraryPodcatsIndexImport
+    '/_app/d/library/podcasts/': {
+      id: '/_app/d/library/podcasts/'
+      path: '/library/podcasts'
+      fullPath: '/d/library/podcasts'
+      preLoaderRoute: typeof AppDLibraryPodcastsIndexImport
       parentRoute: typeof AppDRouteImport
     }
     '/_app/m/library/books/': {
@@ -621,7 +621,7 @@ interface AppDRouteRouteChildren {
   AppDLibraryBooksIndexRoute: typeof AppDLibraryBooksIndexRoute
   AppDLibraryImagesIndexRoute: typeof AppDLibraryImagesIndexRoute
   AppDLibraryLecturesIndexRoute: typeof AppDLibraryLecturesIndexRoute
-  AppDLibraryPodcatsIndexRoute: typeof AppDLibraryPodcatsIndexRoute
+  AppDLibraryPodcastsIndexRoute: typeof AppDLibraryPodcastsIndexRoute
   AppDHomeArticlesCategoryIdArticleIdRoute: typeof AppDHomeArticlesCategoryIdArticleIdRoute
   AppDLectureHallCourseActivityActivityIdRoute: typeof AppDLectureHallCourseActivityActivityIdRoute
   AppDLectureHallCourseLessonLessonIdRoute: typeof AppDLectureHallCourseLessonLessonIdRoute
@@ -639,7 +639,7 @@ const AppDRouteRouteChildren: AppDRouteRouteChildren = {
   AppDLibraryBooksIndexRoute: AppDLibraryBooksIndexRoute,
   AppDLibraryImagesIndexRoute: AppDLibraryImagesIndexRoute,
   AppDLibraryLecturesIndexRoute: AppDLibraryLecturesIndexRoute,
-  AppDLibraryPodcatsIndexRoute: AppDLibraryPodcatsIndexRoute,
+  AppDLibraryPodcastsIndexRoute: AppDLibraryPodcastsIndexRoute,
   AppDHomeArticlesCategoryIdArticleIdRoute:
     AppDHomeArticlesCategoryIdArticleIdRoute,
   AppDLectureHallCourseActivityActivityIdRoute:
@@ -765,7 +765,7 @@ export interface FileRoutesByFullPath {
   '/d/library/books': typeof AppDLibraryBooksIndexRoute
   '/d/library/images': typeof AppDLibraryImagesIndexRoute
   '/d/library/lectures': typeof AppDLibraryLecturesIndexRoute
-  '/d/library/podcats': typeof AppDLibraryPodcatsIndexRoute
+  '/d/library/podcasts': typeof AppDLibraryPodcastsIndexRoute
   '/m/library/books': typeof AppMLibraryBooksIndexRoute
   '/m/library/images': typeof AppMLibraryImagesIndexRoute
   '/m/library/lectures': typeof AppMLibraryLecturesIndexRoute
@@ -808,7 +808,7 @@ export interface FileRoutesByTo {
   '/d/library/books': typeof AppDLibraryBooksIndexRoute
   '/d/library/images': typeof AppDLibraryImagesIndexRoute
   '/d/library/lectures': typeof AppDLibraryLecturesIndexRoute
-  '/d/library/podcats': typeof AppDLibraryPodcatsIndexRoute
+  '/d/library/podcasts': typeof AppDLibraryPodcastsIndexRoute
   '/m/library/books': typeof AppMLibraryBooksIndexRoute
   '/m/library/images': typeof AppMLibraryImagesIndexRoute
   '/m/library/lectures': typeof AppMLibraryLecturesIndexRoute
@@ -853,7 +853,7 @@ export interface FileRoutesById {
   '/_app/d/library/books/': typeof AppDLibraryBooksIndexRoute
   '/_app/d/library/images/': typeof AppDLibraryImagesIndexRoute
   '/_app/d/library/lectures/': typeof AppDLibraryLecturesIndexRoute
-  '/_app/d/library/podcats/': typeof AppDLibraryPodcatsIndexRoute
+  '/_app/d/library/podcasts/': typeof AppDLibraryPodcastsIndexRoute
   '/_app/m/library/books/': typeof AppMLibraryBooksIndexRoute
   '/_app/m/library/images/': typeof AppMLibraryImagesIndexRoute
   '/_app/m/library/lectures/': typeof AppMLibraryLecturesIndexRoute
@@ -898,7 +898,7 @@ export interface FileRouteTypes {
     | '/d/library/books'
     | '/d/library/images'
     | '/d/library/lectures'
-    | '/d/library/podcats'
+    | '/d/library/podcasts'
     | '/m/library/books'
     | '/m/library/images'
     | '/m/library/lectures'
@@ -940,7 +940,7 @@ export interface FileRouteTypes {
     | '/d/library/books'
     | '/d/library/images'
     | '/d/library/lectures'
-    | '/d/library/podcats'
+    | '/d/library/podcasts'
     | '/m/library/books'
     | '/m/library/images'
     | '/m/library/lectures'
@@ -983,7 +983,7 @@ export interface FileRouteTypes {
     | '/_app/d/library/books/'
     | '/_app/d/library/images/'
     | '/_app/d/library/lectures/'
-    | '/_app/d/library/podcats/'
+    | '/_app/d/library/podcasts/'
     | '/_app/m/library/books/'
     | '/_app/m/library/images/'
     | '/_app/m/library/lectures/'
@@ -1058,7 +1058,7 @@ export const routeTree = rootRoute
         "/_app/d/library/books/",
         "/_app/d/library/images/",
         "/_app/d/library/lectures/",
-        "/_app/d/library/podcats/",
+        "/_app/d/library/podcasts/",
         "/_app/d/home/articles/$categoryId/$articleId",
         "/_app/d/lecture-hall/course/activity/$activityId",
         "/_app/d/lecture-hall/course/lesson/$lessonId",
@@ -1181,8 +1181,8 @@ export const routeTree = rootRoute
       "filePath": "_app/d/library/lectures/index.tsx",
       "parent": "/_app/d"
     },
-    "/_app/d/library/podcats/": {
-      "filePath": "_app/d/library/podcats/index.tsx",
+    "/_app/d/library/podcasts/": {
+      "filePath": "_app/d/library/podcasts/index.tsx",
       "parent": "/_app/d"
     },
     "/_app/m/library/books/": {
