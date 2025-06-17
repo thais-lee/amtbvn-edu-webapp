@@ -12,7 +12,7 @@ class LessonService {
 
   getOne(id: number) {
     return httpService.request<{ data: TLessonDto }>({
-      url: `/api/lessons/${id}`,
+      url: `/api/lessons/user/${id}`,
       method: 'GET',
     });
   }
@@ -24,6 +24,13 @@ class LessonService {
       params: {
         courseId,
       },
+    });
+  }
+
+  completeLesson(id: number) {
+    return httpService.request({
+      url: `/api/lessons/${id}/complete`,
+      method: 'PATCH',
     });
   }
 }

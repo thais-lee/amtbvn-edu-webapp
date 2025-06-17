@@ -38,7 +38,7 @@ class CourseService {
 
   getOneCourse(id: number) {
     return httpService.request<TCourseDetail>({
-      url: `/api/courses/${id}`,
+      url: `/api/courses/user/${id}`,
       method: 'GET',
     });
   }

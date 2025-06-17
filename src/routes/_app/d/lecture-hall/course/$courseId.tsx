@@ -95,7 +95,8 @@ function CourseDetailComponent() {
   // Calculate progress
   const totalLessons = course.lessons?.length || 0;
   const completedLessons =
-    course.lessons?.filter((l: any) => l.isCompleted).length || 0;
+    course.lessons?.filter((l: any) => l.completions?.[0]?.isCompleted)
+      .length || 0;
   const progress =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
@@ -170,63 +171,67 @@ function CourseDetailComponent() {
                   label: t('Lessons'),
                   children: (
                     <div className="lessons-list">
-                      {course.lessons?.map((lesson: TLessonDto) => (
-                        <Card
-                          key={lesson.id}
-                          className={`lesson-card ${
-                            lesson.isCompleted ? 'completed' : ''
-                          }`}
-                          onClick={() => handleLessonClick(lesson.id)}
-                        >
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'flex-start',
-                              justifyContent: 'flex-start',
-                              gap: 16,
-                            }}
+                      {course.lessons?.map((lesson: TLessonDto) => {
+                        const isCompleted =
+                          lesson.completions?.[0]?.isCompleted;
+                        return (
+                          <Card
+                            key={lesson.id}
+                            className={`lesson-card ${
+                              isCompleted ? 'completed' : ''
+                            }`}
+                            onClick={() => handleLessonClick(lesson.id)}
                           >
-                            <div className="lesson-info">
-                              <Title level={5}>{lesson.title}</Title>
-                              <Text type="secondary">
-                                <IoTimeOutline />{' '}
-                                {dayjs(lesson.createdAt).format('DD/MM/YYYY')}
-                              </Text>
-                              <Space>
-                                <Paragraph
-                                  style={{
-                                    textAlign: 'justify',
-                                    whiteSpace: 'pre-line',
-                                  }}
-                                  ellipsis={{
-                                    rows: 2,
-                                  }}
-                                >
-                                  <div
-                                    dangerouslySetInnerHTML={{
-                                      __html: lesson.content ?? '',
-                                    }}
-                                  />
-                                </Paragraph>
-                                {lesson.isCompleted && (
-                                  <Tag color="success">{t('Completed')}</Tag>
-                                )}
-                              </Space>
-                            </div>
-                            <Button
-                              type="primary"
-                              icon={<IoPlayOutline />}
-                              className="play-button"
-                              style={{ alignSelf: 'flex-start' }}
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                justifyContent: 'flex-start',
+                                gap: 16,
+                              }}
                             >
-                              {lesson.isCompleted
-                                ? t('Watch Again')
-                                : t('Watch Now')}
-                            </Button>
-                          </div>
-                        </Card>
-                      ))}
+                              <div className="lesson-info">
+                                <Title level={5}>{lesson.title}</Title>
+                                <Text type="secondary">
+                                  <IoTimeOutline />{' '}
+                                  {dayjs(lesson.createdAt).format('DD/MM/YYYY')}
+                                </Text>
+                                <Space>
+                                  <Paragraph
+                                    style={{
+                                      textAlign: 'justify',
+                                      whiteSpace: 'pre-line',
+                                    }}
+                                    ellipsis={{
+                                      rows: 2,
+                                    }}
+                                  >
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: lesson.content ?? '',
+                                      }}
+                                    />
+                                  </Paragraph>
+                                  {isCompleted && (
+                                    <Tag color="success">{t('Completed')}</Tag>
+                                  )}
+                                </Space>
+                              </div>
+                              <Button
+                                type="primary"
+                                icon={<IoPlayOutline />}
+                                className="play-button"
+                                style={{ alignSelf: 'flex-start' }}
+                              >
+                                {isCompleted
+                                  ? t('Watch Again')
+                                  : t('Watch Now')}
+                              </Button>
+                            </div>
+                          </Card>
+                        );
+                      })}
                     </div>
                   ),
                 },

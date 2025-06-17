@@ -39,4 +39,5 @@ export interface TLessonDto {
   previous?: TLessonDto;
   activities?: TActivity[];
   course?: TCourse;
+  completions?: { isCompleted: boolean; completedAt?: string }[];
 }

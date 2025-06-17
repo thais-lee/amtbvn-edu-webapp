@@ -103,6 +103,9 @@ function LessonDetailComponent() {
     }
   };
 
+  const isCompleted = lesson?.completions?.[0]?.isCompleted ?? false;
+  const completedAt = lesson?.completions?.[0]?.completedAt;
+
   if (isLoading || !lesson) {
     return <Skeleton active paragraph={{ rows: 8 }} />;
   }
@@ -134,13 +137,24 @@ function LessonDetailComponent() {
               {lesson.title}
             </Title>
             <Space>
-              <Tag
-                color={lesson.status === 'PUBLISHED' ? 'success' : 'default'}
-              >
-                {lesson.status === 'PUBLISHED' ? t('Published') : t('Draft')}
-              </Tag>
               {lesson.isImportant && <Tag color="red">{t('Important')}</Tag>}
             </Space>
+            {isCompleted && (
+              <Tag color="success" style={{ marginTop: 8 }}>
+                {t('Completed')}
+                {completedAt && (
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      fontWeight: 400,
+                      color: '#888',
+                    }}
+                  >
+                    ({new Date(completedAt).toLocaleString()})
+                  </span>
+                )}
+              </Tag>
+            )}
           </div>
           <Space direction="horizontal" size="large">
             <Space>

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button, Card, Col, Row, Skeleton, Space, Tag, Typography } from 'antd';
 import { IoArrowBack } from 'react-icons/io5';
@@ -30,7 +30,11 @@ function LessonDetailComponent() {
   const { t } = useApp();
 
   // Always call all hooks at the top
-  const { data: lesson, isLoading } = useQuery({
+  const {
+    data: lesson,
+    isLoading: isLessonLoading,
+    refetch: refetchLesson,
+  } = useQuery({
     queryKey: ['/lessons', lessonId],
     queryFn: async () => {
       const res = await lessonService.getOne(Number(lessonId));
@@ -43,14 +47,26 @@ function LessonDetailComponent() {
   const courseId = lesson?.courseId;
 
   // Always call this hook, but only enable when courseId is available
-  const { data: courseData } = useQuery({
+  const {
+    data: courseData,
+    isLoading: isCourseLoading,
+    refetch: refetchCourse,
+  } = useQuery({
     queryKey: ['course-detail', courseId],
     queryFn: () => courseService.getOneCourse(Number(courseId)),
     enabled: !!courseId,
     select: (res) => res.data,
   });
 
-  if (isLoading || !lesson) {
+  const completeLessonMutation = useMutation({
+    mutationFn: () => lessonService.completeLesson(Number(lessonId)),
+    onSuccess: () => {
+      refetchLesson();
+      refetchCourse();
+    },
+  });
+
+  if (isLessonLoading || isCourseLoading || !lesson) {
     return <Skeleton active paragraph={{ rows: 8 }} />;
   }
 
@@ -86,6 +102,9 @@ function LessonDetailComponent() {
 
   const courseTitle = courseData?.name || '';
   const lessonsList: TLessonDto[] = courseData?.lessons || [];
+
+  const isCompleted = lesson?.completions?.[0]?.isCompleted ?? false;
+  const completedAt = lesson?.completions?.[0]?.completedAt;
 
   return (
     <div className="lesson-detail">
@@ -140,8 +159,30 @@ function LessonDetailComponent() {
               >
                 <div className="lesson-meta">
                   <Space>
-                    {lesson.isCompleted && (
-                      <Text type="success">{t('Completed')}</Text>
+                    {isCompleted && (
+                      <Text type="success">
+                        {t('Completed')}
+                        {completedAt && (
+                          <span
+                            style={{
+                              marginLeft: 8,
+                              fontWeight: 400,
+                              color: '#888',
+                            }}
+                          >
+                            ({new Date(completedAt).toLocaleString()})
+                          </span>
+                        )}
+                      </Text>
+                    )}
+                    {!isCompleted && (
+                      <Button
+                        type="primary"
+                        loading={completeLessonMutation.isPending}
+                        onClick={() => completeLessonMutation.mutate()}
+                      >
+                        {t('Mark as completed')}
+                      </Button>
                     )}
                   </Space>
                 </div>
@@ -221,19 +262,22 @@ function LessonDetailComponent() {
           <Card className="sidebar">
             <Title level={5}>{t('Lessons')}</Title>
             <div className="lesson-list-sidebar">
-              {lessonsList.map((l: TLessonDto, idx: number) => (
-                <div
-                  key={l.id}
-                  className={`lesson-sidebar-item${
-                    String(l.id) === String(lessonId) ? ' active' : ''
-                  }${l.isCompleted ? ' completed' : ''}`}
-                  onClick={() => handleLessonSidebarClick(l.id)}
-                >
-                  <div className="lesson-sidebar-index">{idx + 1}</div>
-                  <div className="lesson-sidebar-title">{l.title}</div>
-                  {l.isCompleted && <Tag color="success">{t('Completed')}</Tag>}
-                </div>
-              ))}
+              {lessonsList.map((l: TLessonDto, idx: number) => {
+                const completed = l?.completions?.[0]?.isCompleted ?? false;
+                return (
+                  <div
+                    key={l.id}
+                    className={`lesson-sidebar-item${
+                      String(l.id) === String(lessonId) ? ' active' : ''
+                    }${completed ? ' completed' : ''}`}
+                    onClick={() => handleLessonSidebarClick(l.id)}
+                  >
+                    <div className="lesson-sidebar-index">{idx + 1}</div>
+                    <div className="lesson-sidebar-title">{l.title}</div>
+                    {completed && <Tag color="success">{t('Completed')}</Tag>}
+                  </div>
+                );
+              })}
             </div>
           </Card>
         </Col>
