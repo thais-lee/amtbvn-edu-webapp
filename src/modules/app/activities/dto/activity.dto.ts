@@ -90,6 +90,7 @@ export interface TStudentAnswerDto {
   activityQuestionId: number;
   selectedOptionId: number;
   essayAnswer: string;
+  answer: string;
   fileId: number;
 
   isCorrect: boolean;

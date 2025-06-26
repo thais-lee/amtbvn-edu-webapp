@@ -59,7 +59,7 @@ function ActivityResultComponent({
               dataSource={answers}
               renderItem={(answer) => {
                 const question = answer.question;
-                const userAnswer = answer.essayAnswer;
+                const userAnswer = answer.essayAnswer || answer.answer;
                 const selectedOptionId = answer.selectedOptionId;
                 const correctOptionId = question.options.find(
                   (opt: any) => opt.isCorrect,
