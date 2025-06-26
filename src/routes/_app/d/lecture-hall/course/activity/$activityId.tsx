@@ -72,7 +72,7 @@ function ActivityDetailComponent() {
       const res = await activityService.submitAttempt(doingAttempt.id, answers);
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       setDoingAttempt(null);
       messageApi.success('Nộp bài thành công.');
       refetchAttempts();
