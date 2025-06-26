@@ -17,8 +17,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'AMTBVN Education',
-        short_name: 'AMTBVN Education',
+        name: 'One Learning System',
+        short_name: 'OLS',
         theme_color: '#fff',
         background_color: '#fff',
         display: 'standalone',

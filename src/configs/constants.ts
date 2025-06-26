@@ -1,4 +1,4 @@
-export const APP_NAME = 'AMTBVN Edu App';
+export const APP_NAME = 'OLS - One Learning';
 
 export const ACCESS_TOKEN_KEY = 'accessToken';
 export const REFRESH_TOKEN_KEY = 'refreshToken';
