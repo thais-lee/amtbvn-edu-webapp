@@ -9,6 +9,7 @@ import {
   Space,
   Tag,
   Typography,
+  message as antdMessage,
 } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -18,7 +19,11 @@ import useApp from '@/hooks/use-app';
 import activityService from '@/modules/app/activities/activity.service';
 import ActivityAttemptComponent from '@/modules/app/activities/components/activity-attempt';
 import ActivityResultComponent from '@/modules/app/activities/components/activity-result';
-import { EActivityStatus } from '@/modules/app/activities/dto/activity.dto';
+import {
+  EActivityQuestionType,
+  EActivityStatus,
+  EGradingStatus,
+} from '@/modules/app/activities/dto/activity.dto';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -55,7 +60,27 @@ function ActivityDetailComponent() {
 
   // State for showing result/attempt modal
   const [reviewAttempt, setReviewAttempt] = React.useState(null);
-  const [doingAttempt, setDoingAttempt] = React.useState(null);
+  const [doingAttempt, setDoingAttempt] = React.useState<any>(null);
+
+  // Message instance for feedback
+  const [messageApi, contextHolder] = antdMessage.useMessage();
+
+  // Mutation để submit attempt
+  const submitAttemptMutation = useMutation({
+    mutationFn: async (answers: any) => {
+      if (!doingAttempt?.id) throw new Error('No attempt in progress');
+      const res = await activityService.submitAttempt(doingAttempt.id, answers);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setDoingAttempt(null);
+      messageApi.success('Nộp bài thành công.');
+      refetchAttempts();
+    },
+    onError: (error: any) => {
+      messageApi.error('Không thể nộp bài.' + error.response.data.message);
+    },
+  });
 
   const startAttemptMutation = useMutation({
     mutationFn: () => activityService.startAttempt(Number(activityId)),
@@ -158,7 +183,15 @@ function ActivityDetailComponent() {
                         {t('Questions')} {idx + 1}: {q.question}
                       </Text>
                       <Text type="secondary">
-                        {t('Type')}: {q.type} | {t('Points')}: {q.points}
+                        {t('Type')}:{' '}
+                        {q.type === EActivityQuestionType.MULTIPLE_CHOICE
+                          ? 'Đa lựa chọn'
+                          : q.type === EActivityQuestionType.TRUE_FALSE
+                            ? 'Đúng/ Sai'
+                            : q.type === EActivityQuestionType.SHORT_ANSWER
+                              ? 'Câu trả lời ngắn'
+                              : 'Bài luận'}{' '}
+                        | {t('Points')}: {q.points}
                       </Text>
                       {q.options && q.options.length > 0 && (
                         <div style={{ marginTop: 8 }}>
@@ -197,12 +230,19 @@ function ActivityDetailComponent() {
                     </Text>
                     <Tag
                       color={
-                        attempt.gradingStatus === 'GRADED'
+                        attempt.gradingStatus === EGradingStatus.GRADED
                           ? 'success'
                           : 'default'
                       }
                     >
-                      {attempt.gradingStatus}
+                      {attempt.gradingStatus === EGradingStatus.GRADED
+                        ? 'Đã chấm điểm'
+                        : attempt.gradingStatus === EGradingStatus.IN_PROGRESS
+                          ? 'Đang làm bài'
+                          : attempt.gradingStatus ===
+                              EGradingStatus.PENDING_MANUAL
+                            ? 'ĐANG CHẤM BỞI GIÁO VIÊN'
+                            : ''}
                     </Tag>
                     <Text>
                       {t('Score')}: {attempt.score ?? 'N/A'}
@@ -211,15 +251,46 @@ function ActivityDetailComponent() {
                 </List.Item>
               )}
             />
-            {canStartNew && (
+            {/* Nút bắt đầu hoặc tiếp tục làm bài */}
+            {attempts.length === 0 ? (
               <Button
                 type="primary"
                 onClick={() => startAttemptMutation.mutate()}
                 style={{ marginTop: 16 }}
                 loading={startAttemptMutation.isPending}
               >
-                {t('Start New Attempt')}
+                {t('Start')}
               </Button>
+            ) : (
+              (() => {
+                const inProgressAttempt = attempts.find(
+                  (a) => a.gradingStatus === 'IN_PROGRESS',
+                );
+                if (inProgressAttempt) {
+                  return (
+                    <Button
+                      type="primary"
+                      onClick={() => setDoingAttempt(inProgressAttempt as any)}
+                      style={{ marginTop: 16 }}
+                    >
+                      {t('Continue Attempt')}
+                    </Button>
+                  );
+                }
+                if (canStartNew) {
+                  return (
+                    <Button
+                      type="primary"
+                      onClick={() => startAttemptMutation.mutate()}
+                      style={{ marginTop: 16 }}
+                      loading={startAttemptMutation.isPending}
+                    >
+                      {t('Start')}
+                    </Button>
+                  );
+                }
+                return null;
+              })()
             )}
             {/* Review Modal */}
             <Modal
@@ -246,10 +317,7 @@ function ActivityDetailComponent() {
               {doingAttempt && (
                 <ActivityAttemptComponent
                   attempt={doingAttempt}
-                  onFinish={() => {
-                    setDoingAttempt(null);
-                    refetchAttempts();
-                  }}
+                  onFinish={(answers) => submitAttemptMutation.mutate(answers)}
                   onCancel={() => setDoingAttempt(null)}
                 />
               )}
@@ -257,6 +325,7 @@ function ActivityDetailComponent() {
           </Card>
         </Space>
       </Card>
+      {contextHolder}
     </div>
   );
 }

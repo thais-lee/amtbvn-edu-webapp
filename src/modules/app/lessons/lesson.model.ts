@@ -14,4 +14,5 @@ export interface TLesson {
   course: TCourse;
   previous: TLesson;
   next: TLesson;
+  completions: { isCompleted: boolean; completedAt?: string }[];
 }

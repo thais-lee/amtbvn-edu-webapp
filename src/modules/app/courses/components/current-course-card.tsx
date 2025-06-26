@@ -2,7 +2,6 @@
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Card, Progress, Space, Tag, Typography } from 'antd';
-// Import Progress
 import dayjs from 'dayjs';
 
 import useApp from '@/hooks/use-app';
@@ -24,8 +23,14 @@ export default function CurrentCourseCard({
   const navigate = useNavigate();
   const { t } = useApp();
 
-  // Calculate progress (dummy value for now, replace with actual progress logic)
-  const courseProgress = course.progressPercentage ?? 0; // Assuming 'progress' exists on TCourseEnrolled
+  const totalLessons = course.course.lessons.length;
+  const completedLessons = course.course.lessons.filter(
+    (lesson) =>
+      lesson.completions.length > 0 &&
+      lesson.completions[0].isCompleted === true,
+  );
+
+  const progressPercentage = (completedLessons.length / totalLessons) * 100;
 
   const handleCourseClick = (courseId: number) => {
     navigate({
@@ -60,13 +65,13 @@ export default function CurrentCourseCard({
           {course.course.category.name}
         </Tag>
 
-        {/* Last Accessed Date */}
+        {/* Last Updated Date */}
         <Space>
           <ClockCircleOutlined />
           <Text type="secondary">
-            {t('Last Accessed')}:{' '}
-            {course.lastAccessedAt
-              ? dayjs(course.lastAccessedAt).format('DD/MM/YYYY')
+            {t('Last updated')}:{' '}
+            {course.course.updatedAt
+              ? dayjs(course.course.updatedAt).format('HH:mm DD/MM/YYYY')
               : ''}
           </Text>
         </Space>
@@ -85,7 +90,7 @@ export default function CurrentCourseCard({
         {/* Progress Bar */}
         <div style={{ marginTop: '12px' }}>
           <Text strong>{t('Progress')}</Text>
-          <Progress percent={courseProgress} status="active" />
+          <Progress percent={progressPercentage} status="active" />
         </div>
         <Button
           type="primary"
