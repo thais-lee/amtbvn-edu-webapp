@@ -90,4 +90,31 @@
 .completed {
   background-color: #f6ffed;
   border-color: #b7eb8f;
+}
+
+.floating-audio-player {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  max-width: 90vw;
+}
+
+@media (max-width: 600px) {
+  .floating-audio-player {
+    right: 8px;
+    bottom: 8px;
+    padding: 8px 8px;
+    width: 95vw;
+    max-width: 95vw;
+  }
+  .floating-audio-player audio {
+    width: 100%;
+  }
 } 

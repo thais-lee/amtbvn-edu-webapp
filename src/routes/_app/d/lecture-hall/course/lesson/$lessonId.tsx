@@ -13,6 +13,7 @@ import {
 import courseService from '@/modules/app/courses/course.service';
 import { TLessonDto } from '@/modules/app/lessons/dto/lesson.dto';
 import lessonService from '@/modules/app/lessons/lesson.service';
+import FloatingAudioPlayer from '@/shared/components/audio-player';
 
 import './styles.css';
 
@@ -98,6 +99,11 @@ function LessonDetailComponent() {
   // Find the first video attachment
   const videoAttachment = lesson.attachments?.find(
     (a: TAttachmentDto) => a.type === ELessonAttachmentType.VIDEO,
+  );
+
+  // Find the first audio attachment
+  const audioAttachment = lesson.attachments?.find(
+    (a: TAttachmentDto) => a.type === ELessonAttachmentType.AUDIO,
   );
 
   const courseTitle = courseData?.name || '';
@@ -282,6 +288,8 @@ function LessonDetailComponent() {
           </Card>
         </Col>
       </Row>
+      {/* Floating audio player */}
+      <FloatingAudioPlayer src={audioAttachment?.file?.storagePath} />
     </div>
   );
 }
